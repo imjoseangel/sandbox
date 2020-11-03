@@ -1,0 +1,20 @@
+---
+- name: Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+    - name: Install dev packages
+      dnf:
+        name:
+          - cmake
+          - meson
+          - gcc
+        state: latest
+      register: output
+
+    - name: Debug output
+      debug:
+        msg: "{{ output }}"

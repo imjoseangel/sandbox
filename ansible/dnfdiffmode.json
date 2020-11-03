@@ -1,0 +1,10 @@
+{
+    "ANSIBLE_MODULE_ARGS": {
+        "name": [
+            "cmake",
+            "meson",
+            "gcc"
+        ],
+        "state": "latest"
+    }
+}

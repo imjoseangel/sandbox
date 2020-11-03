@@ -1,0 +1,28 @@
+Package: proftpd-basic
+Source: proftpd-dfsg
+Version: {{ proftpdversion }}
+Architecture: amd64
+Maintainer: ProFTPD Maintainance Team <pkg-proftpd-maintainers@lists.alioth.debian.org>
+Installed-Size: 4517
+Depends: adduser, debconf (>= 0.5.00), debianutils (>= 1.21.0), libpam-runtime (>= 0.76-13.1), netbase (>= 4.13), sed (>= 4.1.5), ucf (>= 0.30), libacl1 (>= 2.2.51-8), libc6 (>= 2.15), libcap2 (>= 1:2.10), libmemcached11, libmemcachedutil2, libncurses5 (>= 5.5-5~), libpam0g (>= 0.99.7.1), libpcre3 (>= 1:8.35), libssl1.0.0 (>= 1.0.1), libtinfo5, libwrap0 (>= 7.6-4~), zlib1g (>= 1:1.1.4)
+Conflicts: ftp-server
+Breaks: proftpd (<< 1.3.2)
+Replaces: proftpd (<< 1.3.2)
+Provides: ftp-server, proftpd
+Section: net
+Priority: optional
+Homepage: http://www.proftpd.org/
+Description: Versatile, virtual-hosting FTP daemon - binaries
+ ProFTPD is a powerful modular FTP/SFTP/FTPS server. This File Transfer
+ Protocol daemon supports also hidden directories, virtual hosts, and
+ per-directory ".ftpaccess" files. It uses a single main configuration
+ file, with a syntax similar to Apache.
+ .
+ Because of the advanced design, anonymous-FTP directories can have
+ an arbitrary internal structure (bin, lib, etc, and special files are
+ not needed). Advanced features such as multiple password files and
+ upload/download ratios are also supported.
+ .
+ This package contains the daemon and all main modules used for
+ common configurations. If you need database-centric authentication
+ install the suitable proftpd-mod suggested package.

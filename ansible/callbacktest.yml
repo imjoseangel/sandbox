@@ -1,0 +1,22 @@
+---
+- name: Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+
+  vars:
+    data:
+    - a
+    - b
+    - c
+
+  tasks:
+
+    - name: Test
+      debug:
+        var: data
+
+    - name: Test
+      debug:
+        var: data

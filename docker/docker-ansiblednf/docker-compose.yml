@@ -1,0 +1,10 @@
+version: '3'
+services:
+  tower:
+    container_name: "fedora"
+    tty: true
+    image: "fedora:ansible"
+    volumes:
+      - ~/source/imjoseangel/sandbox/ansible:/home/ansible/sandbox
+    labels:
+      - "Ansible Fedora"

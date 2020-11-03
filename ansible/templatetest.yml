@@ -1,0 +1,16 @@
+---
+- name: Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+
+    myname: "Melvin"
+    message: "Hello [% myname %]"
+
+  tasks:
+
+    - name: show templating results with different variable start and end string
+      debug:
+        msg: "{{ lookup('template', 'templates/template.j2', variable_start_string='[%', variable_end_string='%]') }}"

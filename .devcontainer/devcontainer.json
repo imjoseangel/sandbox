@@ -1,0 +1,27 @@
+{
+	"name": "Sandbox",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		// Update 'VARIANT' to pick a Python version. Rebuild the container
+		// if it already exists to update. Available variants: 3, 3.6, 3.7, 3.8
+		"args": {
+			"VARIANT": "8"
+		}
+	},
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"python.pythonPath": "/usr/local/bin/python",
+	},
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-python.python",
+		"vscoss.vscode-ansible",
+		"redhat.vscode-yaml"
+	],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install -r requirements.txt",
+	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "ansible"
+}

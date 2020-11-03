@@ -1,0 +1,8 @@
+[local]
+localhost ansible_user=ansible ansible_connection=local ansible_python_interpreter="/usr/bin/env python"
+
+[linux]
+10.100.10.15
+
+[windows]
+172.16.239.135

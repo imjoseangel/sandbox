@@ -1,0 +1,4 @@
+ansible>=2.10.0
+jsonschema
+pip
+python-memcached

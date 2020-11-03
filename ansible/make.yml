@@ -1,0 +1,173 @@
+---
+- name: Create package
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  become: true
+
+  vars:
+    proftpdversion: "1.3.6e"
+
+  tasks:
+
+    - name: Install needed packages
+      apt:
+        name: "{{ debcontrol }}"
+        state: present
+      loop: "{{ debpackages | flatten(levels=1) }}"
+      loop_control:
+        loop_var: "debcontrol"
+      vars:
+        debpackages:
+          - build-essential
+          - libpcre3-dev
+          - libssl-dev
+          - libmemcached-dev
+          - libwrap0-dev
+          - libpam0g-dev
+          - libcap2-dev
+        ansible_python_interpreter: /usr/bin/python2.7
+
+    - name: create temporary directory
+      tempfile:
+        state: directory
+        prefix: "proftpd"
+      register: _tmp
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3
+
+    - name: set temporary working directory
+      set_fact:
+        work_dir: "{{ _tmp.path }}"
+
+    - name: Download package
+      unarchive:
+        src: ftp://ftp.proftpd.org/distrib/source/proftpd-{{ proftpdversion }}.tar.gz
+        dest: "{{ work_dir }}"
+        remote_src: true
+
+    - name: Configure
+      command:
+        cmd: >
+          ./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc/proftpd
+          --localstatedir=/run --libexecdir=/usr/lib/proftpd --enable-sendfile --enable-facl
+          --enable-dso --enable-autoshadow --enable-ctrls --enable-ipv6 --enable-nls
+          --enable-memcache --with-lastlog=/var/log/lastlog --enable-pcre --disable-strip
+          --disable-xattr --with-shared=mod_unique_id:mod_site_misc:mod_load:mod_ban:mod_quotatab:\
+          mod_sql:mod_dynmasq:mod_quotatab_sql:mod_ratio:mod_tls:mod_rewrite:mod_radius:mod_wrap:\
+          mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_quotatab_file:mod_quotatab_radius:mod_facl:\
+          mod_ctrls_admin:mod_copy:mod_deflate:mod_ifversion:mod_exec:mod_sftp:mod_sftp_pam:mod_sftp_sql:\
+          mod_shaper:mod_sql_passwd:mod_ifsession:mod_tls_memcache
+        chdir: "{{ work_dir }}/proftpd-{{ proftpdversion }}"
+
+    - name: Make
+      make:
+        chdir: "{{ work_dir }}/proftpd-{{ proftpdversion }}"
+
+    - name: Make install on specific directory
+      command:
+        cmd: "make DESTDIR=~/proftpd-basic_{{ proftpdversion }}/ROOT install"
+        chdir: "{{ work_dir }}/proftpd-{{ proftpdversion }}"
+
+    - name: Create a directory to prepare deb file
+      file:
+        path: ~/proftpd-basic_{{ proftpdversion }}/DEBIAN
+        state: directory
+        mode: '0755'
+
+    - name: Download deb file
+      command: apt-get download proftpd-basic
+      args:
+        chdir: ~/proftpd-basic_{{ proftpdversion }}
+        warn: false
+
+    - name: Find downloaded package
+      find:
+        paths: ~/proftpd-basic_{{ proftpdversion }}
+        file_type: file
+      register: debpackage
+
+    - name: Extract deb file
+      command: "ar x {{ debpackage.files[0].path }}"
+      args:
+        chdir: ~/proftpd-basic_{{ proftpdversion }}
+
+    - name: Extract packages for data
+      unarchive:
+        src: ~/proftpd-basic_{{ proftpdversion }}/data.tar.xz
+        dest: ~/proftpd-basic_{{ proftpdversion }}
+        remote_src: true
+
+    - name: Extract packages for control
+      unarchive:
+        src: ~/proftpd-basic_{{ proftpdversion }}/control.tar.gz
+        dest: ~/proftpd-basic_{{ proftpdversion }}/DEBIAN
+        remote_src: true
+
+    - name: Find compiled modules
+      find:
+        paths: ~/proftpd-basic_{{ proftpdversion }}/ROOT/usr/lib/proftpd/
+        file_type: file
+        patterns: "*.so"
+      register: modpackage
+
+    - name: Copy compiled module files to the right place
+      copy:
+        src: "{{ cpcompiled.path }}"
+        dest: ~/proftpd-basic_{{ proftpdversion }}/usr/lib/proftpd/
+        remote_src: true
+      loop: "{{ modpackage.files }}"
+      loop_control:
+        loop_var: cpcompiled
+
+    - name: Copy compiled binaries to the right place
+      copy:
+        src: "~/proftpd-basic_{{ proftpdversion }}/ROOT/usr/{{ cpbinaries.src }}"
+        dest: "~/proftpd-basic_{{ proftpdversion }}/usr/{{ cpbinaries.dest }}"
+        remote_src: true
+      loop:
+        - { src: 'bin/ftpdctl', dest: 'bin/ftpdctl' }
+        - { src: 'bin/ftpwho', dest: 'bin/ftpwho' }
+        - { src: 'bin/ftptop', dest: 'bin/ftptop' }
+        - { src: 'bin/ftpcount', dest: 'bin/ftpcount' }
+        - { src: 'bin/ftpmail', dest: 'sbin/ftpmail' }
+        - { src: 'bin/ftpquota', dest: 'sbin/ftpquota' }
+        - { src: 'sbin/ftpscrub', dest: 'sbin/ftpscrub' }
+        - { src: 'sbin/ftpshut', dest: 'sbin/ftpshut' }
+        - { src: 'sbin/proftpd', dest: 'sbin/proftpd' }
+        - { src: 'bin/ftpasswd', dest: 'sbin/ftpasswd' }
+      loop_control:
+        loop_var: cpbinaries
+
+    - name: Remove rubbish
+      file:
+        path: "{{ unneededfiles }}"
+        state: absent
+      loop:
+        - "{{ debpackage.files[0].path }}"
+        - ~/proftpd-basic_{{ proftpdversion }}/debian-binary
+        - ~/proftpd-basic_{{ proftpdversion }}/data.tar.xz
+        - ~/proftpd-basic_{{ proftpdversion }}/control.tar.gz
+        - ~/proftpd-basic_{{ proftpdversion }}/ROOT
+      loop_control:
+        loop_var: unneededfiles
+
+    - name: Replace control file with right version
+      template:
+        src: "{{ playbook_dir }}/templates/proftpd_control.j2"
+        dest: "~/proftpd-basic_{{ proftpdversion }}/DEBIAN/control"
+
+    - name: Build deb file
+      command:
+        cmd: dpkg-deb --build proftpd-basic_{{ proftpdversion }}
+        chdir: "~"
+
+    - name: Remove package working directory
+      file:
+        path: ~/proftpd-basic_{{ proftpdversion }}
+        state: absent
+
+    - name: Remove temporary working directory
+      file:
+        path: "{{ work_dir }}"
+        state: absent

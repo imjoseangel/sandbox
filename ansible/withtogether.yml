@@ -1,0 +1,17 @@
+---
+- name: Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+    - name: with_together -> loop
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }} - {{ item.2 }}"
+      loop: "{{ data[0] | zip(*data[1:]) | list }}"
+      vars:
+        data:
+          - ['a', 'b', 'c']
+          - ['d', 'e', 'f']
+          - ['g', 'h', 'i']
