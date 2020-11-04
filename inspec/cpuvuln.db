@@ -1,0 +1,40 @@
+# Run as inspec exec singlessh.rb -b ssh --host=192.168.72.131 --user=imjoseangel --password=password
+title 'Linux Example'
+
+control 'os-11' do
+  impact 1.0
+  title 'Detect cpu-vulnerability-directory'
+  desc 'The cpu-vulnerability-directory /sys/devices/system/cpu/vulnerabilities'
+  # cpuvulndir = file("/sys/devices/system/cpu/vulnerabilities/")
+
+  # if cpuvulndir.exist?
+  #   describe cpuvulndir do
+  #     it { should be_directory }
+  #   end
+  # end
+
+  cpuvulndir = "/sys/devices/system/cpu/vulnerabilities/"
+  # cpuvulndir.each do |path|
+    if file(cpuvulndir).exist?
+      describe file(cpuvulndir) do
+          # its('type') { should eq :directory }
+          it { should be_directory }
+      end
+      loaded_files = command("find " + cpuvulndir + " -type f -maxdepth 1").stdout.split("\n").map(&:strip).find_all { |cpuvulndir| !cpuvulndir.empty? }
+
+      loaded_files.each do |vulnfile|
+        describe file(vulnfile) do
+          its('content') { should_not match /[vV]ulnerable/ }
+        end
+      end
+    # end
+  end
+
+  # cpuvulndir = "/sys/devices/system/cpu/vulnerabilities/"
+  # describe command("grep -i vulnerable " + cpuvulndir + "*") do
+  #   its('exit_status') { should_not eq 0 }
+  # end
+
+
+
+end
