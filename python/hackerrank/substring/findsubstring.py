@@ -8,23 +8,24 @@ from __future__ import (division, absolute_import, print_function,
 def findSubstring(s, k):
 
     maxvowel = 0
-    finalstr = ""
 
-    split = (s[item:item + k] for item in range(0, len(s), 1))
+    # split = (s[item:item + k] for item in range(0, len(s), 1))
 
-    mapofvowels = ((sum(
-        list(map(mystr.lower().count, "aeiou"))), mystr) for mystr in split if len(mystr) == k)
+    # mapofvowels = ((sum(
+    #     list(map(mystr.lower().count, "aeiou"))), mystr) for mystr in split if len(mystr) == k)
 
-    print(list(maximums))
-    for count, word in mapofvowels:
-        if count > maxvowel:
-            maxvowel = count
-            finalstr = word
+    # [(maxvowel := count, finalstr := word) for count, word in mapofvowels
+    #  if count > maxvowel]
 
-        if finalstr == "":
-            return "Not found!"
+    findstr = ((maxvowel := count, word) for count, word in ((sum(
+        list(map(mystr.lower().count, "aeiou"))), mystr) for mystr in (s[item:item + k] for item in range(0, len(s), 1)) if len(mystr) == k)
+        if count > maxvowel)
 
-    return finalstr
+    try:
+        result = (max(findstr)[1])
+        return result
+    except ValueError:
+        return "Not found!"
 
 
 if __name__ == '__main__':
