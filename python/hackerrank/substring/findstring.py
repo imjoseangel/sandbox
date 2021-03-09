@@ -6,7 +6,13 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def count_substring(string, sub_string):
-    pass
+    count = 0
+
+    while sub_string in string:
+        count += 1
+        string = string[string.find(sub_string) + 1:]
+
+    return count
 
 
 if __name__ == '__main__':
