@@ -14,11 +14,10 @@ WELCOME = "WELCOME"
 def drawdoor(n, m):
 
     middleline = math.ceil(n / 2)
-    middletext = int((m - len(WELCOME)) / 2)
 
     for item in range(1, n + 1):
         if item == middleline:
-            print(SIDES * middletext + WELCOME + SIDES * middletext)
+            print(WELCOME.center(m, "-"))
         elif item < middleline:
             middleitem = CENTER * (2 * item - 1)
             middledash = int((m - len(middleitem)) / 2)
