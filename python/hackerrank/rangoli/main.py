@@ -11,11 +11,14 @@ def print_rangoli(size):
 
     rangosize = rangoli[0:size][::-1] + rangoli[1:size]
 
+    # rangosize.pop(round(len(rangosize) / 2))
+    # rangosize.pop(round(len(rangosize) / 2))
+
     print('-'.join(rangosize))
 
 
 def main():
-    print_rangoli(3)
+    print_rangoli(5)
 
 
 if __name__ == '__main__':
