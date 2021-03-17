@@ -7,8 +7,8 @@ import string
 
 
 def print_rangoli(size):
-    rangoli = string.ascii_lowercase[::-1]
-    print(rangoli)
+    rangoli = list(string.ascii_lowercase)
+    print(rangoli[0:3][::-1])
 
 
 def main():
