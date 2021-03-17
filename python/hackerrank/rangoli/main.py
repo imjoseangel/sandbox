@@ -8,7 +8,10 @@ import string
 
 def print_rangoli(size):
     rangoli = list(string.ascii_lowercase)
-    print(rangoli[0:3][::-1])
+
+    for item in range(1, size + 1):
+
+        print('-'.join(rangoli[0:item][::-1]))
 
 
 def main():
