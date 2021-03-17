@@ -9,9 +9,9 @@ import string
 def print_rangoli(size):
     rangoli = list(string.ascii_lowercase)
 
-    for item in range(1, size + 1):
+    rangosize = rangoli[0:size][::-1] + rangoli[1:size]
 
-        print('-'.join(rangoli[0:item][::-1]))
+    print('-'.join(rangosize))
 
 
 def main():
