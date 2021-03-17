@@ -9,12 +9,12 @@ import string
 def print_rangoli(size):
     rangoli = list(string.ascii_lowercase)
 
-    rangosize = rangoli[0:size][::-1] + rangoli[1:size]
+    middleline = rangoli[0:size][::-1] + rangoli[1:size]
 
-    # rangosize.pop(round(len(rangosize) / 2))
-    # rangosize.pop(round(len(rangosize) / 2))
+    for i in range(2):
+        middleline.pop(round(len(middleline) / 2))
 
-    print('-'.join(rangosize))
+    print('-'.join(middleline))
 
 
 def main():
