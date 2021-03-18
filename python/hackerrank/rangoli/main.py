@@ -30,7 +30,8 @@ def print_rangoli(size):
 
 
 def main():
-    print_rangoli(10)
+    n = int(input())
+    print_rangoli(n)
 
 
 if __name__ == '__main__':
