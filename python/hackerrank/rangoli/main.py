@@ -24,9 +24,13 @@ def print_rangoli(size):
     for item in rangolist[::-1]:
         print('-'.join(item).center(rangolilen, "-"))
 
+    for item in rangolist:
+        if item != rangoli[0:size][::-1] + rangoli[1:size]:
+            print('-'.join(item).center(rangolilen, "-"))
+
 
 def main():
-    print_rangoli(5)
+    print_rangoli(10)
 
 
 if __name__ == '__main__':
