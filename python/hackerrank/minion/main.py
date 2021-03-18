@@ -11,6 +11,8 @@ from itertools import chain, combinations
 def minion_game(string):
 
     vowels = ['A', 'E', 'I', 'O', 'U']
+    finalcons = []
+    finalvowel = []
     letters = list(string)
 
     combines = list(chain.from_iterable(combinations(string, r)
@@ -20,6 +22,14 @@ def minion_game(string):
     startcons = [item for item in middleresult if item[0]
                  not in vowels]
     startvowel = [item for item in middleresult if item[0] in vowels]
+
+    for item in set(startcons):
+        cons = False
+        for letter in item:
+            pass
+
+    for item in set(startvowel):
+        print(item)
 
 
 def main():
