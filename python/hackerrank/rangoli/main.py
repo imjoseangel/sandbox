@@ -8,13 +8,21 @@ import string
 
 def print_rangoli(size):
     rangoli = list(string.ascii_lowercase)
+    rangolist = []
 
     middleline = rangoli[0:size][::-1] + rangoli[1:size]
+    rangolilen = len('-'.join(middleline))
 
-    for i in range(2):
-        middleline.pop(round(len(middleline) / 2))
+    rangolist.append(middleline[:])
 
-    print('-'.join(middleline))
+    while len(middleline) > 1:
+        for i in range(2):
+            middleline.pop(round(len(middleline) / 2))
+
+        rangolist.append(middleline[:])
+
+    for item in rangolist[::-1]:
+        print('-'.join(item).center(rangolilen, "-"))
 
 
 def main():
