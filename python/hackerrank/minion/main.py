@@ -24,7 +24,10 @@ def minion_game(string):
     startvowel = [item for item in middleresult if item[0] in vowels]
 
     for item in set(startcons):
-        print(item)
+        if len(item) == 1:
+            finalcons.append(item)
+
+    print(finalcons)
 
 
 def main():
