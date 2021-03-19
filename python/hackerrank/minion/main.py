@@ -19,8 +19,7 @@ def minion_game(string):
                                         for r in range(len(string) + 1)))
 
     middleresult = [''.join(combine) for combine in combines if combine]
-    startcons = [item for item in middleresult if item[0]
-                 not in vowels]
+    startcons = [item for item in middleresult if item[0] not in vowels]
     startvowel = [item for item in middleresult if item[0] in vowels]
 
     for item in set(startcons):
