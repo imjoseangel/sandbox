@@ -24,11 +24,6 @@ def minion_game(string):
     startvowel = [item for item in middleresult if item[0] in vowels]
 
     for item in set(startcons):
-        cons = False
-        for letter in item:
-            pass
-
-    for item in set(startvowel):
         print(item)
 
 
