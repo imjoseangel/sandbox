@@ -6,6 +6,7 @@ from __future__ import (division, absolute_import, print_function,
 
 
 from itertools import chain, combinations
+import re
 
 
 def minion_game(string):
@@ -22,11 +23,18 @@ def minion_game(string):
     startcons = [item for item in middleresult if item[0] not in vowels]
     startvowel = [item for item in middleresult if item[0] in vowels]
 
-    for item in set(startcons):
-        if len(item) == 1:
-            finalcons.append(item)
+    for word in set(startcons):
+        if len(word) == 1:
+            finalcons.append(word)
+        else:
 
-    print(finalcons)
+            findcons = re.findall(r'[^aeiou]+',
+                                  word, re.IGNORECASE)
+            findvowel = re.findall(r'[aeiou]+',
+                                   word, re.IGNORECASE)
+            findword = findcons + findvowel
+
+            print(word, findword)
 
 
 def main():
