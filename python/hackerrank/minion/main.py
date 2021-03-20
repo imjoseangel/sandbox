@@ -6,7 +6,7 @@ from __future__ import (division, absolute_import, print_function,
 
 
 from itertools import chain, combinations
-import re
+import regex
 
 
 def minion_game(string):
@@ -14,6 +14,9 @@ def minion_game(string):
     vowels = ['A', 'E', 'I', 'O', 'U']
     consnotwant = []
     vowelnotwant = []
+
+    countcons = 0
+    countvowel = 0
 
     combines = list(chain.from_iterable(combinations(string, r)
                                         for r in range(len(string) + 1)))
@@ -25,10 +28,10 @@ def minion_game(string):
 
     for word in startcons:
 
-        findcons = re.findall(r'[^aeiou]+',
-                              word, re.IGNORECASE)
-        findvowel = re.findall(r'[aeiou]+',
-                               word, re.IGNORECASE)
+        findcons = regex.findall(r'[^aeiou]+',
+                                 word, regex.IGNORECASE)
+        findvowel = regex.findall(r'[aeiou]+',
+                                  word, regex.IGNORECASE)
         findword = findcons + findvowel
 
         for notcons in findword:
@@ -37,25 +40,35 @@ def minion_game(string):
 
     for word in startvowel:
 
-        findcons = re.findall(r'[^aeiou]+',
-                              word, re.IGNORECASE)
-        findvowel = re.findall(r'[aeiou]+',
-                               word, re.IGNORECASE)
+        findcons = regex.findall(r'[^aeiou]+',
+                                 word, regex.IGNORECASE)
+        findvowel = regex.findall(r'[aeiou]+',
+                                  word, regex.IGNORECASE)
         findword = findcons + findvowel
 
         for notvowel in findword:
             if len(notvowel) > 1:
                 vowelnotwant.append(word)
 
-    conslist = (list(set(startcons) - set(consnotwant)))
-    print(conslist)
-    vowellist = (list(set(startvowel) - set(vowelnotwant)))
-    print(vowellist)
+    conslist = sorted(list(set(startcons) - set(consnotwant)))
+    vowellist = sorted(list(set(startvowel) - set(vowelnotwant)))
+
+    for letscountcons in conslist:
+        countcons = countcons + \
+            len(regex.findall(letscountcons, string, overlapped=True))
+
+    for letscountvowel in vowellist:
+        countvowel = countvowel + \
+            len(regex.findall(letscountvowel, string, overlapped=True))
+
+    if countcons > countvowel:
+        print(f"Stuart {countcons}")
+    else:
+        print(f"Kevin {countvowel}")
 
 
 def main():
-    # s = input()
-    s = 'BANANA'
+    s = input()
     minion_game(s)
 
 
