@@ -34,7 +34,8 @@ def minion_game(string):
                                    word, re.IGNORECASE)
             findword = findcons + findvowel
 
-            print(word, findword)
+            for item in findword:
+                print(word, len(item))
 
 
 def main():
