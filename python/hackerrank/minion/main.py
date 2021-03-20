@@ -13,6 +13,7 @@ def minion_game(string):
 
     vowels = ['A', 'E', 'I', 'O', 'U']
     consnotwant = []
+    vowelnotwant = []
 
     combines = list(chain.from_iterable(combinations(string, r)
                                         for r in range(len(string) + 1)))
@@ -34,8 +35,22 @@ def minion_game(string):
             if len(notcons) > 1:
                 consnotwant.append(word)
 
+    for word in startvowel:
+
+        findcons = re.findall(r'[^aeiou]+',
+                              word, re.IGNORECASE)
+        findvowel = re.findall(r'[aeiou]+',
+                               word, re.IGNORECASE)
+        findword = findcons + findvowel
+
+        for notvowel in findword:
+            if len(notvowel) > 1:
+                vowelnotwant.append(word)
+
     conslist = (list(set(startcons) - set(consnotwant)))
     print(conslist)
+    vowellist = (list(set(startvowel) - set(vowelnotwant)))
+    print(vowellist)
 
 
 def main():
