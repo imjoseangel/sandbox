@@ -13,18 +13,22 @@ def minion_game(string):
 
     vowels = 'AEIOU'
 
-    kevsc = 0
-    stusc = 0
-    for i in range(len(string)):
-        if string[i] in vowels:
-            kevsc += (len(string) - i)
+    kevsc, stusc = 0, 0
+    length = len(string)
+
+    for item in range(length):
+
+        score = length - item
+
+        if string[item] in vowels:
+            kevsc += score
         else:
-            stusc += (len(string) - i)
+            stusc += score
 
     if kevsc > stusc:
-        print("Kevin", kevsc)
+        print(f"Kevin {kevsc}")
     elif kevsc < stusc:
-        print("Stuart", stusc)
+        print(f"Stuart {stusc}")
     else:
         print("Draw")
 
