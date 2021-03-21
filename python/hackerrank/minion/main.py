@@ -63,8 +63,10 @@ def minion_game(string):
 
     if countcons > countvowel:
         print(f"Stuart {countcons}")
-    else:
+    elif countcons < countvowel:
         print(f"Kevin {countvowel}")
+    else:
+        print("Draw")
 
 
 def main():
