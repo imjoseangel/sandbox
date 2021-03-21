@@ -11,7 +11,8 @@ def merge_the_tools(string, k):
 
     chars = [string[index: index + nk]
              for index in range(0, len(string), nk)]
-    print(list(chars))
+    for item in list(chars):
+        print("".join(dict.fromkeys(item)))
 
 
 def main():
