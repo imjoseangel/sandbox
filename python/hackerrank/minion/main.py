@@ -6,7 +6,7 @@ from __future__ import (division, absolute_import, print_function,
 
 
 from itertools import chain, combinations
-import regex
+import re
 
 
 def minion_game(string):
@@ -28,10 +28,10 @@ def minion_game(string):
 
     for word in startcons:
 
-        findcons = regex.findall(r'[^aeiou]+',
-                                 word, regex.IGNORECASE)
-        findvowel = regex.findall(r'[aeiou]+',
-                                  word, regex.IGNORECASE)
+        findcons = re.findall(r'[^aeiou]+',
+                              word, re.IGNORECASE)
+        findvowel = re.findall(r'[aeiou]+',
+                               word, re.IGNORECASE)
         findword = findcons + findvowel
 
         for notcons in findword:
@@ -40,10 +40,10 @@ def minion_game(string):
 
     for word in startvowel:
 
-        findcons = regex.findall(r'[^aeiou]+',
-                                 word, regex.IGNORECASE)
-        findvowel = regex.findall(r'[aeiou]+',
-                                  word, regex.IGNORECASE)
+        findcons = re.findall(r'[^aeiou]+',
+                              word, re.IGNORECASE)
+        findvowel = re.findall(r'[aeiou]+',
+                               word, re.IGNORECASE)
         findword = findcons + findvowel
 
         for notvowel in findword:
@@ -55,11 +55,11 @@ def minion_game(string):
 
     for letscountcons in conslist:
         countcons = countcons + \
-            len(regex.findall(letscountcons, string, overlapped=True))
+            len(re.findall(f'(?={letscountcons})', string))
 
     for letscountvowel in vowellist:
         countvowel = countvowel + \
-            len(regex.findall(letscountvowel, string, overlapped=True))
+            len(re.findall(f'(?={letscountvowel})', string))
 
     if countcons > countvowel:
         print(f"Stuart {countcons}")
@@ -68,7 +68,8 @@ def minion_game(string):
 
 
 def main():
-    s = input()
+    # s = input()
+    s = 'BANANA'
     minion_game(s)
 
 
