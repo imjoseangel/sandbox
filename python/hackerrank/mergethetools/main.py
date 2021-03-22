@@ -5,14 +5,17 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 
+from collections import OrderedDict
+
+
 def merge_the_tools(string, k):
     lenght = len(string)
-    nk = int(lenght / k)
 
-    chars = [string[index: index + nk]
-             for index in range(0, len(string), nk)]
+    chars = [''.join(OrderedDict.fromkeys(string[index: index + k]))
+             for index in range(0, lenght, k)]
+
     for item in list(chars):
-        print("".join(dict.fromkeys(item)))
+        print(item)
 
 
 def main():
