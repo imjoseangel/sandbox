@@ -10,12 +10,8 @@ import string
 
 def main():
     n, m = input().split()
-    result = list(permutations(n, int(m)))
 
-    sortedresult = sorted(result, key=lambda tup: (tup[0], tup[1]))
-
-    for item in sortedresult:
-        print(f"{item[0]}{item[1]}")
+    print(*[''.join(i) for i in permutations(sorted(n), int(m))], sep='\n')
 
 
 if __name__ == '__main__':
