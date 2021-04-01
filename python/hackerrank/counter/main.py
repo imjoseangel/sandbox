@@ -12,6 +12,12 @@ def main():
     S = Counter(map(int, input().split()))
     M = int(input())
 
+    print(X, S, M)
+
+    for _ in range(int(input())):
+        size, price = map(int, input().split())
+        print(size, price)
+
 
 if __name__ == '__main__':
     main()
