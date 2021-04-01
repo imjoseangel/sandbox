@@ -9,10 +9,8 @@ from collections import Counter
 
 def main():
     X = int(input())
-    S = list(map(int, input().rstrip().split()))
-    N = int(input())
-
-    print(N, S)
+    S = Counter(map(int, input().split()))
+    M = int(input())
 
 
 if __name__ == '__main__':
