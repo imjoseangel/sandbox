@@ -21,7 +21,13 @@ def main():
         item = input().split()
         Z['B'].append(item[0])
 
-    print(X, Z)
+    for item in Z.get('B'):
+        if item not in X.get('A'):
+            print(-1)
+        else:
+            Y = [index + 1 for index,
+                 element in enumerate(X.get('A')) if element == item]
+            print(' '.join(Q) for Q in Y)
 
 
 if __name__ == '__main__':
