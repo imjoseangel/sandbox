@@ -27,7 +27,10 @@ def main():
         else:
             Y = [index + 1 for index,
                  element in enumerate(X.get('A')) if element == item]
-            print(' '.join(Q) for Q in Y)
+
+            for item in Y:
+                print(item, end=' ')
+            print('')
 
 
 if __name__ == '__main__':
