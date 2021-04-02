@@ -9,14 +9,17 @@ from collections import Counter
 
 def main():
     X = int(input())
-    S = Counter(map(int, input().split()))
-    M = int(input())
-
-    print(X, S, M)
+    N = Counter(map(int, input().split()))
+    R = 0
 
     for _ in range(int(input())):
-        size, price = map(int, input().split())
-        print(size, price)
+        shoe, price = map(int, input().split())
+
+        if N[shoe]:
+            N[shoe] -= 1
+            R += price
+
+    print(R)
 
 
 if __name__ == '__main__':
