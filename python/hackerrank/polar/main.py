@@ -8,10 +8,10 @@ from cmath import phase
 
 def main():
 
-    
+    Y = complex(input().rstrip())
 
-    print(abs(complex(1.0, 2.0)))
-    print(phase(complex(1.0, 2.0)))
+    print(abs(complex(Y.real, Y.imag)))
+    print(phase(complex(Y.real, Y.imag)))
 
 
 if __name__ == '__main__':
