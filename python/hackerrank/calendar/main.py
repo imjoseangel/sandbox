@@ -7,7 +7,11 @@ import calendar
 
 
 def main():
-    print(calendar.TextCalendar(firstweekday=6).formatyear(2015))
+
+    weekdays = ["MONDAY", "TUESDAY",
+                "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+    month, day, year = map(int, input().rstrip().split())
+    print(weekdays[calendar.weekday(year, month, day)])
 
 
 if __name__ == '__main__':
