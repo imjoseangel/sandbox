@@ -10,6 +10,15 @@ from collections import namedtuple
 def main():
     student = namedtuple('student', 'ID MARKS CLASS NAME')
 
+    total = int(input().rstrip())
+    fields = list(input().split())
+
+    marksum = 0
+
+    for _ in range(0, total):
+        tempsum = list(input().rstrip().split())
+        marksum += tempsum[fields.index('MARKS')]
+
 
 if __name__ == '__main__':
     main()
