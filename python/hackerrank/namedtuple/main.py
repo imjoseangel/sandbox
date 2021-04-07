@@ -17,7 +17,9 @@ def main():
 
     for _ in range(0, total):
         tempsum = list(input().rstrip().split())
-        marksum += tempsum[fields.index('MARKS')]
+        marksum += int(tempsum[fields.index('MARKS')])
+
+    print(f"{marksum / total:.2f}")
 
 
 if __name__ == '__main__':
