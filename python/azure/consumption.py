@@ -40,6 +40,7 @@ class AzureBillingCollector():
         for item in usages:
             results.append(item.as_dict())
 
+        pd.set_option('display.max_columns', None)
         dataframe = pd.DataFrame(results)
         print(dataframe)
 
