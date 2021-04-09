@@ -48,7 +48,7 @@ def run_example_by_datefilter(client_id, secret, tenant_id, subscription_id):
     azure_usage = AzureBillingCollector(
         client_id, secret, tenant_id, subscription_id)
     date_filter = "properties/usageStart ge '2021-02-26' AND properties/usageStart lt '2021-02-27'"
-    print("Get data by date range '2021-02-26' and '2021-02-27'")
+    print("Get data by date range '2021-04-07' and '2021-04-27'")
     azure_usage.run_by_date(date_filter)
     print("Done")
 
@@ -56,8 +56,8 @@ def run_example_by_datefilter(client_id, secret, tenant_id, subscription_id):
 def run_example_by_billingperiod(client_id, secret, tenant_id, subscription_id):
     azure_usage = AzureBillingCollector(
         client_id, secret, tenant_id, subscription_id)
-    print("Get data by billing period 202003")
-    azure_usage.run_by_billing_period("202003")
+    print("Get data by billing period 202104")
+    azure_usage.run_by_billing_period("202104")
     print("Done")
 
 
@@ -69,7 +69,7 @@ def main():
     tenant_id = os.getenv("ARM_TENANT_ID")
     # billingPeriodName = '202103'
 
-    run_example_by_datefilter(client_id, secret, tenant_id, subscription_id)
+    # run_example_by_datefilter(client_id, secret, tenant_id, subscription_id)
     run_example_by_billingperiod(client_id, secret, tenant_id, subscription_id)
     # consumption = AzureBillingCollector(
     #     client_id, secret, tenant_id, subscription_id)
