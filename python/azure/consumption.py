@@ -41,8 +41,7 @@ class AzureBillingCollector():
             results.append(item.as_dict())
 
         pd.set_option('display.max_columns', None)
-        dataframe = pd.DataFrame(results)
-        print(dataframe)
+        dataframe = pd.DataFrame(results).to_csv('out.csv')
 
 
 def run_example_by_datefilter(client_id, secret, tenant_id, subscription_id):
