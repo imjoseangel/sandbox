@@ -11,6 +11,7 @@ from calendar import month_abbr
 def main():
 
     T = int(input().rstrip())
+    seconds_in_day = 24 * 60 * 60
 
     for _ in range(0, T):
         day1, dd1, mm1, yyyy1, time1, diff1 = list(input().rstrip().split())
@@ -31,7 +32,7 @@ def main():
                          second=int(time2.split(":")[2]))
 
         difference = date1 - date2
-        print(difference.days)
+        print(difference.days * seconds_in_day)
 
 
 if __name__ == '__main__':
