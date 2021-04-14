@@ -30,7 +30,8 @@ def main():
                          minute=int(time2.split(":")[1]),
                          second=int(time2.split(":")[2]))
 
-        print(date1 - date2)
+        difference = date1 - date2
+        print(difference.days)
 
 
 if __name__ == '__main__':
