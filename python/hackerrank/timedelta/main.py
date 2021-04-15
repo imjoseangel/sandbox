@@ -4,7 +4,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from calendar import month_abbr
 
 
@@ -33,6 +33,9 @@ def main():
 
         difference = date1 - date2
         print(difference.days * seconds_in_day)
+        print(int(diff1))
+
+# datetime.fromisoformat(f'{yyyy1}-0{list(month_abbr).index(mm1)}-{dd1}T{time1}-07:00')
 
 
 if __name__ == '__main__':
