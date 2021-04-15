@@ -4,8 +4,9 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from datetime import datetime, timedelta
 from calendar import month_abbr
+from datetime import datetime, timedelta
+import re
 
 
 def main():
@@ -16,6 +17,9 @@ def main():
     for _ in range(0, T):
         day1, dd1, mm1, yyyy1, time1, diff1 = list(input().rstrip().split())
         day2, dd2, mm2, yyyy2, time2, diff2 = list(input().rstrip().split())
+
+        diff1 = re.findall('.{1,3}', diff1)
+        diff2 = re.findall('.{1,3}', diff2)
 
         date1 = datetime(year=int(yyyy1),
                          month=(list(month_abbr).index(mm1)),
@@ -33,9 +37,9 @@ def main():
 
         difference = date1 - date2
         print(difference.days * seconds_in_day)
-        print(int(diff1))
 
-# datetime.fromisoformat(f'{yyyy1}-0{list(month_abbr).index(mm1)}-{dd1}T{time1}-07:00')
+        print(datetime.fromisoformat(
+            f'{yyyy1}-0{list(month_abbr).index(mm1)}-{dd1}T{time1}{diff1[0]}:{diff1[1]}'))
 
 
 if __name__ == '__main__':
