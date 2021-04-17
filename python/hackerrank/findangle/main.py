@@ -4,26 +4,16 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from math import sqrt, pi, acos
+from math import degrees, atan2
 
 
 def main():
-    AB = 10
-    c = 10
-    CA = sqrt(AB**2 + c**2)
 
-    b = CA / 2
-    a = sqrt(b**2 + c**2)
+    AB = float(input())
+    BC = float(input())
 
-    alpha = acos((b**2 + c**2 - a**2) / (2 * b * c))
-    betta = acos((a**2 + c**2 - b**2) / (2 * a * c))
-    gamma = acos((a**2 + b**2 - c**2) / (2 * a * b))
-
-    alpha = alpha * 180 / pi
-    betta = betta * 180 / pi
-    gamma = gamma * 180 / pi
-
-    print(alpha, betta, gamma)
+    degree_sign = u'\N{DEGREE SIGN}'
+    print(f'{int(round(degrees(atan2(AB, BC))))}{degree_sign}')
 
 
 if __name__ == '__main__':
