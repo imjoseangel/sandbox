@@ -7,7 +7,7 @@ from __future__ import (division, absolute_import, print_function,
 
 def person_lister(f):
     def inner(people):
-        return map(f, sorted(people, key=lambda age: age[2]))
+        return map(f, sorted(people, key=lambda age: int(age[2])))
     return inner
 
 
