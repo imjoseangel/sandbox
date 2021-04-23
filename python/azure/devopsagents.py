@@ -9,6 +9,7 @@ import argparse
 import os
 import requests
 import json
+from flask import Flask
 
 FALLBACK_ARGS = dict(organization='inc', poolid='1')
 
@@ -17,14 +18,16 @@ FALLBACK_ARGS = dict(organization='inc', poolid='1')
 class RunJob:
 
     secret = os.getenv("ADV_TOKEN")
+    organization = os.getenv("ADV_ORGANIZATION")
+    poolid = os.getenv("ADV_POOLID")
 
     def __post_init__(self):
-        self.parse_arguments()
+        pass
 
     def get_running(self):
 
         headers = {"Authorization": f"Basic {self.secret}"}
-        url = f"https://dev.azure.com/{self.args.organization}/_apis/distributedtask/pools/{self.args.poolid}/jobrequests"
+        url = f"https://dev.azure.com/{self.organization}/_apis/distributedtask/pools/{self.poolid}/jobrequests"
 
         try:
             response = requests.request("GET", url, headers=headers)
@@ -38,28 +41,11 @@ class RunJob:
 
         return {'runningjobs': 0}
 
-    def parse_arguments(self):
-        '''argument parser'''
-        parser = argparse.ArgumentParser(
-            description='Get Azure DevOps Job Requests')
-        parser.add_argument('--organization',
-                            '-o',
-                            help='organization. default: "inc"',
-                            default=FALLBACK_ARGS['organization'])
-        parser.add_argument(
-            '--poolid',
-            '-p',
-            help='Pool id number. default: "1"',
-            default=FALLBACK_ARGS['poolid'])
 
-        self.args = parser.parse_args()
+app = Flask(__name__)
+jobrequests = RunJob()
 
 
-def main():
-
-    jobrequests = RunJob()
-    print(jobrequests.get_running())
-
-
-if __name__ == '__main__':
-    main()
+@app.route('/')
+def index():
+    return jobrequests.get_running()
