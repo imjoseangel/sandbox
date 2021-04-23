@@ -10,19 +10,21 @@ import os
 import requests
 import json
 
-FALLBACK_ARGS = dict(organization='raet', poolid='1')
+FALLBACK_ARGS = dict(organization='inc', poolid='1')
 
 
 @dataclass
 class RunJob:
 
     secret = os.getenv("ADV_TOKEN")
-    organization: str
-    poolid: str
+
+    def __post_init__(self):
+        self.parse_arguments()
 
     def get_running(self):
+
         headers = {"Authorization": f"Basic {self.secret}"}
-        url = f"https://dev.azure.com/{self.organization}/_apis/distributedtask/pools/{self.poolid}/jobrequests"
+        url = f"https://dev.azure.com/{self.args.organization}/_apis/distributedtask/pools/{self.args.poolid}/jobrequests"
 
         try:
             response = requests.request("GET", url, headers=headers)
@@ -32,9 +34,9 @@ class RunJob:
         if response.ok:
             data = json.loads(response.text).get("value")
             results = [item for item in data if "result" not in item]
-            return len(results)
+            return {'runningjobs': len(results)}
 
-        return 0
+        return {'runningjobs': 0}
 
     def parse_arguments(self):
         '''argument parser'''
@@ -42,7 +44,7 @@ class RunJob:
             description='Get Azure DevOps Job Requests')
         parser.add_argument('--organization',
                             '-o',
-                            help='organization. default: "raet"',
+                            help='organization. default: "inc"',
                             default=FALLBACK_ARGS['organization'])
         parser.add_argument(
             '--poolid',
@@ -55,7 +57,7 @@ class RunJob:
 
 def main():
 
-    jobrequests = RunJob("raet", "63")
+    jobrequests = RunJob()
     print(jobrequests.get_running())
 
 
