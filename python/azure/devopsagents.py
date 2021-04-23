@@ -6,8 +6,8 @@ from __future__ import (division, absolute_import, print_function,
 
 from dataclasses import dataclass
 import os
-import requests
 import json
+import requests
 from flask import Flask
 
 FALLBACK_ARGS = dict(organization='inc', poolid='1')
