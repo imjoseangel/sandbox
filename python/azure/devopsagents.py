@@ -26,7 +26,9 @@ class RunJob:
     def get_running(self):
 
         headers = {"Authorization": f"Basic {self.secret}"}
-        url = f"https://dev.azure.com/{self.organization}/_apis/distributedtask/pools/{self.poolid}/jobrequests"
+        url = (
+            f"https://dev.azure.com/{self.organization}/"
+            f"_apis/distributedtask/pools/{self.poolid}/jobrequests")
 
         try:
             response = requests.request("GET", url, headers=headers)
