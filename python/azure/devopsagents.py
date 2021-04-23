@@ -50,3 +50,7 @@ jobrequests = RunJob()
 @app.route('/')
 def index():
     return jobrequests.get_running()
+
+
+if __name__ == '__main__':
+    app.run()
