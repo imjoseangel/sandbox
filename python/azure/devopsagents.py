@@ -4,8 +4,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from dataclasses import dataclass, field, MISSING
-import argparse
+from dataclasses import dataclass
 import os
 import requests
 import json
