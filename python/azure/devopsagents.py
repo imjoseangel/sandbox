@@ -4,34 +4,41 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+from dataclasses import dataclass
 import os
 import requests
 import json
 
 
-def main():
+@dataclass
+class RunJob:
+
     secret = os.getenv("ADV_TOKEN")
-    organization = os.getenv("ADV_ORG")
-    poolid = os.getenv("ADV_POOLID")
+    organization: str
+    poolid: str
 
-    headers = {"Authorization": f"Basic {secret}"}
-    url = f"https://dev.azure.com/{organization}/_apis/distributedtask/pools/{poolid}/jobrequests"
+    def get_running(self):
+        headers = {"Authorization": f"Basic {self.secret}"}
+        url = f"https://dev.azure.com/{self.organization}/_apis/distributedtask/pools/{self.poolid}/jobrequests"
 
-    try:
-        response = requests.request("GET", url, headers=headers)
-    except NameError as e:
-        print(e)
+        try:
+            response = requests.request("GET", url, headers=headers)
+        except NameError as e:
+            print(e)
 
-    if response.ok:
-        data = json.loads(response.text)
+        if response.ok:
+            data = json.loads(response.text)
 
-        data = data.get("value")
+            data = data.get("value")
 
-        x = [item for item in data if "result" not in item]
-        print(json.dumps(x, indent=4, sort_keys=True))
+            results = [item for item in data if "result" not in item]
+            return len(results)
 
-        print(len(x))
-        # print(json.dumps(data, indent=4, sort_keys=True))
+
+def main():
+
+    jobrequests = RunJob("raet", "63")
+    print(jobrequests.get_running())
 
 
 if __name__ == '__main__':
