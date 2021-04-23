@@ -27,12 +27,11 @@ class RunJob:
             print(e)
 
         if response.ok:
-            data = json.loads(response.text)
-
-            data = data.get("value")
-
+            data = json.loads(response.text).get("value")
             results = [item for item in data if "result" not in item]
             return len(results)
+
+        return 0
 
 
 def main():
