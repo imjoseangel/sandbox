@@ -36,9 +36,12 @@ class RunJob:
             print(e)
 
         if response.ok:
-            data = json.loads(response.text).get("value")
-            results = [item for item in data if "result" not in item]
-            return {'runningjobs': len(results)}
+            try:
+                data = json.loads(response.text).get("value")
+                results = [item for item in data if "result" not in item]
+                return {'runningjobs': len(results)}
+            except json.JSONDecodeError as e:
+                pass
 
         return {'runningjobs': 0}
 
@@ -53,4 +56,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=8080)
