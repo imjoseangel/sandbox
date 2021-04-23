@@ -5,9 +5,12 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from dataclasses import dataclass
+import argparse
 import os
 import requests
 import json
+
+FALLBACK_ARGS = dict(organization='raet', poolid='1')
 
 
 @dataclass
@@ -32,6 +35,22 @@ class RunJob:
             return len(results)
 
         return 0
+
+    def parse_arguments(self):
+        '''argument parser'''
+        parser = argparse.ArgumentParser(
+            description='Get Azure DevOps Job Requests')
+        parser.add_argument('--organization',
+                            '-o',
+                            help='organization. default: "raet"',
+                            default=FALLBACK_ARGS['organization'])
+        parser.add_argument(
+            '--poolid',
+            '-p',
+            help='Pool id number. default: "1"',
+            default=FALLBACK_ARGS['poolid'])
+
+        self.args = parser.parse_args()
 
 
 def main():
