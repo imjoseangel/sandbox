@@ -4,7 +4,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, MISSING
 import argparse
 import os
 import requests
@@ -17,9 +17,9 @@ FALLBACK_ARGS = dict(organization='inc', poolid='1')
 @dataclass
 class RunJob:
 
-    secret = os.getenv("ADV_TOKEN")
-    organization = os.getenv("ADV_ORGANIZATION")
-    poolid = os.getenv("ADV_POOLID")
+    secret: str = os.getenv("ADV_TOKEN", "")
+    organization: str = os.getenv("ADV_ORGANIZATION", "inc")
+    poolid: str = os.getenv("ADV_POOLID", "1")
 
     def __post_init__(self):
         pass
