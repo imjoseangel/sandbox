@@ -4,9 +4,10 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from dataclasses import dataclass
-import os
+from dataclasses import dataclass, field
+import base64
 import json
+import os
 import requests
 from flask import Flask
 
@@ -16,16 +17,29 @@ FALLBACK_ARGS = dict(organization='inc', poolid='1')
 @dataclass
 class RunJob:
 
+    auth: str = field(default="")
+    encodeauth: str = field(default="")
+    headers: dict = field(default_factory=dict)
     secret: str = os.getenv("ADV_TOKEN", "")
     organization: str = os.getenv("ADV_ORGANIZATION", "inc")
     poolid: str = os.getenv("ADV_POOLID", "1")
 
     def __post_init__(self):
-        pass
+        self.authencode()
+
+    def authencode(self):
+
+        self.auth = f':{self.secret}'
+        self.encodeauth = base64.b64encode(self.auth.encode('utf-8'))
+
+        self.headers = {
+            'Authorization':
+            'Basic {0}'.format(self.encodeauth.decode('utf-8'))
+        }
 
     def get_running(self):
 
-        headers = {"Authorization": f"Basic {self.secret}"}
+        headers = self.headers
         url = (
             f"https://dev.azure.com/{self.organization}/"
             f"_apis/distributedtask/pools/{self.poolid}/jobrequests")
@@ -38,6 +52,7 @@ class RunJob:
         if response.ok:
             try:
                 data = json.loads(response.text).get("value")
+                print(data)
                 results = [item for item in data if "result" not in item]
                 return {'runningjobs': len(results)}
             except json.JSONDecodeError as e:
