@@ -21,8 +21,8 @@ class RunJob:
     encodeauth: str = field(default="")
     headers: dict = field(default_factory=dict)
     secret: str = os.getenv("ADV_TOKEN", "")
-    organization: str = os.getenv("ADV_ORGANIZATION", "inc")
-    poolid: str = os.getenv("ADV_POOLID", "1")
+    organization: str = os.getenv("ADV_ORG", "inc")
+    poolid: str = os.getenv("ADV_POOL", "1")
 
     def __post_init__(self):
         self.authencode()
@@ -52,11 +52,10 @@ class RunJob:
         if response.ok:
             try:
                 data = json.loads(response.text).get("value")
-                print(data)
                 results = [item for item in data if "result" not in item]
                 return {'runningjobs': len(results)}
             except json.JSONDecodeError as e:
-                pass
+                print(e)
 
         return {'runningjobs': 0}
 
