@@ -11,8 +11,6 @@ import os
 import requests
 from flask import Flask
 
-FALLBACK_ARGS = dict(organization='inc', poolid='1')
-
 
 @dataclass
 class RunJob:
