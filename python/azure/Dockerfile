@@ -7,6 +7,9 @@ ADD requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt && chmod +x /usr/local/sbin/devopsagents
 
+RUN useradd -u 1001 none
+USER none
+
 EXPOSE 8080
 
 ENTRYPOINT ["devopsagents"]
