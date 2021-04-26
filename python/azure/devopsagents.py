@@ -39,21 +39,20 @@ class RunJob:
 
     def get_running(self):
 
-        headers = self.headers
         url = (
             f"https://dev.azure.com/{self.organization}/"
             f"_apis/distributedtask/pools/{self.poolid}/jobrequests")
 
         try:
-            response = requests.request("GET", url, headers=headers)
+            response = requests.request("GET", url, headers=self.headers)
         except NameError as e:
             print(e)
 
         if response.ok:
             try:
                 data = json.loads(response.text).get("value")
-                results = [item for item in data if "result" not in item]
-                return {'runningjobs': len(results)}
+                results = len([item for item in data if "result" not in item])
+                return {'runningjobs': results}
             except json.JSONDecodeError as e:
                 print(e)
 
