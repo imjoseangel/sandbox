@@ -10,7 +10,6 @@ import base64
 import json
 import os
 import sys
-import hupper
 from waitress import serve
 import requests
 from flask import Flask
@@ -76,7 +75,6 @@ def home():
 
 
 def main():
-    hupper.start_reloader('devopsagents.main')
     serve(app)
 
 
