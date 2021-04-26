@@ -51,12 +51,16 @@ class RunJob:
         if response.ok:
             try:
                 data = json.loads(response.text).get("value")
-                results = len([item for item in data if "result" not in item])
+                results = self.get_data(data)
                 return {'runningjobs': results}
             except json.JSONDecodeError as e:
                 print(e)
 
         return {'runningjobs': 0}
+
+    def get_data(self, data):
+        results = len([item for item in data if "result" not in item])
+        return results
 
 
 app = Flask(__name__)
