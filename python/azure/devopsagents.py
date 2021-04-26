@@ -15,9 +15,6 @@ from waitress import serve
 import requests
 from flask import Flask
 
-# Set local path
-here = normpath(abspath(dirname(__file__)))
-
 
 @dataclass
 class RunJob:
