@@ -7,7 +7,9 @@ from __future__ import (division, absolute_import, print_function,
 from dataclasses import dataclass, field
 import base64
 import json
+import logging
 import os
+import sys
 import requests
 from flask import Flask
 
@@ -59,11 +61,14 @@ class RunJob:
 
 
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.disabled = True
 jobrequests = RunJob()
 
 
 @app.route('/')
 def index():
+    print(jobrequests.get_running(), file=sys.stderr)
     return jobrequests.get_running()
 
 
