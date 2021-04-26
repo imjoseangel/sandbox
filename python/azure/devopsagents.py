@@ -5,13 +5,18 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from dataclasses import dataclass, field
+from os.path import abspath, dirname, normpath
 import base64
 import json
-import logging
 import os
 import sys
+import hupper
+from waitress import serve
 import requests
 from flask import Flask
+
+# Set local path
+here = normpath(abspath(dirname(__file__)))
 
 
 @dataclass
@@ -64,16 +69,19 @@ class RunJob:
 
 
 app = Flask(__name__)
-log = logging.getLogger('werkzeug')
-log.disabled = True
 jobrequests = RunJob()
 
 
 @app.route('/')
-def index():
+def home():
     print(jobrequests.get_running(), file=sys.stderr)
     return jobrequests.get_running()
 
 
+def main():
+    hupper.start_reloader('devopsagents.main')
+    serve(app)
+
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080)
+    main()
