@@ -5,7 +5,6 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from dataclasses import dataclass, field
-from os.path import abspath, dirname, normpath
 import base64
 import json
 import os
