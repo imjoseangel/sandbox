@@ -25,10 +25,11 @@ class AzureVMScaleSet():
 
     def run(self):
 
-        vmss = self.compute_client.virtual_machine_scale_set_vms.list(
+        vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
             "rsg-scaleset", "vmsagents")
 
-        [print(item) for item in vmss]
+        self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
+            "rsg-scaleset", "vmsagents", {'Location': vMachineScaleSet.location, 'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 3}})
 
 
 def main():
