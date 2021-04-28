@@ -34,7 +34,7 @@ class AzureVMScaleSet():
         self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
             self.resource_group, self.scaleset,
             {'Location': vMachineScaleSet.location,
-             'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 2}})
+             'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 0, 'tier': vMachineScaleSet.sku.tier}})
 
 
 def main():
