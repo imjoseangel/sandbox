@@ -28,7 +28,7 @@ class AzureVMScaleSet():
         vmss = self.compute_client.virtual_machine_scale_set_vms.list(
             "rsg-scaleset", "vmsagents")
 
-        vms = [print(item) for item in vmss]
+        [print(item) for item in vmss]
 
 
 def main():
