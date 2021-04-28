@@ -10,8 +10,11 @@ from azure.mgmt.compute import ComputeManagementClient
 
 
 class AzureVMScaleSet():
-    def __init__(self, client_id, secret, tenant_id, subscription_id):
+    def __init__(self, client_id, secret, tenant_id, subscription_id, resource_group, scaleset):
         self.subscription_id = subscription_id
+        self.resource_group = resource_group
+        self.scaleset = scaleset
+
         self.credentials = ClientSecretCredential(
             client_id=client_id,
             client_secret=secret,
@@ -26,10 +29,12 @@ class AzureVMScaleSet():
     def run(self):
 
         vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
-            "rsg-scaleset", "vmsagents")
+            self.resource_group, self.scaleset)
 
         self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
-            "rsg-scaleset", "vmsagents", {'Location': vMachineScaleSet.location, 'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 3}})
+            self.resource_group, self.scaleset,
+            {'Location': vMachineScaleSet.location,
+             'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 2}})
 
 
 def main():
@@ -39,7 +44,7 @@ def main():
     tenant_id = os.getenv("ARM_TENANT_ID")
 
     azure_vms = AzureVMScaleSet(
-        client_id, secret, tenant_id, subscription_id)
+        client_id, secret, tenant_id, subscription_id, "rsg-scaleset", "vmsagents")
     azure_vms.run()
 
 
