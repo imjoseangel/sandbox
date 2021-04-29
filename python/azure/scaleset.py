@@ -4,14 +4,24 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import os
-import configparser
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
+import configparser
+import logging
+import os
+import sys
 
 
 class AzureVMScaleSet():
     def __init__(self, client_id, secret, tenant_id, subscription_id):
+
+        logging.basicConfig(
+            format="%(asctime)s %(levelname)s: %(message)s",
+            level=logging.INFO,
+            datefmt="%d-%b-%y %H:%M:%S",
+            stream=sys.stderr,
+        )
+
         self.subscription_id = subscription_id
 
         self.credentials = ClientSecretCredential(
@@ -30,8 +40,11 @@ class AzureVMScaleSet():
         self._config = configparser.ConfigParser()
         self._config.read(self._path + '/{0}'.format('config.ini'))
 
-        self.resource_group = self._config['DEFAULT']['resource_group']
-        self.scaleset = self._config['DEFAULT']['scaleset']
+        try:
+            self.resource_group = self._config['DEFAULT']['resource_group']
+            self.scaleset = self._config['DEFAULT']['scaleset']
+        except KeyError as e:
+            logging.error(e)
 
     def workpath(self):
         """ Return Work Path """
@@ -47,15 +60,19 @@ class AzureVMScaleSet():
 
     def run(self):
 
-        vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
-            self.resource_group, self.scaleset)
+        try:
+            vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
+                self.resource_group, self.scaleset)
 
-        scale = self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
-            self.resource_group, self.scaleset,
-            {'Location': vMachineScaleSet.location,
-             'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 0, 'tier': vMachineScaleSet.sku.tier}})
+            scale = self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
+                self.resource_group, self.scaleset,
+                {'Location': vMachineScaleSet.location,
+                 'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 0, 'tier': vMachineScaleSet.sku.tier}})
 
-        print(scale.result())
+            logging.info(scale.result())
+
+        except AttributeError as e:
+            logging.error(e)
 
 
 def main():
