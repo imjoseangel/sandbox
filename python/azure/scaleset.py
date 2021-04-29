@@ -5,15 +5,14 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import os
+import configparser
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 
 
 class AzureVMScaleSet():
-    def __init__(self, client_id, secret, tenant_id, subscription_id, resource_group, scaleset):
+    def __init__(self, client_id, secret, tenant_id, subscription_id):
         self.subscription_id = subscription_id
-        self.resource_group = resource_group
-        self.scaleset = scaleset
 
         self.credentials = ClientSecretCredential(
             client_id=client_id,
@@ -25,6 +24,26 @@ class AzureVMScaleSet():
             credential=self.credentials,
             subscription_id=self.subscription_id
         )
+
+        self._path = os.path.dirname(os.path.realpath(__file__))
+        self._work_path = os.path.dirname(self._path)
+        self._config = configparser.ConfigParser()
+        self._config.read(self._path + '/{0}'.format('config.ini'))
+
+        self.resource_group = self._config['DEFAULT']['resource_group']
+        self.scaleset = self._config['DEFAULT']['scaleset']
+
+    def workpath(self):
+        """ Return Work Path """
+        return self._work_path
+
+    def path(self):
+        """ Returns Path """
+        return self._path
+
+    def config(self):
+        """ Returns Config """
+        return self._config
 
     def run(self):
 
@@ -44,7 +63,7 @@ def main():
     tenant_id = os.getenv("ARM_TENANT_ID")
 
     azure_vms = AzureVMScaleSet(
-        client_id, secret, tenant_id, subscription_id, "rsg-scaleset", "vmsagents")
+        client_id, secret, tenant_id, subscription_id)
     azure_vms.run()
 
 
