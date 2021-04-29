@@ -7,8 +7,10 @@ from __future__ import (division, absolute_import, print_function,
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 import configparser
+import json
 import logging
 import os
+import requests
 import sys
 
 
@@ -44,7 +46,13 @@ class AzureVMScaleSet():
             self.resource_group = self._config['DEFAULT']['resource_group']
             self.scaleset = self._config['DEFAULT']['scaleset']
         except KeyError as e:
-            logging.error(e)
+            logging.error(f'DEFAULT {e} key not defined in config.ini')
+
+        try:
+            self.url = self._config['api']['url']
+            self.value = self._config['api']['valuelocation']
+        except KeyError as e:
+            logging.error(f'api {e} key not defined in config.ini')
 
     def workpath(self):
         """ Return Work Path """
@@ -58,7 +66,25 @@ class AzureVMScaleSet():
         """ Returns Config """
         return self._config
 
+    def get_urldata(self):
+        try:
+            response = requests.request("GET", self.url)
+
+            if response.ok:
+                try:
+                    self.data = json.loads(response.text).get(self.value)
+                except json.JSONDecodeError as e:
+                    logging.error(e)
+
+        except NameError as e:
+            logging.error(e)
+
+        except AttributeError as e:
+            logging.error(e)
+
     def run(self):
+
+        self.get_urldata()
 
         try:
             vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
@@ -67,7 +93,9 @@ class AzureVMScaleSet():
             scale = self.compute_client.virtual_machine_scale_sets.begin_create_or_update(
                 self.resource_group, self.scaleset,
                 {'Location': vMachineScaleSet.location,
-                 'sku': {'name': vMachineScaleSet.sku.name, 'capacity': 0, 'tier': vMachineScaleSet.sku.tier}})
+                 'sku': {'name': vMachineScaleSet.sku.name,
+                         'capacity': self.data,
+                         'tier': vMachineScaleSet.sku.tier}})
 
             logging.info(scale.result())
 
