@@ -7,6 +7,7 @@ from __future__ import (division, absolute_import, print_function,
 from dataclasses import dataclass, field
 import base64
 import json
+import logging
 import os
 import sys
 from waitress import serve
@@ -16,6 +17,13 @@ from flask import Flask
 
 @dataclass
 class RunJob:
+
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)s: %(message)s",
+        level=logging.INFO,
+        datefmt="%d-%b-%y %H:%M:%S",
+        stream=sys.stderr,
+    )
 
     auth: str = field(default="")
     encodeauth: str = field(default="")
@@ -46,7 +54,7 @@ class RunJob:
         try:
             response = requests.request("GET", url, headers=self.headers)
         except NameError as e:
-            print(e)
+            logging.error(e)
 
         if response.ok:
             try:
@@ -54,9 +62,9 @@ class RunJob:
                 results = self.get_data(data)
                 return {'runningjobs': results}
             except json.JSONDecodeError as e:
-                print(e)
+                logging.error(e)
 
-        return {'runningjobs': 0}
+        return {'runningjobs': ""}
 
     def get_data(self, data):
         results = len([item for item in data if "result" not in item])
@@ -74,7 +82,10 @@ def home():
 
 
 def main():
-    serve(app)
+    try:
+        serve(app)
+    except OSError as e:
+        logging.error(e)
 
 
 if __name__ == '__main__':

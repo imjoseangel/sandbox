@@ -6,6 +6,7 @@ from __future__ import (division, absolute_import, print_function,
 
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
+import msrest
 import configparser
 import json
 import logging
@@ -76,6 +77,12 @@ class AzureVMScaleSet():
                 except json.JSONDecodeError as e:
                     logging.error(e)
 
+        except requests.exceptions.ConnectionError as e:
+            logging.error(e)
+
+        except ValueError:
+            logging.error(e)
+
         except NameError as e:
             logging.error(e)
 
@@ -109,9 +116,14 @@ def main():
     subscription_id = os.getenv("ARM_SUBSCRIPTION_ID")
     tenant_id = os.getenv("ARM_TENANT_ID")
 
-    azure_vms = AzureVMScaleSet(
-        client_id, secret, tenant_id, subscription_id)
-    azure_vms.run()
+    try:
+        azure_vms = AzureVMScaleSet(
+            client_id, secret, tenant_id, subscription_id)
+        azure_vms.run()
+    except msrest.exceptions.SerializationError as e:
+        logging.error(e)
+    except ValueError:
+        logging.error(e)
 
 
 if __name__ == '__main__':
