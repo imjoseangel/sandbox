@@ -64,7 +64,7 @@ class RunJob:
             except json.JSONDecodeError as e:
                 logging.error(e)
 
-        return {'runningjobs': ""}
+        return {'runningjobs': 0}
 
     def get_data(self, data):
         results = len([item for item in data if "result" not in item])
