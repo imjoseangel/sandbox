@@ -66,7 +66,8 @@ class RunJob:
 
         return {'runningjobs': 0}
 
-    def get_data(self, data):
+    @staticmethod
+    def get_data(data):
         results = len([item for item in data if "result" not in item])
         return results
 

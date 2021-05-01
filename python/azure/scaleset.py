@@ -122,7 +122,7 @@ def main():
         azure_vms.run()
     except msrest.exceptions.SerializationError as e:
         logging.error(e)
-    except ValueError:
+    except ValueError as e:
         logging.error(e)
 
 
