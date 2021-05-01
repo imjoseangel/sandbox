@@ -4,15 +4,16 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from azure.identity import ClientSecretCredential
-from azure.mgmt.compute import ComputeManagementClient
-import msrest
 import configparser
 import json
 import logging
 import os
-import requests
 import sys
+import requests
+
+import msrest
+from azure.identity import ClientSecretCredential
+from azure.mgmt.compute import ComputeManagementClient
 
 
 class AzureVMScaleSet():
@@ -26,6 +27,7 @@ class AzureVMScaleSet():
         )
 
         self.subscription_id = subscription_id
+        self.data = 0
 
         self.credentials = ClientSecretCredential(
             client_id=client_id,
