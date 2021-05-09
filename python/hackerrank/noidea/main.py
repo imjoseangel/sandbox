@@ -6,11 +6,11 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    m = 3
-    n = 2
-    array = [1, 5, 3]
-    a = (3, 1)
-    b = (5, 7)
+
+    _ = input()
+    array = list(input().rstrip())
+    a = set(input().split())
+    b = set(input().split())
     initial = 0
 
     for item in array:
