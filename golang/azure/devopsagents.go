@@ -3,6 +3,8 @@ package main
 
 import (
 	"encoding/base64"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -32,6 +34,8 @@ func authencode() string {
 
 func get_running() {
 
+	encodeauth = authencode()
+
 	org, _ := os.LookupEnv("ADV_ORG")
 	pool, _ := os.LookupEnv("ADV_POOL")
 
@@ -39,12 +43,26 @@ func get_running() {
 
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Add("Authorization", "Basic "+encodeauth)
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+
+	if err != nil {
+		log.Println("Error on response.\n[ERROR] -", err)
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		log.Println("Error while reading the response bytes:", err)
+	}
+
+	log.Println(string([]byte(body)))
 }
 
 func main() {
 
-	authencode()
-
-	// authorizer, err := auth.NewAuthorizerFromEnvironment()
+	get_running()
 
 }
