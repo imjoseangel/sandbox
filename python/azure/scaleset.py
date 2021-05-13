@@ -85,8 +85,8 @@ class AzureVMScaleSet():
 
             if response.ok:
                 try:
-                    self.data = json.loads(response.text).get(
-                        self.value) + self.mininstances
+                    self.data = int(json.loads(response.text).get(
+                        self.value)) + int(self.mininstances)
                 except json.JSONDecodeError as e:
                     logging.error(e)
 
@@ -107,6 +107,7 @@ class AzureVMScaleSet():
         self.get_urldata()
 
         try:
+            print(self.data)
             vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
                 self.resource_group, self.scaleset)
 
