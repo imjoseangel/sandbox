@@ -52,10 +52,10 @@ class AzureVMScaleSet():
             logging.error(f'DEFAULT {e} key not defined in config.ini')
 
         try:
-            self.url = self._config['api']['url']
-            self.value = self._config['api']['valuelocation']
+            self.url = self._config['trigger']['url']
+            self.value = self._config['trigger']['valuelocation']
         except KeyError as e:
-            logging.error(f'api {e} key not defined in config.ini')
+            logging.error(f'trigger {e} key not defined in config.ini')
 
     def workpath(self):
         """ Return Work Path """
