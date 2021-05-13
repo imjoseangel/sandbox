@@ -1,0 +1,13 @@
+# Azure DevOps Agent Pool Listener
+FROM python:3.9.4
+LABEL maintainer="imjoseangel"
+
+ADD scaleset.py /usr/local/sbin/scaleset
+ADD requirements.scaleset.txt requirements.txt
+
+RUN pip install -r requirements.txt && chmod +x /usr/local/sbin/scaleset && useradd -u 1001 none
+USER none
+
+EXPOSE 8080
+
+ENTRYPOINT ["scaleset"]
