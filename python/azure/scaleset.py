@@ -57,6 +57,11 @@ class AzureVMScaleSet():
             logging.error(f'DEFAULT {e} key not defined in config.ini')
 
         try:
+            self.mininstances = self._config['DEFAULT']['mininstances']
+        except KeyError as e:
+            self.mininstances = 1
+
+        try:
             self.url = self._config['trigger']['url']
             self.value = self._config['trigger']['valuelocation']
         except KeyError as e:
@@ -80,7 +85,8 @@ class AzureVMScaleSet():
 
             if response.ok:
                 try:
-                    self.data = json.loads(response.text).get(self.value)
+                    self.data = json.loads(response.text).get(
+                        self.value) + self.mininstances
                 except json.JSONDecodeError as e:
                     logging.error(e)
 
