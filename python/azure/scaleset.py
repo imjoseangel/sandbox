@@ -32,7 +32,6 @@ class AzureVMScaleSet():
         )
 
         self.subscription_id = subscription_id
-        self.data = 0
 
         self.credentials = ClientSecretCredential(
             client_id=client_id,
@@ -57,9 +56,9 @@ class AzureVMScaleSet():
             logging.error(f'DEFAULT {e} key not defined in config.ini')
 
         try:
-            self.mininstances = self._config['DEFAULT']['mininstances']
+            self.data = self.mininstances = self._config['DEFAULT']['mininstances']
         except KeyError as e:
-            self.mininstances = 1
+            self.data = self.mininstances = 1
 
         try:
             self.url = self._config['trigger']['url']
