@@ -107,7 +107,6 @@ class AzureVMScaleSet():
         self.get_urldata()
 
         try:
-            print(self.data)
             vMachineScaleSet = self.compute_client.virtual_machine_scale_sets.get(
                 self.resource_group, self.scaleset)
 
