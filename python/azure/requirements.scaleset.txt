@@ -1,3 +1,4 @@
+azure-core
 azure-identity
 azure-mgmt-compute
 msrest
