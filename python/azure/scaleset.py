@@ -11,6 +11,11 @@ import os
 import sys
 import requests
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ResourceNotFoundError,
+    AzureError
+)
 import msrest
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
@@ -109,6 +114,15 @@ class AzureVMScaleSet():
             logging.info(scale.result())
 
         except AttributeError as e:
+            logging.error(e)
+
+        except ResourceNotFoundError as e:
+            logging.error(e)
+
+        except ServiceRequestError as e:
+            logging.error(e)
+
+        except AzureError as e:
             logging.error(e)
 
 
