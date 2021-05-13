@@ -11,12 +11,12 @@ import os
 import sys
 import requests
 
+import msrest
 from azure.core.exceptions import (
     ServiceRequestError,
     ResourceNotFoundError,
     AzureError
 )
-import msrest
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 
