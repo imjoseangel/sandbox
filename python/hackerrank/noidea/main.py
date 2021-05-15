@@ -8,7 +8,8 @@ from __future__ import (division, absolute_import, print_function,
 def main():
 
     _ = input()
-    array = list(input().rstrip())
+    array = input().split()
+
     a = set(input().split())
     b = set(input().split())
 
