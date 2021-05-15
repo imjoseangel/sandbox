@@ -11,15 +11,8 @@ def main():
     array = list(input().rstrip())
     a = set(input().split())
     b = set(input().split())
-    initial = 0
 
-    for item in array:
-        if item in a:
-            initial += 1
-        elif item in b:
-            initial -= 1
-
-    print(initial)
+    print(sum((item in a) - (item in b) for item in array))
 
 
 if __name__ == '__main__':
