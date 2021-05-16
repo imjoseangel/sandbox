@@ -5,10 +5,6 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 
-from itertools import chain, combinations
-import re
-
-
 def minion_game(string):
 
     vowels = 'AEIOU'
