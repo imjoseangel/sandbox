@@ -12,11 +12,11 @@ def main():
     sizeb = input()
     arrayb = set(map(int, input().rstrip().split()))
 
-    myset = list(arraya.difference(arrayb))
-    myset = myset + (list(arrayb.difference(arraya)))
-    myset.sort()
-    for item in myset:
-        print(item)
+    myseta = arraya.difference(arrayb)
+    mysetb = arrayb.difference(arraya)
+    mysetfinal = set(myseta.union(mysetb))
+
+    print(*sorted(mysetfinal, key=int), sep='\n')
 
 
 if __name__ == '__main__':
