@@ -13,8 +13,23 @@ def generatefile(size):
     return myfile
 
 
+def redisconnect(host="127.0.0.1", port=6379, password=""):
+    rc = redis.StrictRedis(host=host, port=port, password=password)
+    return rc
+
+
 def main():
-    redischunk = generatefile(1048576)
+
+    rc = redisconnect()
+    pipe = rc.pipeline()
+
+    key = 'key1Mb'
+    value = generatefile(1048576)
+
+    pipe.mset({key: value})
+    pipe.execute()
+
+    print(rc.get(key))
 
 
 if __name__ == '__main__':
