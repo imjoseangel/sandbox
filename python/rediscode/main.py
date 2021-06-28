@@ -40,8 +40,8 @@ def main():
     key = 'key1Mb'
     value = generatefile(104857699)
 
-    runnotpipe(rc, key, value)
-#    run(pipe, key, value)
+    # runnotpipe(rc, key, value)
+    run(pipe, key, value)
 
 
 @time_this
@@ -51,6 +51,7 @@ def runnotpipe(rc, key, value):
 
 @time_this
 def run(pipe, key, value):
+
     pipe.mset({key: value})
     pipe.execute()
 
