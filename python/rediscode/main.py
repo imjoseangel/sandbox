@@ -5,13 +5,12 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import os
-from timeit import timeit
+from timeit import default_timer as timer
+from datetime import timedelta
 import redis
-
-
-def generatefile(size):
-    myfile = os.urandom(size)
-    return myfile
+import sys
+import msgpack
+from base64 import b64encode
 
 
 def redisconnect(host="127.0.0.1", port=6379, password=""):
@@ -26,20 +25,21 @@ def main():
     pipe = rc.pipeline()
 
     key = 'key1Mb'
-    value = generatefile(104857699)
+    xlsfile = open("excel.xls", "rb")
 
-    print(timeit(f'{runnotpipe(pipe, key, value)}'))
-    print(timeit(f'{run(pipe, key, value)}'))
+    value = msgpack.packb(xlsfile, use_bin_type=True)
+
+    # print(f'len of value = {sys.getsizeof(xlsfile)}')
+    # print(f'len of value = {sys.getsizeof(value)}')
+
+    run(pipe, key, xlsfile)
 
 
-def runnotpipe(rc, key, value):
+def run(rc, key, value):
+    start = timer()
     rc.mset({key: value})
-
-
-def run(pipe, key, value):
-
-    pipe.mset({key: value})
-    pipe.execute()
+    end = timer()
+    print(timedelta(seconds=end - start))
 
 
 if __name__ == '__main__':
