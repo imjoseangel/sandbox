@@ -21,10 +21,14 @@ def main():
     key = 'key1Mb'
     xlsfile = open("excel.xls", "rb").read()
 
+    print(xlsfile[0:20])
+
     value = msgpack.packb(gzip.compress(xlsfile), use_bin_type=True)
+    print(value[0:20])
     print(f'len of value = {sys.getsizeof(xlsfile)}')
 
     set(rc, key, value)
+    get(rc, key)
 
 
 def set(rc, key, value):
@@ -37,9 +41,12 @@ def set(rc, key, value):
 def get(rc, key):
 
     start = timer()
-    rc.get(key)
+    x = rc.get(key)
     end = timer()
     print(timedelta(seconds=end - start))
+    print(x[0:20])
+    value = gzip.decompress(msgpack.unpackb(x, raw=False))
+    print(value[0:20])
 
 
 if __name__ == '__main__':
