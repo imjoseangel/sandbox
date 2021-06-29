@@ -4,7 +4,6 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import zlib
 import gzip
 from timeit import default_timer as timer
 from datetime import timedelta
