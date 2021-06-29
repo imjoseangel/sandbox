@@ -4,7 +4,8 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import os
+import zlib
+import gzip
 from timeit import default_timer as timer
 from datetime import timedelta
 import redis
@@ -13,30 +14,30 @@ import msgpack
 from base64 import b64encode
 
 
-def redisconnect(host="127.0.0.1", port=6379, password=""):
-
-    rc = redis.Redis(host=host, port=port, password=password)
-    return rc
-
-
 def main():
 
-    rc = redisconnect()
-    pipe = rc.pipeline()
+    rc = redis.Redis()
 
     key = 'key1Mb'
     xlsfile = open("excel.xls", "rb").read()
 
-    value = msgpack.packb(xlsfile, use_bin_type=True)
+    value = msgpack.packb(gzip.compress(xlsfile), use_bin_type=True)
+    print(f'len of value = {sys.getsizeof(xlsfile)}')
 
-    print(f'len of value = {sys.getsizeof(value)}')
-
-    run(pipe, key, xlsfile)
+    set(rc, key, value)
 
 
-def run(rc, key, value):
+def set(rc, key, value):
     start = timer()
     rc.mset({key: value})
+    end = timer()
+    print(timedelta(seconds=end - start))
+
+
+def get(rc, key):
+
+    start = timer()
+    rc.get(key)
     end = timer()
     print(timedelta(seconds=end - start))
 
