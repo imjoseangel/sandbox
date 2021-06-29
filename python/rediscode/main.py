@@ -25,12 +25,11 @@ def main():
     pipe = rc.pipeline()
 
     key = 'key1Mb'
-    xlsfile = open("excel.xls", "rb")
+    xlsfile = open("excel.xls", "rb").read()
 
     value = msgpack.packb(xlsfile, use_bin_type=True)
 
-    # print(f'len of value = {sys.getsizeof(xlsfile)}')
-    # print(f'len of value = {sys.getsizeof(value)}')
+    print(f'len of value = {sys.getsizeof(value)}')
 
     run(pipe, key, xlsfile)
 
