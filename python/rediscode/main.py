@@ -13,6 +13,11 @@ import msgpack
 from base64 import b64encode
 
 
+def generatefile(size):
+    myfile = os.urandom(size)
+    return myfile
+
+
 def main():
 
     rc = redis.Redis()
@@ -22,7 +27,7 @@ def main():
 
     print(xlsfile[0:20])
 
-    value = msgpack.packb(gzip.compress(xlsfile), use_bin_type=True)
+    value = msgpack.packb(gzip.compress(xlsfile))
     print(value[0:20])
     print(f'len of value = {sys.getsizeof(xlsfile)}')
 
