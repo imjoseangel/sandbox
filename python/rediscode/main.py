@@ -7,10 +7,10 @@ from __future__ import (division, absolute_import, print_function,
 import gzip
 from timeit import default_timer as timer
 from datetime import timedelta
-import redis
+import os
 import sys
+import redis
 import msgpack
-from base64 import b64encode
 
 
 def generatefile(size):
@@ -20,7 +20,7 @@ def generatefile(size):
 
 def main():
 
-    rc = redis.Redis()
+    redis_conn = redis.Redis()
 
     key = 'key1Mb'
     xlsfile = open("excel.xls", "rb").read()
@@ -31,25 +31,25 @@ def main():
     print(value[0:20])
     print(f'len of value = {sys.getsizeof(xlsfile)}')
 
-    set(rc, key, value)
-    get(rc, key)
+    redisset(redis_conn, key, value)
+    redisget(redis_conn, key)
 
 
-def set(rc, key, value):
+def redisset(redisconn, key, value):
     start = timer()
-    rc.mset({key: value})
+    redisconn.mset({key: value})
     end = timer()
     print(timedelta(seconds=end - start))
 
 
-def get(rc, key):
+def redisget(redisconn, key):
 
     start = timer()
-    x = rc.get(key)
+    getkey = redisconn.get(key)
     end = timer()
     print(timedelta(seconds=end - start))
-    print(x[0:20])
-    value = gzip.decompress(msgpack.unpackb(x, raw=False))
+    print(getkey[0:20])
+    value = gzip.decompress(msgpack.unpackb(getkey, raw=False))
     print(value[0:20])
 
 
