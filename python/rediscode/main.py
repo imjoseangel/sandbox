@@ -14,6 +14,7 @@ import os
 import sys
 import redis
 from io import BytesIO
+import msgpack
 
 
 def compressStringToBytes(inputString):
@@ -65,10 +66,12 @@ def main():
     redis_conn = redis.Redis(host="localhost", port=6380, db=0,
                              password=os.environ["REDISKEY"])
 
-    key = 'key001'
+    key = '{HSS.NET_12p5w50wmcueoz5kbmd1tmzp}_Data'
 
     with open("file.json") as json_file:
         redisdata = json.load(json_file)
+
+    # jsonpack = msgpack.packb(json.dumps(redisdata), use_bin_type=True)
 
     json_data = json.dumps(redisdata)
 
@@ -78,6 +81,7 @@ def main():
     compressed = compressStringToBytes(json_data)
 
     logging.info(f'len of file = {sys.getsizeof(json_data)}')
+    # logging.info(f'len of file = {sys.getsizeof(jsonpack)}')
     logging.info(f'len of file = {sys.getsizeof(compressed)}\n')
 
     redisset(redis_conn, key, json_data, "raw")
