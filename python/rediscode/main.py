@@ -5,13 +5,51 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import gzip
+from base64 import b64encode, b64decode
+import json
 from timeit import default_timer as timer
 from datetime import timedelta
 import logging
 import os
 import sys
 import redis
-import msgpack
+from io import BytesIO
+
+
+def compressStringToBytes(inputString):
+    """
+    read the given string, encode it in utf-8,
+    compress the data and return it as a byte array.
+    """
+    bio = BytesIO()
+    bio.write(inputString.encode("utf-8"))
+    bio.seek(0)
+    stream = BytesIO()
+    compressor = gzip.GzipFile(fileobj=stream, mode='w')
+    while True:  # until EOF
+        chunk = bio.read(8192)
+        if not chunk:  # EOF?
+            compressor.close()
+            return stream.getvalue()
+        compressor.write(chunk)
+
+
+def decompressBytesToString(inputBytes):
+    """
+    decompress the given byte array (which must be valid
+    compressed gzip data) and return the decoded text (utf-8).
+    """
+    bio = BytesIO()
+    stream = BytesIO(inputBytes)
+    decompressor = gzip.GzipFile(fileobj=stream, mode='r')
+    while True:  # until EOF
+        chunk = decompressor.read(8192)
+        if not chunk:
+            decompressor.close()
+            bio.seek(0)
+            return bio.read().decode("utf-8")
+        bio.write(chunk)
+    return None
 
 
 def generatefile(size):
@@ -27,36 +65,34 @@ def main():
     redis_conn = redis.Redis(host="localhost", port=6380, db=0,
                              password=os.environ["REDISKEY"])
 
-    key = 'key1Mb'
-    xlsfile = open("excel.xls", "rb").read()
+    key = 'key001'
 
-    valuepack = msgpack.packb(xlsfile)
-    valuegzip = gzip.compress(xlsfile)
-    valuepackgzip = msgpack.packb(gzip.compress(xlsfile), use_bin_type=True)
+    with open("file.json") as json_file:
+        redisdata = json.load(json_file)
 
-    logging.info(f'len of file = {sys.getsizeof(xlsfile)}\n')
+    json_data = json.dumps(redisdata)
 
-    logging.info(f'xlsfile = {xlsfile[0:20]}')
-    logging.info(f'valuepack = {valuepack[0:20]}')
-    logging.info(f'valuegzip = {valuegzip[0:20]}')
-    logging.info(f'valuepackgzip = {valuepackgzip[0:20]}\n')
+    # compressed = b64encode(gzip.compress(json.dumps(
+    #     realvalue).encode('utf-8'))).decode('ascii')
 
-    redisset(redis_conn, key, xlsfile, "raw")
+    compressed = compressStringToBytes(json_data)
+
+    logging.info(f'len of file = {sys.getsizeof(json_data)}')
+    logging.info(f'len of file = {sys.getsizeof(compressed)}\n')
+
+    redisset(redis_conn, key, json_data, "raw")
     redisget(redis_conn, key, "raw")
 
-    redisset(redis_conn, key, valuepack, "msgpack")
-    redisget(redis_conn, key, "msgpack")
-
-    redisset(redis_conn, key, valuegzip, "gzip")
+    redisset(redis_conn, key, compressed, "gzip")
     redisget(redis_conn, key, "gzip")
-
-    redisset(redis_conn, key, valuepackgzip, "msgpack+gzip")
-    redisget(redis_conn, key, "msgpack+gzip")
 
 
 def redisset(redisconn, key, value, type):
     start = timer()
-    redisconn.mset({key: value})
+
+    for _ in range(1000):
+        redisconn.set(key, value)
+
     end = timer()
 
     logging.info(f'Time set {type} = {timedelta(seconds=end - start)}')
@@ -65,21 +101,11 @@ def redisset(redisconn, key, value, type):
 def redisget(redisconn, key, type):
 
     start = timer()
-    getkey = redisconn.get(key)
+    for _ in range(1000):
+        redisconn.get(key)
     end = timer()
 
     logging.info(f'Time get {type} = {timedelta(seconds=end - start)}\n')
-    logging.info(f'value = {getkey[0:20]}\n')
-
-    try:
-        # value = gzip.decompress(msgpack.unpackb(getkey, raw=False))
-        value = gzip.decompress(getkey)
-        # value = msgpack.unpackb(getkey, raw=False)
-        logging.info(f'value = {value[0:20]}\n')
-    except msgpack.exceptions.ExtraData as e:
-        pass
-    except gzip.BadGzipFile as e:
-        pass
 
 
 if __name__ == '__main__':
