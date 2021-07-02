@@ -36,6 +36,7 @@ session = winrm.Session(host, auth=(
 def sqlping(scheduler):
 
     for server in serverlist:
+        # https://stackoverflow.com/questions/40029235/save-pscredential-in-the-file
         result = session.run_ps(
             f"$cred = Import-CliXml -Path 'cred.xml'; Invoke-command -ComputerName {server}.{domain} -ScriptBlock {{(Test-NetConnection -ComputerName PingServer.{domain} -Port 49508).TcpTestSucceeded}} -Credential $cred")
         logging.info(server)
