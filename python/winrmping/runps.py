@@ -4,14 +4,11 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import winrm
 import logging
 import os
-import sys
-import json
 import sched
-import socket
 import time
+import winrm
 
 path = os.path.dirname(os.path.realpath(__file__))
 # logging.basicConfig(format="%(asctime)s - %(message)s",
@@ -42,7 +39,8 @@ def sqlping(scheduler):
         # https://stackoverflow.com/questions/40029235/save-pscredential-in-the-file
         result = session.run_ps(f"$cred = Import-CliXml -Path 'cred.xml'; Invoke-command "
                                 f"-ComputerName {server}.{tdomain} -ScriptBlock {{(Test-NetConnection "
-                                f"-ComputerName {thost}.{tdomain} -Port {tport}).TcpTestSucceeded}} -Credential $cred")
+                                f"-ComputerName {thost}.{tdomain} -Port {tport}).TcpTestSucceeded}}"
+                                f"-Credential $cred")
         logging.info(server)
         logging.info((result.std_out).decode("utf-8"))
 
