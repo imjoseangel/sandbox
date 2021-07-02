@@ -63,8 +63,7 @@ def main():
     logging.basicConfig(format="%(asctime)s - %(message)s",
                         datefmt="%d-%b-%y %H:%M:%S", stream=sys.stderr, level=logging.DEBUG)
 
-    redis_conn = redis.Redis(host="localhost", port=6380, db=0,
-                             password=os.environ["REDISKEY"])
+    redis_conn = redis.Redis(host="localhost", port=6379, db=0)
 
     key = '{HSS.NET_12p5w50wmcueoz5kbmd1tmzp}_Data'
 
