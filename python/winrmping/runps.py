@@ -22,14 +22,17 @@ logging.basicConfig(filename=f"{path}/access.log", filemode="a", format="%(ascti
 
 sched = sched.scheduler(time.time, time.sleep)
 
-host = "bastion"
-domain = "imjoseangel.local"
+bastion = os.environ['HOST']
 user = os.environ['USER']
+domain = os.environ['DOMAIN']
 password = os.environ['PASS']
+thost = os.environ['THOST']
+tdomain = os.environ['TDOMAIN']
+tport = os.environ['TPORT']
 
 serverlist = ["SERVER1", "SERVER2"]
 
-session = winrm.Session(host, auth=(
+session = winrm.Session(bastion, auth=(
     '{}@{}'.format(user, domain), password), transport='ntlm')
 
 
@@ -37,8 +40,9 @@ def sqlping(scheduler):
 
     for server in serverlist:
         # https://stackoverflow.com/questions/40029235/save-pscredential-in-the-file
-        result = session.run_ps(
-            f"$cred = Import-CliXml -Path 'cred.xml'; Invoke-command -ComputerName {server}.{domain} -ScriptBlock {{(Test-NetConnection -ComputerName PingServer.{domain} -Port 49508).TcpTestSucceeded}} -Credential $cred")
+        result = session.run_ps(f"$cred = Import-CliXml -Path 'cred.xml'; Invoke-command "
+                                f"-ComputerName {server}.{tdomain} -ScriptBlock {{(Test-NetConnection "
+                                f"-ComputerName {thost}.{tdomain} -Port {tport}).TcpTestSucceeded}} -Credential $cred")
         logging.info(server)
         logging.info((result.std_out).decode("utf-8"))
 
