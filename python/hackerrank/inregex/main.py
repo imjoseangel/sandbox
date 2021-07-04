@@ -6,7 +6,9 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+
+    for _ in (int(input())):
+        pass
 
 
 if __name__ == '__main__':
