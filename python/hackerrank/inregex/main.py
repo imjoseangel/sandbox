@@ -4,11 +4,18 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import re
+
 
 def main():
 
-    for _ in (int(input())):
-        pass
+    T = int(input().rstrip())
+    for _ in range(0, T):
+        try:
+            re.compile(input())
+            print(True)
+        except re.error:
+            print(False)
 
 
 if __name__ == '__main__':
