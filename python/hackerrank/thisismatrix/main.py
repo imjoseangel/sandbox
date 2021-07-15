@@ -14,12 +14,12 @@ def main():
     m = int(first_multiple_input[1])
 
     matrix = []
-    startint = 0
-    midstr = ""
 
     for _ in range(n):
         matrix_item = input()
         matrix.append(matrix_item)
+
+    midstr = ""
 
     for x in range(m):
         for y in range(n):
