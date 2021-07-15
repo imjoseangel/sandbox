@@ -3,11 +3,7 @@
 
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
-import sys
 import re
-import random
-import os
-import math
 
 
 def main():
