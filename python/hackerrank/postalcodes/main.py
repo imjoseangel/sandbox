@@ -5,16 +5,17 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import re
 
+regex_integer_in_range = r"^[1-9][0-9][0-9][0-9][0-9][0-9]$"
+
 
 def main():
 
     try:
-        p = int(input())
+        P = input()
     except (ValueError, TypeError) as e:
         print(e)
 
-    if not 100000 <= p <= 999999:
-        print("False")
+    print(bool(re.match(regex_integer_in_range, P)))
 
 
 if __name__ == '__main__':
