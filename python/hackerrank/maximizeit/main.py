@@ -6,7 +6,10 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    n, m = input().split()
+
+    print(sum([max(map(int, input().split())) **
+               2 for _ in range(int(n))]) % int(m))
 
 
 if __name__ == '__main__':
