@@ -8,7 +8,9 @@ from __future__ import (division, absolute_import, print_function,
 def main():
     k, m = map(int, input().split())
 
-    sum(max(map(int, input().split())) ** 2 for _ in range(k))
+    result = sum([max(map(int, input().split())) ** 2 for _ in range(k)])
+
+    print(result % int(m))
 
 
 if __name__ == '__main__':
