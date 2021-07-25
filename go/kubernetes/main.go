@@ -9,4 +9,7 @@ func main() {
 	kubeconfig := "~/.kube/config"
 
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
 }
