@@ -7,7 +7,13 @@ from __future__ import (division, absolute_import, print_function,
 
 def main():
     n = int(input().rstrip())
+
+    myset = list()
+
     for _ in range(0, n):
+        myset.append(input().rstrip())
+
+    print(myset)
 
 
 if __name__ == '__main__':
