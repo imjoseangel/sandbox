@@ -6,7 +6,8 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    n = int(input().rstrip())
+    for _ in range(0, n):
 
 
 if __name__ == '__main__':
