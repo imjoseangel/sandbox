@@ -10,7 +10,7 @@ variable "counter" {
 
 
 locals {
-  count = var.counter % 2 == 0 ? var.counter : 2
+  count = var.counter % 2 == 0 ? var.counter : 0
 }
 
 resource "random_pet" "main" {
