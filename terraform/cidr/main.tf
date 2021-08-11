@@ -4,8 +4,8 @@ provider "azurerm" {
 
 variable "counter" {
   description = "A simple counter"
-  type    = number
-  default = 4
+  type        = number
+  default     = 4
 }
 
 
