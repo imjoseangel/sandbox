@@ -30,7 +30,7 @@ data "azurerm_virtual_network" "network" {
 module "subnet_addrs" {
   source = "hashicorp/subnets/cidr"
 
-  base_cidr_block = "10.49.164.0/23"
+  base_cidr_block = data.azurerm_virtual_network.network.address_space[0]
 
   networks = [
     for name in random_pet.main[*].id :
