@@ -23,7 +23,7 @@ data "azurerm_resource_group" "network" {
 }
 
 data "azurerm_virtual_network" "network" {
-  name                = "net-test"
+  name                = "net-test-voyager"
   resource_group_name = data.azurerm_resource_group.network.name
 }
 
@@ -61,17 +61,22 @@ module "subnet_addrs" {
 }
 
 resource "azurerm_subnet" "subnets" {
-  count                = local.count
-  name                 = format("subnet-%d", count.index + 1)
+  count                = length(random_pet.main[*].id)
+  name                 = format("subnet-%s", random_pet.main[count.index].id)
   resource_group_name  = data.azurerm_resource_group.network.name
   virtual_network_name = data.azurerm_virtual_network.network.name
   address_prefixes     = [module.subnet_addrs.networks[count.index].cidr_block]
 }
 
-output "network" {
-  value = module.subnet_addrs.networks[*].cidr_block
-}
+# output "networks" {
+#   value = module.subnet_addrs.networks[*].cidr_block
+# }
 
-output "names" {
-  value = random_pet.main[*].id
+# output "names" {
+#   value = random_pet.main[*].id
+# }
+
+
+output "networks" {
+  value = zipmap(random_pet.main[*].id, module.subnet_addrs.networks[*].cidr_block)
 }
