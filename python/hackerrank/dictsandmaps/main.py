@@ -11,12 +11,16 @@ def main():
     phoneBook = {key: value for key, value in [
         input().rstrip().split() for _ in range(0, n)]}
 
-    for _ in range(0, n):
-        name = input()
-        if name in phoneBook:
-            print(name + "=" + phoneBook[name])
-        else:
-            print("Not found")
+    while True:
+        try:
+            name = input()
+            if name in phoneBook:
+                print(f"{name}={phoneBook[name]}")
+            else:
+                print("Not found")
+
+        except:
+            break
 
 
 if __name__ == '__main__':
