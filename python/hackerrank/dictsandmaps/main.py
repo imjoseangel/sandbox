@@ -8,10 +8,15 @@ from __future__ import (division, absolute_import, print_function,
 def main():
     n = int(input())
 
-    for _ in range(0, n):
-        s = zip(input().rstrip().split())
+    phoneBook = {key: value for key, value in [
+        input().rstrip().split() for _ in range(0, n)]}
 
-        print(dict(s))
+    for _ in range(0, n):
+        name = input()
+        if name in phoneBook:
+            print(name + "=" + phoneBook[name])
+        else:
+            print("Not found")
 
 
 if __name__ == '__main__':
