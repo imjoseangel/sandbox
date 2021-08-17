@@ -19,7 +19,7 @@ def main():
             else:
                 print("Not found")
 
-        except KeyboardInterrupt:
+        except:
             break
 
 
