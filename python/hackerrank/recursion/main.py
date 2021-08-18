@@ -13,10 +13,7 @@ import sys
 
 def factorial(n):
 
-    for item in range(1, n):
-        n = n * factorial(item)
-
-    return n
+    return n * factorial(n - 1) if n > 1 else 1
 
 
 def main():
