@@ -10,8 +10,10 @@ import itertools
 def main():
     n = int(input().strip())
 
-    for i in "{0:b}".format(n):
-        print(i)
+    z = [(item[0], len(list(item[1])))
+         for item in itertools.groupby("{0:b}".format(n))]
+
+    print(max(z, key=lambda item: item[1])[1])
 
 
 if __name__ == '__main__':
