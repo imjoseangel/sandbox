@@ -7,14 +7,28 @@ from __future__ import (division, absolute_import, print_function,
 
 def main():
 
-    arr = [[1, 1, 1, 0, 0, 0], [0, 1, 0, 0, 0, 0], [1, 1, 1, 0, 0, 0],
-           [0, 0, 2, 4, 4, 0], [0, 0, 0, 2, 0, 0], [0, 0, 1, 2, 4, 0]]
+    arr = []
 
-    # for _ in range(6):
-    #     arr.append(list(map(int, input().rstrip().split())))
+    for _ in range(6):
+        arr.append(list(map(int, input().rstrip().split())))
 
-    for i in range(3):
-        print(arr[i])
+    items = [[arr[i][j:j + 3], arr[i + 1][j:j + 3], arr[i + 2][j:j + 3]]
+             for j in range(len(arr[0]) - 2) for i in range(len(arr) - 2)]
+
+    maxsum = 0
+
+    for order in range(len(items)):
+        total = 0
+
+        del items[order][1][0], items[order][1][-1]
+
+        for item in items[order]:
+            total += sum(item)
+
+        if total > maxsum:
+            maxsum = total
+
+    print(maxsum)
 
 
 if __name__ == '__main__':
