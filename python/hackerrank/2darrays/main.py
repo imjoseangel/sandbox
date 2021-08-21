@@ -6,7 +6,11 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+
+    arr = []
+
+    for _ in range(6):
+        arr.append(list(map(int, input().rstrip().split())))
 
 
 if __name__ == '__main__':
