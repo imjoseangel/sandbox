@@ -38,8 +38,11 @@ class Student(Person):
     #   Return: A character denoting the grade.
     #
     # Write your function here
+
     def calculate(self):
-        return self.scores
+
+        grade = sum(self.scores) / len(self.scores)
+        return grade
 
 
 def main():
