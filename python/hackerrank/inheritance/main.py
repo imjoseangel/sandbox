@@ -42,7 +42,13 @@ class Student(Person):
     def calculate(self):
 
         grade = sum(self.scores) / len(self.scores)
-        return grade
+
+        scale = {90 <= grade <= 100: "O", 80 <=
+                 grade < 90: "E", 70 <= grade < 80: "A",
+                 55 <= grade < 70: "P", 40 <= grade < 55: "D",
+                 grade < 40: "T"}
+
+        return scale.get(True)
 
 
 def main():
