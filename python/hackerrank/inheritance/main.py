@@ -38,10 +38,19 @@ class Student(Person):
     #   Return: A character denoting the grade.
     #
     # Write your function here
+    def calculate(self):
+        return self.scores
 
 
 def main():
-    pass
+
+    firstName = "Memelli"
+    lastName = "Heraldo"
+    idNum = "8135627"
+    scores = [100, 80]
+    s = Student(firstName, lastName, idNum, scores)
+    s.printPerson()
+    print("Grade:", s.calculate())
 
 
 if __name__ == '__main__':
