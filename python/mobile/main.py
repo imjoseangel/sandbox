@@ -12,7 +12,13 @@ Builder.load_file('design.kv')
 
 
 class LoginScreen(Screen):
-    pass
+    def signup(self):
+        self.manager.current = 'signup_screen'
+
+
+class SignUpScreen(Screen):
+    def login(self):
+        print('Login button pressed')
 
 
 class RootWidget(ScreenManager):
