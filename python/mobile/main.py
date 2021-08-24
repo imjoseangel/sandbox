@@ -17,8 +17,7 @@ class LoginScreen(Screen):
 
 
 class SignUpScreen(Screen):
-    def login(self):
-        print('Login button pressed')
+    pass
 
 
 class RootWidget(ScreenManager):
