@@ -17,7 +17,7 @@
                 text: 'Reset Password'
             Button:
                 text: 'Sign Up'
-                on_release: root.signup()
+                on_press: root.signup()
 
 <SignUpScreen>:
     GridLayout:
@@ -25,11 +25,14 @@
         Label:
             text: 'User Sign Up'
         TextInput:
+            id: username
             hint_text: 'Username'
         TextInput:
+            id: password
             hint_text: 'Password'
         Button:
             text: 'Sign Up'
+            on_press: root.add_user(root.ids.username.text, root.ids.password.text)
 
 <RootWidget>:
     LoginScreen:

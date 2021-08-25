@@ -17,7 +17,8 @@ class LoginScreen(Screen):
 
 
 class SignUpScreen(Screen):
-    pass
+    def add_user(self, uname, pword):
+        print(uname, pword)
 
 
 class RootWidget(ScreenManager):
