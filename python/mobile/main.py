@@ -15,11 +15,29 @@ Builder.load_file('design.kv')
 
 
 class LoginScreen(Screen):
+
     def signup(self):
         self.manager.current = 'signup_screen'
 
+    def login(self, uname, pword):
+        with open('users.json') as file:
+            users = json.load(file)
+
+        if uname in users and pword == users[uname]['password']:
+            self.manager.current = 'login_screen_success'
+        else:
+            self.ids.error_label.text = 'Invalid username or password'
+
+
+class LoginScreenSuccess(Screen):
+
+    def logout(self):
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'login_screen'
+
 
 class SignUpScreen(Screen):
+
     def add_user(self, uname, pword):
         with open('users.json') as file:
             users = json.load(file)
@@ -34,8 +52,8 @@ class SignUpScreen(Screen):
 
 
 class SignUpScreenSuccess(Screen):
-    def go_back(self):
 
+    def go_back(self):
         self.manager.transition.direction = 'right'
         self.manager.current = 'login_screen'
 
