@@ -5,7 +5,10 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from datetime import datetime
+import glob
 import json
+from pathlib import Path
+import random
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -34,6 +37,17 @@ class LoginScreenSuccess(Screen):
     def logout(self):
         self.manager.transition.direction = 'right'
         self.manager.current = 'login_screen'
+
+    def enlighten(self, feel):
+        feel = feel.lower()
+
+        feelingsdata = glob.glob('quotes/*.txt')
+        feelings = [Path(filename).stem for filename in feelingsdata]
+
+        if feel in feelings:
+            with open(f'quotes/{feel}.txt') as file:
+                quotes = file.readlines()
+            self.ids.quote.text = random.choice(quotes)
 
 
 class SignUpScreen(Screen):

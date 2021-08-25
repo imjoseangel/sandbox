@@ -34,10 +34,13 @@
         Label:
             text: 'How do you feel?'
         TextInput:
-            hint_text: 'Things to try: happy, excited, in-love...'
+            id: feeling
+            hint_text: 'Things to try: happy, sad, unloved'
         Button:
             text: 'Enlighten me'
+            on_press: root.enlighten(root.ids.feeling.text)
         Label:
+            id: quote
             text: ''
 
 <SignUpScreen>:
@@ -63,7 +66,6 @@
         Button:
             text: 'Go Back'
             on_press: root.go_back()
-
 
 
 <RootWidget>:
