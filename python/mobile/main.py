@@ -35,6 +35,8 @@ class SignUpScreen(Screen):
 
 class SignUpScreenSuccess(Screen):
     def go_back(self):
+
+        self.manager.transition.direction = 'right'
         self.manager.current = 'login_screen'
 
 
