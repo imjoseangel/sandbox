@@ -44,9 +44,14 @@
 <LoginScreenSuccess>:
     GridLayout:
         cols: 1
-        Button:
-            text: 'Logout'
-            on_press: root.logout()
+        padding: 30, 30
+        spacing: 30, 30
+        RelativeLayout:
+            ImageButton:
+                on_press: root.logout()
+                source: 'logout_hover.png' if self.hovered else 'logout_nothover.png'
+                size_hint: 0.35, 0.35
+                pos_hint: {'center_x': 0.93, 'center_y': 0.8}
         Label:
             text: 'How do you feel?'
         TextInput:
@@ -62,6 +67,8 @@
 <SignUpScreen>:
     GridLayout:
         cols: 1
+        padding: 20, 20
+        spacing: 20, 20
         Label:
             text: 'User Sign Up'
         TextInput:

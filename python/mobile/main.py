@@ -9,10 +9,12 @@ import glob
 import json
 from pathlib import Path
 import random
+from hoverable import HoverBehavior
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-
+from kivy.uix.image import Image
+from kivy.uix.behaviors import ButtonBehavior
 
 Builder.load_file('design.kv')
 
@@ -75,6 +77,10 @@ class SignUpScreenSuccess(Screen):
 
 
 class RootWidget(ScreenManager):
+    pass
+
+
+class ImageButton(ButtonBehavior, HoverBehavior, Image):
     pass
 
 
