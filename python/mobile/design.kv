@@ -12,11 +12,13 @@
                 id: username
                 hint_text: 'Username'
                 multiline: False
+                write_tab: False
             TextInput:
                 id: password
                 password: True
                 hint_text: 'Password'
                 multiline: False
+                write_tab: False
             RelativeLayout:
                 Button:
                     text: 'Login'
@@ -60,6 +62,7 @@
             id: feeling
             hint_text: 'Things to try: happy, sad, unloved'
             multiline: False
+            write_tab: False
         Button:
             text: 'Enlighten me'
             on_press: root.enlighten(root.ids.feeling.text)
@@ -82,11 +85,13 @@
             id: username
             hint_text: 'Username'
             multiline: False
+            write_tab: False
         TextInput:
             id: password
             password: True
             hint_text: 'Password'
             multiline: False
+            write_tab: False
         Button:
             text: 'Sign Up'
             on_press: root.add_user(root.ids.username.text, root.ids.password.text)
