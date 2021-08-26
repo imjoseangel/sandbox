@@ -11,10 +11,12 @@
             TextInput:
                 id: username
                 hint_text: 'Username'
+                multiline: False
             TextInput:
                 id: password
                 password: True
                 hint_text: 'Password'
+                multiline: False
             RelativeLayout:
                 Button:
                     text: 'Login'
@@ -57,6 +59,7 @@
         TextInput:
             id: feeling
             hint_text: 'Things to try: happy, sad, unloved'
+            multiline: False
         Button:
             text: 'Enlighten me'
             on_press: root.enlighten(root.ids.feeling.text)
@@ -78,10 +81,12 @@
         TextInput:
             id: username
             hint_text: 'Username'
+            multiline: False
         TextInput:
             id: password
             password: True
             hint_text: 'Password'
+            multiline: False
         Button:
             text: 'Sign Up'
             on_press: root.add_user(root.ids.username.text, root.ids.password.text)
