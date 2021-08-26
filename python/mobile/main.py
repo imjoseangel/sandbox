@@ -30,6 +30,7 @@ class LoginScreen(Screen):
 
         if uname in users and pword == users[uname]['password']:
             self.manager.current = 'login_screen_success'
+            self.ids.error_label.text = ''
         else:
             self.ids.error_label.text = 'Invalid username or password'
 
