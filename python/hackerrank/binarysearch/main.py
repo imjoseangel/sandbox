@@ -13,7 +13,7 @@ class Node:
 
 class Solution:
     def insert(self, root, data):
-        if root == None:
+        if root is None:
             return Node(data)
         else:
             if data <= root.data:
