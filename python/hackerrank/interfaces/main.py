@@ -12,7 +12,7 @@ class AdvancedArithmetic(object):
 
 class Calculator(AdvancedArithmetic):
     def divisorSum(self, n):
-        pass
+        return sum([i for i in range(1, n) if n % i == 0] + [n])
 
 
 def main():
