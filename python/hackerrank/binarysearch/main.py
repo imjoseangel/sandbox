@@ -25,7 +25,10 @@ class Solution:
         return root
 
     def getHeight(self, root):
-        pass
+        if root is None:
+            return -1
+        else:
+            return 1 + max(self.getHeight(root.left), self.getHeight(root.right))
 
 
 def main():
