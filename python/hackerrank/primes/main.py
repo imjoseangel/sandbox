@@ -5,23 +5,19 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 
-def prime(n: int) -> int:
-    if n > 1:
-        for i in range(2, n):
-            if n % i == 0:
-                return False
-        return True
-
-
 def main():
     n = int(input())
 
-    for i in range(n):
+    for _ in range(n):
         number = int(input())
-        if prime(number):
-            print("Prime")
-        else:
-            print("Not prime")
+
+        x = (i for i in range(2, number) if number % i == 0)
+
+        try:
+            next(x)
+            print('Not prime')
+        except StopIteration:
+            print('Prime')
 
 
 if __name__ == '__main__':
