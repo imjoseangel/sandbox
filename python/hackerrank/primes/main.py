@@ -6,22 +6,25 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def prime(n: int) -> int:
-    if n > 1:
-        result = (i for i in range(2, n) if n % i == 0)
 
-        try:
-            next(result)
+    if(n == 1):
+        return False
+    else:
+        if(n % 2 == 0 and n > 2):
             return False
-        except StopIteration:
-            return True
+        else:
+            for i in range(3, int(n**(1 / 2)) + 1, 2):
+                if n % i == 0:
+                    return False
+            else:
+                return True
 
 
 def main():
     n = int(input())
 
-    for _ in range(n):
+    for i in range(n):
         number = int(input())
-
         if prime(number):
             print("Prime")
         else:
