@@ -7,10 +7,10 @@ from __future__ import (division, absolute_import, print_function,
 
 def prime(n: int) -> int:
 
-    if(n == 1):
+    if n == 1:
         return False
     else:
-        if(n % 2 == 0 and n > 2):
+        if n % 2 == 0 and n > 2:
             return False
         else:
             for i in range(3, int(n**(1 / 2)) + 1, 2):
