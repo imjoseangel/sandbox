@@ -23,7 +23,7 @@ def prime(n: int) -> int:
 def main():
     n = int(input())
 
-    for i in range(n):
+    for _ in range(n):
         number = int(input())
         if prime(number):
             print("Prime")
