@@ -16,8 +16,11 @@ def minimum_index(seq):
     return min_idx
 
 
-def TestDataEmptyArray():
-    return []
+class TestDataEmptyArray():
+
+    @staticmethod
+    def get_array():
+        return []
 
 
 def TestWithEmptyArray():
@@ -30,8 +33,14 @@ def TestWithEmptyArray():
         assert False
 
 
-def TestDataUniqueValues():
-    return [5, 7, 5, 7, 5, 7, 5, 7]
+class TestDataUniqueValues():
+    @staticmethod
+    def get_array():
+        return [2, 3, 5]
+
+    @staticmethod
+    def get_expected_result():
+        return 0
 
 
 def TestWithUniqueValues():
@@ -45,8 +54,14 @@ def TestWithUniqueValues():
     assert result == expected_result
 
 
-def TestDataExactlyTwoDifferentMinimums():
-    return [1, 2, 3, 4, 5]
+class TestDataExactlyTwoDifferentMinimums():
+    @staticmethod
+    def get_array():
+        return [2, 2, 5, 5, 7, 11]
+
+    @staticmethod
+    def get_expected_result():
+        return 0
 
 
 def TestiWithExactyTwoDifferentMinimums():
