@@ -15,7 +15,7 @@ def main():
 
     days = datediff.days
     months = (ry - dy) * 12 + rm - dm
-    years = days // 365
+    years = ry - dy
 
     if years > 0:
         print(10000)
