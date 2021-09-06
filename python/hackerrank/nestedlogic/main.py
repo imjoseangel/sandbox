@@ -14,7 +14,6 @@ def main():
     datediff = datetime(ry, rm, rd) - datetime(dy, dm, dd)
 
     days = datediff.days
-    xx = dir(datediff)
     moths = days // 30
     years = days // 365
 
