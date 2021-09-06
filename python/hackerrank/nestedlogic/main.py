@@ -21,8 +21,10 @@ def main():
         print(10000)
     elif months > 0:
         print(500 * months)
-    else:
+    elif days > 0:
         print(15 * days)
+    else:
+        print(0)
 
 
 if __name__ == '__main__':
