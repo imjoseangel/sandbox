@@ -13,7 +13,17 @@ def main():
 
     datediff = datetime(ry, rm, rd) - datetime(dy, dm, dd)
 
-    print(datediff)
+    days = datediff.days
+    xx = dir(datediff)
+    moths = days // 30
+    years = days // 365
+
+    if years > 0:
+        print(10000)
+    elif moths > 0:
+        print(500 * moths)
+    else:
+        print(15 * days)
 
 
 if __name__ == '__main__':
