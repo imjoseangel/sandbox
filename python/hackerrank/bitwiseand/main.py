@@ -12,7 +12,11 @@ import sys
 
 
 def bitwiseAnd(N, K):
-    pass
+
+    if K - 1 | K <= N:
+        return K - 1
+    else:
+        return K - 2
 
 
 def main():
