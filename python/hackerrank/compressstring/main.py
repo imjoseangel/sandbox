@@ -10,7 +10,7 @@ from itertools import groupby
 def main():
     s = input()
     for k, g in groupby(s):
-        print(f'({len(list(g))}, {k})', end='')
+        print(f'({len(list(g))}, {k})', end=' ')
 
 
 if __name__ == '__main__':
