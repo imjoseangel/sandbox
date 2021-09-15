@@ -4,9 +4,13 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+from collections import Counter
+
 
 def main():
-    pass
+    n = input()
+
+    print(Counter(sorted(n)))
 
 
 if __name__ == '__main__':
