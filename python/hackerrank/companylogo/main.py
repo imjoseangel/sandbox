@@ -8,9 +8,9 @@ from collections import Counter
 
 
 def main():
-    n = input()
+    s = input()
 
-    for a, b in Counter(sorted(n)).most_common(3):
+    for a, b in Counter(sorted(s)).most_common(3):
         print(a, b)
 
 
