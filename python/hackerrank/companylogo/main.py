@@ -10,7 +10,8 @@ from collections import Counter
 def main():
     n = input()
 
-    print(Counter(sorted(n)))
+    for a, b in Counter(sorted(n)).most_common(3):
+        print(a, b)
 
 
 if __name__ == '__main__':
