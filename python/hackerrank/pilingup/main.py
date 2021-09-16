@@ -6,7 +6,14 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    T = int(input())
+
+    for _ in range(T):
+
+        n = int(input())
+        a = list(map(int, input().split()))
+
+        print(a)
 
 
 if __name__ == '__main__':
