@@ -13,8 +13,10 @@ def main():
     l = list(input().split())
     k = int(input())
 
-    print(
-        f"{len([item for item in list(combinations(l, k)) if 'a' in item]) / len(list(combinations(l, k))):.12f}")
+    aonly = len([item for item in list(combinations(l, k)) if 'a' in item])
+    allcomb = len(list(combinations(l, k)))
+
+    print(f"{aonly / allcomb:.12f}")
 
 
 if __name__ == '__main__':
