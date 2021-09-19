@@ -19,10 +19,11 @@ class Complex(object):
         return Complex(self.real - no.real, self.imaginary - no.imaginary)
 
     def __mul__(self, no):
-        pass
+        return Complex(self.real * no.real - self.imaginary * no.imaginary,
+                       self.real * no.imaginary + self.imaginary * no.real)
 
     def __truediv__(self, no):
-        return Complex(self.real / no.real, self.imaginary / no.imaginary)
+        pass
 
     def mod(self):
         return Complex(math.sqrt(self.real ** 2 + self.imaginary ** 2), 0)
