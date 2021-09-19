@@ -23,7 +23,9 @@ class Complex(object):
                        self.real * no.imaginary + self.imaginary * no.real)
 
     def __truediv__(self, no):
-        pass
+        result = complex(self.real, self.imaginary) / \
+            complex(no.real, no.imaginary)
+        return Complex(result.real, result.imag).__str__()
 
     def mod(self):
         return Complex(math.sqrt(self.real ** 2 + self.imaginary ** 2), 0)
