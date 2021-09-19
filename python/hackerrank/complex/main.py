@@ -9,22 +9,23 @@ import math
 
 class Complex(object):
     def __init__(self, real, imaginary):
-        pass
+        self.real = real
+        self.imaginary = imaginary
 
     def __add__(self, no):
-        pass
+        return Complex(self.real + no.real, self.imaginary + no.imaginary)
 
     def __sub__(self, no):
-        pass
+        return Complex(self.real - no.real, self.imaginary - no.imaginary)
 
     def __mul__(self, no):
         pass
 
     def __truediv__(self, no):
-        pass
+        return Complex(self.real / no.real, self.imaginary / no.imaginary)
 
     def mod(self):
-        pass
+        return Complex(math.sqrt(self.real ** 2 + self.imaginary ** 2), 0)
 
     def __str__(self):
         if self.imaginary == 0:
