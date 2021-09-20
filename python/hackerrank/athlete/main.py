@@ -9,7 +9,6 @@ def main():
     nm = input().split()
 
     n = int(nm[0])
-
     m = int(nm[1])
 
     arr = []
@@ -18,6 +17,11 @@ def main():
         arr.append(list(map(int, input().rstrip().split())))
 
     k = int(input())
+
+    sorted_arr = sorted(arr, key=lambda x: x[k])
+
+    for item in sorted_arr:
+        print(item)
 
 
 if __name__ == '__main__':
