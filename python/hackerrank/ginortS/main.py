@@ -9,12 +9,10 @@ import re
 def main():
     n = input()
 
-    textlow = re.sub(r'[^a-z]', '', n)
-    textupp = re.sub(r'[^A-Z]', '', n)
-    numbers = re.sub(r'[a-zA-Z]', '', n)
-
-    print("".join(sorted(textlow)) +
-          "".join(sorted(textupp)) + "".join(sorted(numbers, key=lambda x: [int(x) % 2 == 0, x])))
+    print("".join(sorted(re.sub(r'[^a-z]', '', n))) +
+          "".join(sorted(re.sub(r'[^A-Z]', '', n))) +
+          "".join(sorted(re.sub(r'[a-zA-Z]', '', n),
+                         key=lambda x: [int(x) % 2 == 0, x])))
 
 
 if __name__ == '__main__':
