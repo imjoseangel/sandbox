@@ -9,10 +9,11 @@ import re
 def main():
     n = input()
 
-    text = re.sub(r'[^a-zA-Z]', '', n)
-    numb = re.sub(r'[a-zA-Z]', '', n)
+    textlow = re.sub(r'[^a-z]', '', n)
+    textupp = re.sub(r'[^A-Z]', '', n)
+    numbers = re.sub(r'[a-zA-Z]', '', n)
 
-    print(f"{text[::-1]}{numb}")
+    print("".join(sorted(textlow)) + "".join(sorted(textupp)) + numbers)
 
 
 if __name__ == '__main__':
