@@ -6,8 +6,15 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def fun(s):
-    # return True if s is a valid email, else return False
-    pass
+    try:
+        user, www = s.split("@")
+        web, ext = www.split(".")
+        if not user or not web or not ext:
+            return False
+        return not any([user != "".join(filter(lambda x: x.isalnum() or x in ["_", "-"], user)),
+                        web != "".join(filter(lambda x: x.isalnum(), web)), len(ext) > 3])
+    except Exception as _:
+        return False
 
 
 def filter_mail(emails):
