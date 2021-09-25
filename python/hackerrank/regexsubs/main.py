@@ -4,14 +4,22 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import re
+
+
+def replandor(match):
+    if match.group() == "&&":
+        return "and"
+    else:
+        return "or"
+
 
 def main():
     n = int(input())
 
-    for i in range(n):
+    for _ in range(n):
         s = input()
-
-        print(s.replace(' || ', ' or ').replace(' && ', ' and '))
+        print(re.sub(r"(?<= )(&&|\|\|)(?= )", replandor, s))
 
 
 if __name__ == '__main__':
