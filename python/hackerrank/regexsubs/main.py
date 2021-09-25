@@ -6,7 +6,12 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    n = int(input())
+
+    for i in range(n):
+        s = input()
+
+        print(s.replace(' || ', ' or ').replace(' && ', ' and '))
 
 
 if __name__ == '__main__':
