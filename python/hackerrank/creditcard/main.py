@@ -16,7 +16,8 @@ def main():
     for _ in range(n):
         credit_card = input()
 
-        if re.match(pattern_match, credit_card) and not re.search(consecutive_digits, credit_card):
+        if re.match((pattern_match, credit_card) and not
+                    re.search(consecutive_digits, credit_card.replace('-', ''))):
             print('Valid')
         else:
             print('Invalid')
