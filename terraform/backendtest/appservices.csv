@@ -1,0 +1,3 @@
+NAME,RESOURCE GROUP
+"app01","rsg-main"
+"app02","rsg-devel"
