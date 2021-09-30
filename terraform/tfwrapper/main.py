@@ -77,7 +77,6 @@ def main():
     """ Main function """
 
     options = ParseArgs()
-    print(options.args)
 
     logging.basicConfig(format="%(asctime)s - %(message)s",
                         datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout, level=logging.INFO)
@@ -103,7 +102,7 @@ def main():
                 logging.error(e.filename, e.strerror)
 
         runterraform(
-            'init', f'-upgrade -backend-config=key={0}-{1}'
+            'init', '-upgrade -backend-config=key={0}-{1}'
             .format(appname, options.args.statename))
 
         runterraform(
