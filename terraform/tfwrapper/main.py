@@ -4,12 +4,44 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import argparse
 import logging
 import os
 import shutil
 import subprocess
 import sys
 import pandas as pd
+
+
+class ParseArgs():
+    def __init__(self) -> None:
+
+        # Parse arguments passed at cli
+        self.parse_arguments()
+
+    def parse_arguments(self):
+
+        description = '''
+    This script is used to launch multiple Terraform executions.'''
+
+        parser = argparse.ArgumentParser(
+            description=description, formatter_class=argparse.RawTextHelpFormatter)
+
+        parser.add_argument('-s', '--statename',
+                            help='Terraform state name. Defaults to terraform.tfstate',
+                            required=False,
+                            default='terraform.tfstate')
+
+        parser.add_argument('-c', '--csvfile',
+                            help='CSV file with the list of Terraform executions. Defaults to terraform.csv',
+                            required=False,
+                            default='terraform.csv')
+
+        self.args = parser.parse_args()
+
+        if len(self.args.paths) == 0:
+            parser.print_help()
+            sys.exit(1)
 
 
 def runterraform(verb, args=''):
@@ -42,11 +74,15 @@ def runterraform(verb, args=''):
 
 
 def main():
+    """ Main function """
+
+    options = ParseArgs()
+    print(options.args)
 
     logging.basicConfig(format="%(asctime)s - %(message)s",
                         datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout, level=logging.INFO)
 
-    appservices = pd.read_csv('appservices.csv', sep=',')
+    appservices = pd.read_csv(options.args.csvfile, sep=',')
 
     for item in appservices.iterrows():
 
@@ -67,8 +103,8 @@ def main():
                 logging.error(e.filename, e.strerror)
 
         runterraform(
-            'init', '-upgrade -backend-config=key={0}-customdns.tfstate'
-            .format(appname))
+            'init', f'-upgrade -backend-config=key={0}-{1}'
+            .format(appname, options.args.statename))
 
         runterraform(
             'apply', '-auto-approve -var="name={0}" -var="resource_group={1}"'
