@@ -39,10 +39,6 @@ class ParseArgs():
 
         self.args = parser.parse_args()
 
-        if len(self.args.paths) == 0:
-            parser.print_help()
-            sys.exit(1)
-
 
 def runterraform(verb, args=''):
     """ Run Terraform """
