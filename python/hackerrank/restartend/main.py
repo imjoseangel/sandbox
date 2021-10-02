@@ -8,14 +8,18 @@ import re
 
 
 def main():
-    S = str(input())
-    k = str(input())
+    S = input()
+    k = input()
 
-    m = re.search(k, S)
+    pattern = re.compile(k)
+
+    m = pattern.search(S)
     if not m:
         print('(-1, -1)')
-    else:
+
+    while m:
         print(f'({m.start()}, {m.end() - 1})')
+        m = pattern.search(S, m.start() + 1)
 
 
 if __name__ == '__main__':
