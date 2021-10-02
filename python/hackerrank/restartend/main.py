@@ -12,8 +12,10 @@ def main():
     k = str(input())
 
     m = re.search(k, S)
-
-    print(m.end(), m.start())
+    if not m:
+        print('(-1, -1)')
+    else:
+        print(f'({m.start()}, {m.end() - 1})')
 
 
 if __name__ == '__main__':
