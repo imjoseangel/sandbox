@@ -6,7 +6,12 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    a = int(input())
+    b = map(int, input().split())
+    c = int(input())
+    d = map(int, input().split())
+
+    print(len(set(b).difference(set(d))))
 
 
 if __name__ == '__main__':
