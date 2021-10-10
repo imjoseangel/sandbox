@@ -6,7 +6,17 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+    _ = int(input())
+    A = set(map(int, input().split()))
+
+    for _ in range(int(input())):
+
+        command, _ = input().split()
+        B = set(map(int, input().split()))
+
+        getattr(A, command)(B)
+
+    print(sum(A))
 
 
 if __name__ == '__main__':
