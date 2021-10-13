@@ -12,7 +12,9 @@ def main():
 
     for _ in range(int(input())):
 
-        superset.append(A.issuperset(set(map(int, input().split()))))
+        B = set(map(int, input().split()))
+
+        superset.append(A.issuperset(B))
 
     print(all(superset))
 
