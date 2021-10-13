@@ -6,17 +6,11 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
+
     A = set(map(int, input().split()))
 
-    superset = []
-
-    for _ in range(int(input())):
-
-        B = set(map(int, input().split()))
-
-        superset.append(A.issuperset(B))
-
-    print(all(superset))
+    print(all([A.issuperset(set(map(int, input().split())))
+          for _ in range(int(input()))]))
 
 
 if __name__ == '__main__':
