@@ -7,14 +7,13 @@ from __future__ import (division, absolute_import, print_function,
 
 def main():
 
-    X = list(map(int, input().rstrip().split()))
     A = []
 
-    for _ in range(X[1]):
+    for _ in range(list(map(int, input().rstrip().split()))[1]):
         A.append(input().rstrip().split())
 
-    for item in (list(zip(*A))):
-        print(sum(list(map(float, item))) / len(item))
+    print(*[sum(list(map(float, item))) / len(item)
+          for item in list(zip(*A))], sep='\n')
 
 
 if __name__ == '__main__':
