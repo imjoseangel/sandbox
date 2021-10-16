@@ -6,7 +6,14 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    X, Y = (int(input()) for _ in range(2))
+
+    X = list(map(int, input().rstrip().split()))
+    A = []
+
+    for _ in range(X[1]):
+        A.append(input().rstrip().split())
+
+    print(list(zip(*A)))
 
 
 if __name__ == '__main__':
