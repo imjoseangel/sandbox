@@ -13,7 +13,8 @@ def main():
     for _ in range(X[1]):
         A.append(input().rstrip().split())
 
-    print(list(zip(*A)))
+    for item in (list(zip(*A))):
+        print(sum(list(map(float, item))) / len(item))
 
 
 if __name__ == '__main__':
