@@ -6,7 +6,7 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    _, y = list(map(int, input().split()))
+    x, y = list(map(int, input().split()))
 
     print(eval(input()) == y)
 
