@@ -23,7 +23,7 @@ class Block:
                        str(self.nonce)).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
-        while self.hash[:difficulty] != "0" * difficulty:
+        while self.hash[:difficulty] != '0' * difficulty:
             self.nonce += 1
             self.hash = self.getHash()
 
@@ -32,7 +32,7 @@ class Blockchain:
     def __init__(self):
         self.chain = [Block(str(int(time())))]
         self.difficulty = 1
-        self.blockTime = 1000
+        self.blockTime = 1
 
     def getLastBlock(self):
         return self.chain[len(self.chain) - 1]
@@ -44,8 +44,8 @@ class Blockchain:
         self.chain.append(block)
         miningTime = int(time()) - \
             int(self.getLastBlock().timestamp)
-        # self.difficulty = round(
-        #     self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
+        self.difficulty = round(
+            self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
 
     def isValid(self):
         for index in range(1, len(self.chain)):
@@ -72,9 +72,10 @@ def main():
     blockchain = Blockchain()
     blockchain.addBlock(Block(data=({"amount": 40})))
     blockchain.addBlock(Block(data=({"amount": 60})))
+    blockchain.addBlock(Block(data=({"amount": 100})))
+    blockchain.addBlock(Block(data=({"amount": 110})))
 
     print(blockchain)
-    # print(blockchain.isValid())
 
 
 if __name__ == '__main__':
