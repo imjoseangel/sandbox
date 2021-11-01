@@ -23,8 +23,6 @@ class Block:
                        str(self.nonce)).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
-        print(difficulty)
-        print(self.hash)
         while self.hash[:difficulty] != "0" * difficulty:
             self.nonce += 1
             self.hash = self.getHash()
@@ -37,7 +35,7 @@ class Blockchain:
         self.blockTime = 1000
 
     def getLastBlock(self):
-        return self.chain[-1]
+        return self.chain[len(self.chain) - 1]
 
     def addBlock(self, block):
         block.prevHash = self.getLastBlock().hash
@@ -65,10 +63,13 @@ def main():
 
     JeChain.addBlock(
         Block(str(int(time())),
-              json.loads('{"from": "Chain", "to": "Je", "amount": 1}')))
+              json.loads('{"from": "chain", "to": "python", "amount": 1}')))
 
     for item in JeChain.chain:
-        print(item.timestamp, item.data, item.hash, item.prevHash)
+
+        print(json.dumps({'timestamp': item.timestamp, 'data': item.data,
+                          'prevHash': item.prevHash, 'hash': item.hash,
+                          'nonce': item.nonce}, indent=4))
 
 
 if __name__ == '__main__':
