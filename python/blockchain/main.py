@@ -6,19 +6,9 @@ from __future__ import (division, absolute_import, print_function,
 
 
 class Block:
-    def __init__(self, index, transactions, timestamp, previous_hash):
-        self.index = index
-        self.transactions = transactions
+    def __init__(self, timestamp="", data=[]):
         self.timestamp = timestamp
-        self.previous_hash = previous_hash
-        self.nonce = 0
-
-    def compute_hash(self):
-        """
-        A function that return the hash of the block contents.
-        """
-        block_string = json.dumps(self.__dict__, sort_keys=True)
-        return sha256(block_string.encode()).hexdigest()
+        self.data = data
 
 
 def main():
