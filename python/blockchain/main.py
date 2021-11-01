@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 class Block:
-    def __init__(self, timestamp="", data=[]):
+    def __init__(self, timestamp=str(int(datetime.utcnow().timestamp())), data=[]):
         self.timestamp = timestamp
         self.data = data
         self.prevHash = ""
@@ -18,8 +18,9 @@ class Block:
         self.hash = self.getHash()
 
     def getHash(self):
-        return sha256((self.prevHash + self.timestamp + json.dumps(self.data, separators=(',', ':')) +
-                      str(self.nonce)).encode('utf-8')).hexdigest()
+        return sha256((self.prevHash + self.timestamp +
+                       json.dumps(self.data, separators=(',', ':')) +
+                       str(self.nonce)).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
         while self.hash[:difficulty] != "0" * difficulty:
