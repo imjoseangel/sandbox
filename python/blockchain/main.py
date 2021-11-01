@@ -10,22 +10,29 @@ from time import time
 
 
 class Block:
-    def __init__(self, timestamp=str(int(time())), data=[]):
-        self.timestamp = timestamp
+
+    def __init__(self, data=[], previous_hash=None):
+        self.timestamp = time()
         self.data = data
-        self.prevHash = ""
+        self.prevHash = previous_hash
         self.nonce = 0
         self.hash = self.getHash()
 
     def getHash(self):
-        return sha256((self.prevHash + self.timestamp +
-                       json.dumps(self.data, separators=(',', ':')) +
-                       str(self.nonce)).encode('utf-8')).hexdigest()
+
+        hash = sha256()
+        hash.update(str(self.timestamp).encode('utf-8'))
+        hash.update(str(self.data).encode('utf-8'))
+        hash.update(str(self.prevHash).encode('utf-8'))
+        hash.update(str(self.nonce).encode('utf-8'))
+        return hash.hexdigest()
 
     def mine(self, difficulty):
         while self.hash[:difficulty] != '0' * difficulty:
             self.nonce += 1
             self.hash = self.getHash()
+
+        print(f'Block Mined : {self.hash} in {self.nonce} iterations')
 
 
 class Blockchain:
