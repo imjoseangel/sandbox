@@ -27,6 +27,14 @@ class Block:
             self.nonce += 1
             self.hash = self.getHash()
 
+    def __str__(self):
+        return "(timestamp: {}, data: {},  prevHash: {}, hash: {}, nonce: {})".format(
+            self.timestamp,
+            self.data,
+            self.prevHash,
+            self.hash,
+            self.nonce)
+
 
 class Blockchain:
     def __init__(self):
@@ -48,28 +56,29 @@ class Blockchain:
             self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
 
     def isValid(self):
-        for i in range(1, len(self.chain)):
-            currentBlock = self.chain[i]
-            prevBlock = self.chain[i - 1]
+        for index in range(1, len(self.chain)):
+            currentBlock = self.chain[index]
+            prevBlock = self.chain[index - 1]
 
             if currentBlock.hash != currentBlock.getHash() or prevBlock.hash != currentBlock.prevHash:
                 return False
 
         return True
 
+    def __str__(self):
+
+        return json.dumps([{'timestamp': item.timestamp, 'data': item.data,
+                           'prevHash': item.prevHash, 'hash': item.hash,
+                            'nonce': item.nonce} for item in self.chain], indent=4)
+
 
 def main():
-    JeChain = Blockchain()
+    blockchain = Blockchain()
 
-    JeChain.addBlock(
-        Block(str(int(time())),
-              json.loads('{"from": "chain", "to": "python", "amount": 1}')))
+    blockchain.addBlock(
+        Block(str(int(time())), ({"amount": 40})))
 
-    for item in JeChain.chain:
-
-        print(json.dumps({'timestamp': item.timestamp, 'data': item.data,
-                          'prevHash': item.prevHash, 'hash': item.hash,
-                          'nonce': item.nonce}, indent=4))
+    print(blockchain)
 
 
 if __name__ == '__main__':
