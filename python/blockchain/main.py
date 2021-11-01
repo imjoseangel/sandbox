@@ -13,11 +13,14 @@ class Block:
     def __init__(self, timestamp="", data=[]):
         self.timestamp = timestamp
         self.data = data
-        self.hash = self.getHash()
         self.prevHash = ""
+        self.nonce = 0
+        self.hash = self.getHash()
 
     def getHash(self):
-        return sha256(self.prevHash + self.timestamp + json(self.data)).hexdigest()
+        return sha256(self.prevHash.encode('utf-8') + self.timestamp.encode('utf-8') +
+                      json.dumps(self.data, separators=(',', ':')).encode('utf-8') +
+                      str(self.nonce).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
         while self.hash[:difficulty] != "0" * difficulty:
@@ -56,7 +59,7 @@ class Blockchain:
 
 def main():
     JeChain = Blockchain()
-    print(JeChain)
+    print(JeChain.getLastBlock().hash)
 
 
 if __name__ == '__main__':
