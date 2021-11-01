@@ -27,14 +27,6 @@ class Block:
             self.nonce += 1
             self.hash = self.getHash()
 
-    def __str__(self):
-        return "(timestamp: {}, data: {},  prevHash: {}, hash: {}, nonce: {})".format(
-            self.timestamp,
-            self.data,
-            self.prevHash,
-            self.hash,
-            self.nonce)
-
 
 class Blockchain:
     def __init__(self):
