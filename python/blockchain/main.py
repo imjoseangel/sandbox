@@ -44,15 +44,19 @@ class Blockchain:
         self.chain.append(block)
         miningTime = int(time()) - \
             int(self.getLastBlock().timestamp)
-        self.difficulty = round(
-            self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
+        # self.difficulty = round(
+        #     self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
 
     def isValid(self):
         for index in range(1, len(self.chain)):
             currentBlock = self.chain[index]
             prevBlock = self.chain[index - 1]
 
-            if currentBlock.hash != currentBlock.getHash() or prevBlock.hash != currentBlock.prevHash:
+            if (currentBlock.hash != currentBlock.getHash()):
+                print('Block has changed')
+                return False
+            if (currentBlock.prevHash != prevBlock.hash):
+                print('Block link invalid')
                 return False
 
         return True
@@ -67,8 +71,10 @@ class Blockchain:
 def main():
     blockchain = Blockchain()
     blockchain.addBlock(Block(data=({"amount": 40})))
+    blockchain.addBlock(Block(data=({"amount": 60})))
 
     print(blockchain)
+    # print(blockchain.isValid())
 
 
 if __name__ == '__main__':
