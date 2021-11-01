@@ -34,6 +34,11 @@ class Block:
 
         print(f'Block Mined : {self.hash} in {self.nonce} iterations')
 
+    def __str__(self):
+        return json.dumps([{'data': item.data, 'timestamp': item.timestamp,
+                           'nonce': item.nonce, 'hash': item.hash, 'prevHash': item.prevHash
+                            } for item in self.chain], indent=4)
+
 
 class Blockchain:
     def __init__(self):
@@ -69,10 +74,9 @@ class Blockchain:
         return True
 
     def __str__(self):
-
-        return json.dumps([{'timestamp': item.timestamp, 'data': item.data,
-                           'prevHash': item.prevHash, 'hash': item.hash,
-                            'nonce': item.nonce} for item in self.chain], indent=4)
+        return json.dumps([{'data': item.data, 'timestamp': item.timestamp,
+                           'nonce': item.nonce, 'hash': item.hash, 'prevHash': item.prevHash
+                            } for item in self.chain], indent=4)
 
 
 def main():
