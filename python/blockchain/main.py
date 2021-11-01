@@ -18,9 +18,8 @@ class Block:
         self.hash = self.getHash()
 
     def getHash(self):
-        return sha256(self.prevHash.encode('utf-8') + self.timestamp.encode('utf-8') +
-                      json.dumps(self.data, separators=(',', ':')).encode('utf-8') +
-                      str(self.nonce).encode('utf-8')).hexdigest()
+        return sha256((self.prevHash + self.timestamp + json.dumps(self.data, separators=(',', ':')) +
+                      str(self.nonce)).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
         while self.hash[:difficulty] != "0" * difficulty:
@@ -30,7 +29,7 @@ class Block:
 
 class Blockchain:
     def __init__(self):
-        self.chain = [Block(str(datetime.now()))]
+        self.chain = [Block(str(int(datetime.utcnow().timestamp())))]
         self.difficulty = 1
         self.blockTime = 1000
 
@@ -42,7 +41,8 @@ class Blockchain:
         block.hash = block.getHash()
         block.mine(self.difficulty)
         self.chain.append(block)
-        miningTime = datetime.now() - int(self.getLastBlock().timestamp)
+        miningTime = int(datetime.utcnow().timestamp()) - \
+            int(self.getLastBlock().timestamp)
         self.difficulty = round(
             self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
 
@@ -59,7 +59,13 @@ class Blockchain:
 
 def main():
     JeChain = Blockchain()
-    print(JeChain.getLastBlock().hash)
+
+    JeChain.addBlock(
+        Block(str(int(datetime.utcnow().timestamp())),
+              json.loads('{"from": "Chain", "to": "Je", "amount": 1}')))
+
+    for item in JeChain.chain:
+        print(item.timestamp, item.data, item.hash, item.prevHash)
 
 
 if __name__ == '__main__':
