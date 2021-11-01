@@ -6,11 +6,11 @@ from __future__ import (division, absolute_import, print_function,
 
 from hashlib import sha256
 import json
-from datetime import datetime
+from time import time
 
 
 class Block:
-    def __init__(self, timestamp=str(int(datetime.utcnow().timestamp())), data=[]):
+    def __init__(self, timestamp=str(int(time())), data=[]):
         self.timestamp = timestamp
         self.data = data
         self.prevHash = ""
@@ -23,6 +23,8 @@ class Block:
                        str(self.nonce)).encode('utf-8')).hexdigest()
 
     def mine(self, difficulty):
+        print(difficulty)
+        print(self.hash)
         while self.hash[:difficulty] != "0" * difficulty:
             self.nonce += 1
             self.hash = self.getHash()
@@ -30,7 +32,7 @@ class Block:
 
 class Blockchain:
     def __init__(self):
-        self.chain = [Block(str(int(datetime.utcnow().timestamp())))]
+        self.chain = [Block(str(int(time())))]
         self.difficulty = 1
         self.blockTime = 1000
 
@@ -42,7 +44,7 @@ class Blockchain:
         block.hash = block.getHash()
         block.mine(self.difficulty)
         self.chain.append(block)
-        miningTime = int(datetime.utcnow().timestamp()) - \
+        miningTime = int(time()) - \
             int(self.getLastBlock().timestamp)
         self.difficulty = round(
             self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
@@ -62,7 +64,7 @@ def main():
     JeChain = Blockchain()
 
     JeChain.addBlock(
-        Block(str(int(datetime.utcnow().timestamp())),
+        Block(str(int(time())),
               json.loads('{"from": "Chain", "to": "Je", "amount": 1}')))
 
     for item in JeChain.chain:
