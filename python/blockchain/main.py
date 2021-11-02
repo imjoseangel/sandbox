@@ -21,9 +21,9 @@ class Block:
     def getHash(self):
 
         hash = sha256()
+        hash.update(str(self.prevHash).encode('utf-8'))
         hash.update(str(self.timestamp).encode('utf-8'))
         hash.update(str(self.data).encode('utf-8'))
-        hash.update(str(self.prevHash).encode('utf-8'))
         hash.update(str(self.nonce).encode('utf-8'))
         return hash.hexdigest()
 
