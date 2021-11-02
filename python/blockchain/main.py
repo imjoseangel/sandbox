@@ -54,15 +54,14 @@ class Blockchain:
         block.hash = block.getHash()
         block.mine(self.difficulty)
         self.chain.append(block)
-        miningTime = int(time()) - \
-            int(self.getLastBlock().timestamp)
-        self.difficulty = round(
-            self.difficulty * self.blockTime / (miningTime, 1)[miningTime <= 0])
+
+        self.difficulty += (-1, 1)[int(time()) -
+                                   int(self.getLastBlock().timestamp) < self.blockTime]
 
     def isValid(self):
-        for index in range(1, len(self.chain)):
-            currentBlock = self.chain[index]
-            prevBlock = self.chain[index - 1]
+        for i in range(1, len(self.chain)):
+            currentBlock = self.chain[i]
+            prevBlock = self.chain[i - 1]
 
             if (currentBlock.hash != currentBlock.getHash() or prevBlock.hash != currentBlock.prevHash):
                 return False
