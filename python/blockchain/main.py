@@ -64,11 +64,7 @@ class Blockchain:
             currentBlock = self.chain[index]
             prevBlock = self.chain[index - 1]
 
-            if (currentBlock.hash != currentBlock.getHash()):
-                print('Block has changed')
-                return False
-            if (currentBlock.prevHash != prevBlock.hash):
-                print('Block link invalid')
+            if (currentBlock.hash != currentBlock.getHash() or prevBlock.hash != currentBlock.prevHash):
                 return False
 
         return True
