@@ -42,9 +42,9 @@ class Block:
 
 class Blockchain:
     def __init__(self):
-        self.chain = [Block(str(int(time())))]
+        self.chain = [Block()]
         self.difficulty = 1
-        self.blockTime = 1
+        self.blockTime = 30000
 
     def getLastBlock(self):
         return self.chain[len(self.chain) - 1]
