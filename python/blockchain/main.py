@@ -82,9 +82,8 @@ class Blockchain:
 def main():
     blockchain = Blockchain()
     blockchain.addBlock(Block(data=({"amount": 40})))
-    blockchain.addBlock(Block(data=({"amount": 60})))
-    blockchain.addBlock(Block(data=({"amount": 100})))
-    blockchain.addBlock(Block(data=({"amount": 110})))
+    blockchain.addBlock(Block(data=({"amount": 160})))
+    blockchain.addBlock(Block(data=({"amount": 510})))
 
     print(blockchain)
 
