@@ -11,12 +11,12 @@ from time import time
 
 class Block:
 
-    def __init__(self, data=[], previous_hash=None):
-        self.timestamp = time()
+    def __init__(self, timestamp=time(), data=[]):
+        self.timestamp = timestamp
         self.data = data
-        self.prevHash = previous_hash
-        self.nonce = 0
+        self.prevHash = None
         self.hash = self.getHash()
+        self.nonce = 0
 
     def getHash(self):
 
