@@ -15,8 +15,8 @@ class Block:
         self.timestamp = timestamp
         self.data = data
         self.prevHash = None
-        self.hash = self.getHash()
         self.nonce = 0
+        self.hash = self.getHash()
 
     def getHash(self):
 
