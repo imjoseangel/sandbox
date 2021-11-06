@@ -1,8 +1,12 @@
-import os
-import connexion
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+# -*- coding: utf-8 -*-
 
+from __future__ import (division, absolute_import, print_function,
+                        unicode_literals)
+
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
+import connexion
+import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
