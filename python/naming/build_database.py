@@ -26,11 +26,11 @@ logging.basicConfig(format="%(asctime)s %(levelname)s: %(message)s",
 local = normpath(abspath(dirname(__file__)))
 
 
-with open(f'{local}/{DATAFILE}') as resourceDefinition:
+with open(f'{local}/{DATAFILE}', 'r') as resourceDefinition:
     data = json.load(resourceDefinition)
 
 # Create A DataFrame From the JSON Data
-df = pd.DataFrame(data)
+df = pd.json_normalize(data, sep='')
 
 # Delete database file if it exists currently
 if os.path.exists(f'{local}/{DBFILE}'):
