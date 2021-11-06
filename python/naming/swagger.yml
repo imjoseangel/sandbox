@@ -1,0 +1,67 @@
+swagger: "2.0"
+info:
+  description: >
+    This is the swagger file that goes with our server code.
+  version: "1.0.0"
+  title: Naming Convention API
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /
+
+# Paths supported by the server application
+paths:
+  /:
+    get:
+      operationId: ui.home
+      tags:
+        - UI
+      summary: Get Swagger UI Home
+      description: Get Swagger UI Home
+      responses:
+        200:
+          description: Successfully got Swagger Home
+
+  /naming:
+    get:
+      operationId: naming.read_all
+      tags:
+        - Naming
+      summary: Read the entire set of items, sorted by name
+      description: Read the entire set of items, sorted by name
+      responses:
+        200:
+          description: Successfully read name convention set operation
+          schema:
+            type: array
+            items:
+              properties:
+                index:
+                  type: integer
+                  description: Id of the resource
+
+
+  /naming/{index}:
+    get:
+      operationId: naming.read_one
+      tags:
+        - Naming
+      summary: Read one resource definition item
+      description: Read one resource definition item
+      parameters:
+        - name: index
+          in: path
+          description: Id of the name to get
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully read item from naming data operation
+          schema:
+            type: object
+            properties:
+              index:
+                type: integer
+                description: Id of the resource
