@@ -11,7 +11,9 @@ from time import time
 
 class Block:
 
-    def __init__(self, timestamp=time(), data=[]):
+    def __init__(self, timestamp=None, data=None):
+        self.timestamp = timestamp or time()
+        self.data = [] if data is None else data
         self.timestamp = timestamp
         self.data = data
         self.prevHash = None
