@@ -7,7 +7,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 class Naming(db.Model):
     __tablename__ = "resourceDefinition"
-    resource_id = db.Column(db.Integer, primary_key=True)
+    index = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)
     length = db.Column(db.String(32))
     regex = db.Column(db.String(256))
