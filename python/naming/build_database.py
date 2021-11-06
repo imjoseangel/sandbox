@@ -41,4 +41,4 @@ db.create_all()
 
 # populate the database
 conn = sqlite3.connect(f'{local}/{DBFILE}')
-df.to_sql('naming', conn, if_exists='append')
+df.to_sql('resourceDefinition', conn, if_exists='append')

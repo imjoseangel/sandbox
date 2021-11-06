@@ -13,7 +13,7 @@ class Naming(db.Model):
     regex = db.Column(db.String(256))
     scope = db.Column(db.String(16))
     slug = db.Column(db.String(16))
-    dashes = db.Column(db.Boolean)
+    dashes = db.Column(db.Boolean())
     timestamp = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
