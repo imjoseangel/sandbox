@@ -13,18 +13,18 @@ basePath: /
 
 # Paths supported by the server application
 paths:
-  /:
-    get:
-      operationId: ui.home
-      tags:
-        - UI
-      summary: Get Swagger UI Home
-      description: Get Swagger UI Home
-      responses:
-        200:
-          description: Successfully got Swagger Home
+  # /:
+  #   get:
+  #     operationId: ui.home
+  #     tags:
+  #       - UI
+  #     summary: Get Swagger UI Home
+  #     description: Get Swagger UI Home
+  #     responses:
+  #       200:
+  #         description: Successfully got Swagger Home
 
-  /naming:
+  /:
     get:
       operationId: naming.read_all
       tags:
@@ -43,7 +43,7 @@ paths:
                   description: Id of the resource
 
 
-  /naming/{index}:
+  /naming/{name}:
     get:
       operationId: naming.read_one
       tags:
@@ -51,10 +51,10 @@ paths:
       summary: Read one resource definition item
       description: Read one resource definition item
       parameters:
-        - name: index
+        - name: name
           in: path
-          description: Id of the name to get
-          type: integer
+          description: name to get
+          type: string
           required: True
       responses:
         200:
@@ -65,3 +65,6 @@ paths:
               index:
                 type: integer
                 description: Id of the resource
+              name:
+                type: string
+                description: Name of the resource

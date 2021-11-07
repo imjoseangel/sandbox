@@ -24,7 +24,7 @@ def read_all():
     return data
 
 
-def read_one(index):
+def read_one(name):
     """
     This function responds to a request for /mlw/{index}
     with one matching item from mlw
@@ -33,7 +33,7 @@ def read_one(index):
     """
     # Get the item requested
     naming = Naming.query.filter(
-        Naming.index == index).one_or_none()
+        Naming.name == name).one_or_none()
 
     # Did we find a mlw?
     if naming is not None:
@@ -47,6 +47,5 @@ def read_one(index):
     else:
         abort(
             404,
-            "MLW Register not found for Id: {index}".format(
-                index=index),
+            "Name Register not found: {name}".format(name=name),
         )
