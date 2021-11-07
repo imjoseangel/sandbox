@@ -38,10 +38,27 @@ paths:
             type: array
             items:
               properties:
-                index:
+                name:
+                  type: string
+                  description: Name of the resource
+                lengthmin:
                   type: integer
-                  description: Id of the resource
-
+                  description: Minimum lenght for the resource
+                lenghthmax:
+                  type: integer
+                  description: Maximum lenght for the resource
+                regex:
+                  type: string
+                  description: Naming regex for the resource
+                scope:
+                  type: string
+                  description: Scope of the resource
+                slug:
+                  type: string
+                  description: Slug of the resource
+                dashes:
+                  type: string
+                  description: Dashes permitted on the resource
 
   /naming/{name}:
     get:
@@ -62,9 +79,24 @@ paths:
           schema:
             type: object
             properties:
-              index:
-                type: integer
-                description: Id of the resource
               name:
                 type: string
                 description: Name of the resource
+              lengthmin:
+                type: integer
+                description: Minimum lenght for the resource
+              lenghthmax:
+                type: integer
+                description: Maximum lenght for the resource
+              regex:
+                type: string
+                description: Naming regex for the resource
+              scope:
+                type: string
+                description: Scope of the resource
+              slug:
+                type: string
+                description: Slug of the resource
+              dashes:
+                type: string
+                description: Dashes permitted on the resource
