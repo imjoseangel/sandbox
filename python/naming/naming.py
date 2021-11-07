@@ -20,7 +20,7 @@ def read_all():
 
     # Serialize the data for the response
     naming_schema = NamingSchema(many=True)
-    data = inventory_schema.dump(naming)
+    data = naming_schema.dump(naming)
     return data
 
 
@@ -40,7 +40,7 @@ def read_one(index):
 
         # Serialize the data for the response
         naming_schema = NamingSchema()
-        data = naming_schema.dump(mlw)
+        data = naming_schema.dump(naming)
         return data
 
     # Otherwise, nope, didn't find that item
