@@ -60,7 +60,7 @@ paths:
                   type: string
                   description: Dashes permitted on the resource
 
-  /naming/{name}:
+  /naming:
     get:
       operationId: naming.read_one
       tags:
