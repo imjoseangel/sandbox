@@ -78,6 +78,11 @@ paths:
           description: prefix to include
           type: string
           required: False
+        - name: suffix
+          in: query
+          description: suffix to include
+          type: string
+          required: False
       responses:
         200:
           description: Successfully read item from naming data operation

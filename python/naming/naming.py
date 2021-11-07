@@ -24,7 +24,7 @@ def read_all():
     return data
 
 
-def read_one(name, prefix=None):
+def read_one(name, prefix=None, suffix=None):
     """
     This function responds to a request for /Naming/{name}
     with one matching item from resourceDefinition
@@ -32,8 +32,9 @@ def read_one(name, prefix=None):
     :return:       resourceDefinition matching name
     """
 
-    # Empty prefix if not defined
+    # Empty prefix and suffix if not defined
     prefix = '' if prefix is None else prefix
+    suffix = '' if suffix is None else suffix
 
     # Get the item requested
     naming = Naming.query.filter(
@@ -45,7 +46,10 @@ def read_one(name, prefix=None):
         # Serialize the data for the response
         naming_schema = NamingSchema()
         data = naming_schema.dump(naming)
-        return f"{prefix}{data['slug']}"
+
+        dashes = '-' if data['dashes'] else ""
+
+        return f"{prefix}{dashes}{data['slug']}{dashes}{suffix}"
 
     # Otherwise, nope, didn't find that item
     else:
