@@ -73,6 +73,11 @@ paths:
           description: name to get
           type: string
           required: True
+        - name: prefix
+          in: query
+          description: prefix to include
+          type: string
+          required: False
       responses:
         200:
           description: Successfully read item from naming data operation

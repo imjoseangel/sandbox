@@ -24,13 +24,17 @@ def read_all():
     return data
 
 
-def read_one(name):
+def read_one(name, prefix=None):
     """
-    This function responds to a request for /mlw/{index}
-    with one matching item from mlw
-    :param index:   Id of mlw to find
-    :return:               Mlw matching id
+    This function responds to a request for /Naming/{name}
+    with one matching item from resourceDefinition
+    :param name:   name of resourceDefinition to find
+    :return:       resourceDefinition matching name
     """
+
+    # Empty prefix if not defined
+    prefix = '' if prefix is None else prefix
+
     # Get the item requested
     naming = Naming.query.filter(
         Naming.name == name).one_or_none()
@@ -41,7 +45,7 @@ def read_one(name):
         # Serialize the data for the response
         naming_schema = NamingSchema()
         data = naming_schema.dump(naming)
-        return data
+        return f"{prefix}{data['slug']}"
 
     # Otherwise, nope, didn't find that item
     else:
