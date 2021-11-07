@@ -54,6 +54,5 @@ def read_one(name, prefix=None, suffix=None):
     # Otherwise, nope, didn't find that item
     else:
         abort(
-            404,
-            "Name Register not found: {name}".format(name=name),
+            404, "Name not found for: {name}".format(name=name),
         )

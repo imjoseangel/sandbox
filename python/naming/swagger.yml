@@ -60,7 +60,7 @@ paths:
                   type: string
                   description: Dashes permitted on the resource
 
-  /naming:
+  /naming/{name}:
     get:
       operationId: naming.read_one
       tags:
@@ -110,3 +110,7 @@ paths:
               dashes:
                 type: string
                 description: Dashes permitted on the resource
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Name not found"
