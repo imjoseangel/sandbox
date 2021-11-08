@@ -1,10 +1,9 @@
 """
-This is the inventory module and supports all the REST actions for the
-inventory data
+This is the naming module and supports all the REST actions for the
+naming data
 """
 
 from flask import abort
-from config import db
 from models import Naming, NamingSchema
 
 
