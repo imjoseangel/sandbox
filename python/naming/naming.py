@@ -3,7 +3,7 @@ This is the inventory module and supports all the REST actions for the
 inventory data
 """
 
-from flask import make_response, abort
+from flask import abort
 from config import db
 from models import Naming, NamingSchema
 
@@ -54,5 +54,5 @@ def read_one(name, prefix=None, suffix=None):
     # Otherwise, nope, didn't find that item
     else:
         abort(
-            404, "Name not found for: {name}".format(name=name),
+            404, f"Name not found for: {name}",
         )

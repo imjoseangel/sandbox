@@ -1,0 +1,11 @@
+connexion
+connexion[swagger-ui]
+Flask-Caching
+flask_marshmallow
+flask_sqlalchemy
+Flask-SQLAlchemy-Caching
+folium
+hupper
+marshmallow-sqlalchemy
+pandas
+waitress
