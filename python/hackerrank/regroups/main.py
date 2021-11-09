@@ -8,10 +8,9 @@ import re
 
 
 def main():
-    S = input()
 
-    result = re.search(r'(\w(?!_))\1+', S)
-    print(result.group(1) if result else -1)
+    S = re.search(r'(\w(?!_))\1+', input())
+    print(S.group(1) if S else -1)
 
 
 if __name__ == '__main__':
