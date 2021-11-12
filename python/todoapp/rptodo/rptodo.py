@@ -34,3 +34,8 @@ class Todoer:
         read.todo_list.append(todo)
         write = self._db_handler.write_todos(read.todo_list)
         return CurrentTodo(todo, write.error)
+
+    def get_todo_list(self) -> List[Dict[str, Any]]:
+        """Return the current to-do list."""
+        read = self._db_handler.read_todos()
+        return read.todo_list
