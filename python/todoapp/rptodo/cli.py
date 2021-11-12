@@ -3,13 +3,16 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 
-from rptodo import ERRORS, __app_name__, __version__, config, database
+from rptodo import (
+    ERRORS, __app_name__, __version__, config, database, rptodo
+)
 
 app = typer.Typer()
+
 
 @app.command()
 def init(
@@ -37,6 +40,25 @@ def init(
         raise typer.Exit(1)
     else:
         typer.secho(f"The to-do database is {db_path}", fg=typer.colors.GREEN)
+
+
+def get_todoer() -> rptodo.Todoer:
+    if config.CONFIG_FILE_PATH.exists():
+        db_path = database.get_database_path(config.CONFIG_FILE_PATH)
+    else:
+        typer.secho(
+            'Config file not found. Please, run "rptodo init"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+    if db_path.exists():
+        return rptodo.Todoer(db_path)
+    else:
+        typer.secho(
+            'Database not found. Please, run "rptodo init"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
 
 
 def _version_callback(value: bool) -> None:
