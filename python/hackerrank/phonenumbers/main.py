@@ -6,7 +6,10 @@ from __future__ import (division, absolute_import, print_function,
 
 
 def main():
-    pass
+
+    for _ in range(int(input())):
+        phone_number = input()
+        print(phone_number)
 
 
 if __name__ == '__main__':
