@@ -9,6 +9,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import email.utils
+import re
 
 
 def main():
@@ -16,8 +17,13 @@ def main():
     Main function
     """
 
+    email_regex = re.compile(
+        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+
     for _ in range(int(input())):
-        print(email.utils.parseaddr(input())[1])
+        address = input()
+        if email_regex.match(email.utils.parseaddr(address)[1]):
+            print(address)
 
 
 if __name__ == '__main__':
