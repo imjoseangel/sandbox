@@ -17,8 +17,7 @@ def main():
     Main function
     """
 
-    email_regex = re.compile(
-        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+    email_regex = re.compile(r"^[a-zA-Z][\w\-.]*@[a-zA-Z]+\.[a-zA-Z]{1,3}$")
 
     for _ in range(int(input())):
         address = input()
