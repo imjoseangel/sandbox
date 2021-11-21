@@ -4,20 +4,21 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-import regex
+import re
 
 
 def main():
 
-    N = int(input())
-
-    hexcolor = regex.compile(r'#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})')
+    hexcolor = re.compile(r'#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})')
     hexfound = []
 
-    for _ in range(N):
-        hexfound.extend(regex.findall(hexcolor, input()))
+    for _ in range(int(input())):
+        line = input()
 
-    print('\n'.join(hexfound))
+        if not line.startswith('#'):
+            hexfound.extend(re.findall(hexcolor, line))
+
+    print('\n'.join([f'#{hexcolor}' for hexcolor in hexfound]))
 
 
 if __name__ == '__main__':
