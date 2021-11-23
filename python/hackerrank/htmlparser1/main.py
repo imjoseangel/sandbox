@@ -26,8 +26,9 @@ def main():
 
     # instantiate the parser and fed it some HTML
     parser = MyHTMLParser()
-    parser.feed("<html><head><title>HTML Parser - I</title></head>"
-                + "<body data-modal-target class='1'><h1>HackerRank</h1><br /></body></html>")
+
+    for _ in range(int(input())):
+        parser.feed(input())
 
 
 if __name__ == '__main__':
