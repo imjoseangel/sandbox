@@ -16,7 +16,7 @@ class MyHTMLParser(HTMLParser):
                 print(f"-> {attr[0]} > {attr[1]}")
 
     def handle_endtag(self, tag):
-        print(f"End : {tag}")
+        print(f"End   : {tag}")
 
     def handle_startendtag(self, tag, attrs):
         print(f"Empty : {tag}")
