@@ -20,6 +20,9 @@ class MyHTMLParser(HTMLParser):
 
     def handle_startendtag(self, tag, attrs):
         print(f"Empty : {tag}")
+        if attrs:
+            for attr in attrs:
+                print(f"-> {attr[0]} > {attr[1]}")
 
 
 def main():
