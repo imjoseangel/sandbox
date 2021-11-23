@@ -7,7 +7,6 @@ from __future__ import (division, absolute_import, print_function,
 from html.parser import HTMLParser
 
 
-# create a subclass and override the handler methods
 class MyHTMLParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
