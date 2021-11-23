@@ -11,13 +11,16 @@ from html.parser import HTMLParser
 class MyHTMLParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
-        print("Found a start tag  :", tag)
+        print(f"Start : {tag}")
 
     def handle_endtag(self, tag):
-        print("Found an end tag   :", tag)
+        print(f"End : {tag}")
 
     def handle_startendtag(self, tag, attrs):
-        print("Found an empty tag :", tag)
+        print(f"Empty : {tag}")
+
+    def handle_pi(self, data):
+        print(f"Data : {data}")
 
 
 def main():
@@ -25,7 +28,7 @@ def main():
     # instantiate the parser and fed it some HTML
     parser = MyHTMLParser()
     parser.feed("<html><head><title>HTML Parser - I</title></head>"
-                + "<body><h1>HackerRank</h1><br /></body></html>")
+                + "<body data-modal-target class='1'><h1>HackerRank</h1><br /></body></html>")
 
 
 if __name__ == '__main__':
