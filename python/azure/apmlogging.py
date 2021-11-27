@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def valuePrompt():
+def valueprompt():
     """
     This function prompts the user for a value.
     """
@@ -26,7 +26,7 @@ def main():
     """
 
     while True:
-        valuePrompt()
+        valueprompt()
 
 
 if __name__ == '__main__':
