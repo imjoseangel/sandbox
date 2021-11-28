@@ -7,7 +7,7 @@ Python Template
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 import requests
-import resolver
+import etchosts
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     Main function
     """
 
-    resolver.bind_ip('www.example.com', 443, '216.58.215.174')
+    etchosts.bind_ip('www.example.com', 443, '216.58.215.174')
 
     # this sends requests to 216.58.215.174
     response = requests.get('https://www.example.com', verify=True)
