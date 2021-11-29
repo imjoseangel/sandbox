@@ -7,12 +7,27 @@ data "http" "azureips" {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
+
+data "azurerm_route_table" "main" {
+  name                = "udr"
+  resource_group_name = "we-d-rsg-network"
+}
+
+resource "azurerm_route" "main" {
+  count               = length(local.ip_addrs)
+  name                = format("acceptanceTestRoute%s", count.index)
+  resource_group_name = "we-d-rsg-network"
+  route_table_name    = "udr"
+  address_prefix      = local.ip_addrs[count.index]
+  next_hop_type       = "Internet"
+}
 
 locals {
   raw_data = jsondecode(data.http.azureips.body)
   values   = local.raw_data.values[*]
-}
-
-output "name" {
-  value = local.values[index(local.values.*.name, "AzureCloud.westus")].properties.addressPrefixes
+  ip_addrs = local.values[index(local.values.*.name, "AzureCloud.westus")].properties.addressPrefixes
 }
