@@ -11,12 +11,6 @@ provider "azurerm" {
   features {}
 }
 
-
-data "azurerm_route_table" "main" {
-  name                = "udr"
-  resource_group_name = "we-d-rsg-network"
-}
-
 resource "azurerm_route" "main" {
   count               = length(local.ip_addrs)
   name                = format("acceptanceTestRoute%s", count.index)
