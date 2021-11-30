@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Terraform Wrapper
+"""
 
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
@@ -14,12 +17,15 @@ import pandas as pd
 
 
 class ParseArgs():
+    """ Parse command line arguments """
+
     def __init__(self) -> None:
 
         # Parse arguments passed at cli
         self.parse_arguments()
 
     def parse_arguments(self):
+        """ Parse arguments passed at cli """
 
         description = '''
     This script is used to launch multiple Terraform executions.'''
@@ -45,7 +51,7 @@ def runterraform(verb, args=''):
     validverbs = {'init', 'apply', 'destroy'}
 
     if verb not in validverbs:
-        raise ValueError('Verb must be one of {0}'.format(validverbs))
+        raise ValueError(f'Verb must be one of {validverbs}')
 
     try:
 
@@ -88,22 +94,22 @@ def main():
         if os.path.exists(tfdir):
             try:
                 shutil.rmtree(tfdir)
-            except OSError as e:
-                logging.error(e.filename, e.strerror)
+            except OSError as oserror_exception:
+                logging.error(oserror_exception.filename,
+                              oserror_exception.strerror)
 
         if os.path.exists('.terraform.lock.hcl'):
             try:
                 os.remove('.terraform.lock.hcl')
-            except OSError as e:
-                logging.error(e.filename, e.strerror)
+            except OSError as oserror_exception:
+                logging.error(oserror_exception.filename,
+                              oserror_exception.strerror)
 
         runterraform(
-            'init', '-upgrade -backend-config=key={0}-{1}'
-            .format(appname, options.args.statename))
+            'init', f'-upgrade -backend-config=key={appname}-{options.args.statename}')
 
         runterraform(
-            'apply', '-auto-approve -var="name={0}" -var="resource_group={1}"'
-            .format(appname, resourcegroup))
+            'apply', f'-auto-approve -var="name={appname}" -var="resource_group={resourcegroup}"')
 
 
 if __name__ == '__main__':
