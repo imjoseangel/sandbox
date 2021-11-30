@@ -39,7 +39,8 @@ class ParseArgs():
                             default='terraform.tfstate')
 
         parser.add_argument('-c', '--csvfile',
-                            help='CSV file with the list of Terraform executions. Defaults to terraform.csv',
+                            help='CSV file with the list of Terraform executions. \
+                                Defaults to terraform.csv',
                             required=False,
                             default='terraform.csv')
 
@@ -81,7 +82,8 @@ def main():
     options = ParseArgs()
 
     logging.basicConfig(format="%(asctime)s - %(message)s",
-                        datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout, level=logging.INFO)
+                        datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout,
+                        level=logging.INFO)
 
     appservices = pd.read_csv(options.args.csvfile, sep=',')
 
