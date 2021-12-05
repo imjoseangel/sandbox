@@ -12,7 +12,6 @@ from html.parser import HTMLParser
 
 class MyHTMLParser(HTMLParser):
     """ HTML Parser """
-    pass
 
 
 def main():
