@@ -44,7 +44,7 @@ locals {
       min_length  = {{ item.length.min }}
       max_length  = {{ item.length.max }}
       scope       = "{{ item.scope }}"
-      regex       = "{{ item.regex }}"
+      regex       = "{{ item.regex | cleanRegex }}"
     }
     {%- endfor %}
   }
