@@ -29,7 +29,7 @@ def main():
     with open('resourceDefinition_out_of_docs.json', encoding='utf-8') as jsonout_file:
         definitionout = json.load(jsonout_file)
 
-    data = definition + definitionout
+    data = (sorted(definition + definitionout, key=lambda i: i['name']))
 
     loader = FileSystemLoader('templates')
     env = Environment(autoescape=True, loader=loader)
