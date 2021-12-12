@@ -8,7 +8,6 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import json
-import jsondiff
 import re
 from jinja2 import FileSystemLoader, Environment
 
@@ -30,7 +29,7 @@ def main():
     with open('resourceDefinition_out_of_docs.json', encoding='utf-8') as jsonout_file:
         definitionout = json.load(jsonout_file)
 
-    data = jsondiff.diff(definitionout, definition)
+    data = definition + definitionout
 
     loader = FileSystemLoader('templates')
     env = Environment(autoescape=True, loader=loader)
@@ -38,8 +37,8 @@ def main():
     env.filters['cleanRegex'] = cleanregex
     maintftemp = env.get_template('main.j2')
     outputtftemp = env.get_template('outputs.j2')
-    maintemplate = maintftemp.render(data=definition)
-    outputtemplate = outputtftemp.render(data=definition)
+    maintemplate = maintftemp.render(data=data)
+    outputtemplate = outputtftemp.render(data=data)
 
     with open("main.tf", "w", encoding="utf-8") as maintf:
         maintf.write(maintemplate)

@@ -778,3 +778,123 @@ output "windows_virtual_machine_scale_set" {
   value = local.az.windows_virtual_machine_scale_set
 }
 
+output "databricks_cluster" {
+  value = local.az.databricks_cluster
+}
+
+output "databricks_high_concurrency_cluster" {
+  value = local.az.databricks_high_concurrency_cluster
+}
+
+output "databricks_standard_cluster" {
+  value = local.az.databricks_standard_cluster
+}
+
+output "dns_a_record" {
+  value = local.az.dns_a_record
+}
+
+output "dns_aaaa_record" {
+  value = local.az.dns_aaaa_record
+}
+
+output "dns_caa_record" {
+  value = local.az.dns_caa_record
+}
+
+output "dns_cname_record" {
+  value = local.az.dns_cname_record
+}
+
+output "dns_mx_record" {
+  value = local.az.dns_mx_record
+}
+
+output "dns_ns_record" {
+  value = local.az.dns_ns_record
+}
+
+output "dns_ptr_record" {
+  value = local.az.dns_ptr_record
+}
+
+output "dns_txt_record" {
+  value = local.az.dns_txt_record
+}
+
+output "firewall_application_rule_collection" {
+  value = local.az.firewall_application_rule_collection
+}
+
+output "firewall_ip_configuration" {
+  value = local.az.firewall_ip_configuration
+}
+
+output "firewall_nat_rule_collection" {
+  value = local.az.firewall_nat_rule_collection
+}
+
+output "firewall_network_rule_collection" {
+  value = local.az.firewall_network_rule_collection
+}
+
+output "network_ddos_protection_plan" {
+  value = local.az.network_ddos_protection_plan
+}
+
+output "private_dns_a_record" {
+  value = local.az.private_dns_a_record
+}
+
+output "private_dns_aaaa_record" {
+  value = local.az.private_dns_aaaa_record
+}
+
+output "private_dns_cname_record" {
+  value = local.az.private_dns_cname_record
+}
+
+output "private_dns_mx_record" {
+  value = local.az.private_dns_mx_record
+}
+
+output "private_dns_ptr_record" {
+  value = local.az.private_dns_ptr_record
+}
+
+output "private_dns_srv_record" {
+  value = local.az.private_dns_srv_record
+}
+
+output "private_dns_txt_record" {
+  value = local.az.private_dns_txt_record
+}
+
+output "private_dns_zone_group" {
+  value = local.az.private_dns_zone_group
+}
+
+output "private_endpoint" {
+  value = local.az.private_endpoint
+}
+
+output "private_link_service" {
+  value = local.az.private_link_service
+}
+
+output "private_service_connection" {
+  value = local.az.private_service_connection
+}
+
+output "proximity_placement_group" {
+  value = local.az.proximity_placement_group
+}
+
+output "virtual_machine_extension" {
+  value = local.az.virtual_machine_extension
+}
+
+output "virtual_machine_scale_set_extension" {
+  value = local.az.virtual_machine_scale_set_extension
+}
+
