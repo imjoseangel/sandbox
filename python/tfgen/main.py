@@ -30,7 +30,7 @@ def main():
     with open('resourceDefinition_out_of_docs.json', encoding='utf-8') as jsonout_file:
         definitionout = json.load(jsonout_file)
 
-    # with open('templates/main.j2', 'r', encoding="utf-8") as open_file:
+    data = jsondiff.diff(definitionout, definition)
 
     loader = FileSystemLoader('templates')
     env = Environment(autoescape=True, loader=loader)
