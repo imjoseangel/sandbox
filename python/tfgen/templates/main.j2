@@ -39,12 +39,12 @@ locals {
     {%- for item in data %}
     {{ item.name }} = {
       name        = substr(join("{% if item.dashes %}-{% endif %}", compact([local.prefix{% if not item.dashes %}_safe{% endif %}, "{{ item.slug }}", local.suffix{% if not item.dashes %}_safe{% endif %}])), 0, {{ item.length.max }})
-      dashes      = {{ item.dashes }}
+      dashes      = {{ item.dashes | lower }}
       slug        = "{{ item.slug }}"
       min_length  = {{ item.length.min }}
       max_length  = {{ item.length.max }}
       scope       = "{{ item.scope }}"
-      regex       = "{{ item.regex | cleanRegex }}"
+      regex       = "{{ item.regex | cleanRegex | safe }}"
     }
     {%- endfor %}
   }
