@@ -1,0 +1,12 @@
+output "unique-seed" {
+  value = coalesce(var.unique-seed, local.random_safe_generation)
+}
+
+output "validation" {
+  value = local.validation
+}
+{% for item in data %}
+output "{{ item.name }}" {
+  value = local.az.{{ item.name }}
+}
+{% endfor %}

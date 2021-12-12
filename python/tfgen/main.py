@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Python Template
+Terraform template generator
 """
 
 from __future__ import (division, absolute_import, print_function,
@@ -32,13 +32,20 @@ def main():
     env = Environment(autoescape=True, loader=loader)
 
     env.filters['cleanRegex'] = cleanregex
-    temp = env.get_template('main.j2')
-    maintemplate = temp.render(data=data)
+    maintftemp = env.get_template('main.j2')
+    outputtftemp = env.get_template('outputs.j2')
+    maintemplate = maintftemp.render(data=data)
+    outputtemplate = outputtftemp.render(data=data)
 
     with open("main.tf", "w", encoding="utf-8") as maintf:
         maintf.write(maintemplate)
         maintf.write("\n")
         maintf.close()
+
+    with open("outputs.tf", "w", encoding="utf-8") as outputtf:
+        outputtf.write(outputtemplate)
+        outputtf.write("\n")
+        outputtf.close()
 
 
 if __name__ == '__main__':
