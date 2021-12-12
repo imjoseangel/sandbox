@@ -39,6 +39,7 @@ locals {
     {%- for item in data %}
     {{ item.name }} = {
       name        = substr(join("{% if item.dashes %}-{% endif %}", compact([local.prefix{% if not item.dashes %}_safe{% endif %}, "{{ item.slug }}", local.suffix{% if not item.dashes %}_safe{% endif %}])), 0, {{ item.length.max }})
+      name_unique = substr(join("{% if item.dashes %}-{% endif %}", compact([local.prefix{% if not item.dashes %}_safe{% endif %}, "{{ item.slug }}", local.suffix_unique{% if not item.dashes %}_safe{% endif %}])), 0, {{ item.length.max}})
       dashes      = {{ item.dashes | lower }}
       slug        = "{{ item.slug }}"
       min_length  = {{ item.length.min }}
@@ -52,6 +53,7 @@ locals {
     {%- for item in data %}
     {{ item.name }} = {
       valid_name        = length(regexall(local.az.{{- item.name }}.regex, local.az.{{- item.name  }}.name)) > 0 && length(local.az.{{- item.name  }}.name) > local.az.{{- item.name  }}.min_length
+      valid_name_unique = length(regexall(local.az.{{- item.name }}.regex, local.az.{{- item.name }}.name_unique)) > 0
     }
     {%- endfor %}
   }
