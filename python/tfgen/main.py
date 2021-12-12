@@ -14,7 +14,7 @@ from jinja2 import FileSystemLoader, Environment
 
 def cleanRegex(input):
     """Custom filter"""
-    pattern = re.compile('(?m)\\(\\?=.{\\d+,\\d+}\\$\\)|\\(\\?!\\.\\*--\\)')
+    pattern = '(?m)\\(\\?=.{\\d+,\\d+}\\$\\)|\\(\\?!\\.\\*--\\)'
     return re.sub(pattern, '', input)
 
 
