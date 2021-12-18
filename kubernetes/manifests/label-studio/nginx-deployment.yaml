@@ -1,0 +1,199 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: static
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default.conf
+  namespace: default
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  _;
+
+        # The lines below are handled by entrypoint.sh.
+        # Do not delete it.
+        #listen 443 ssl;
+        #ssl_certificate @cert@;
+        #ssl_certificate_key @certkey@;
+
+        proxy_redirect          off;
+        proxy_set_header        Host            $host;
+        proxy_set_header        X-Real-IP       $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        client_body_buffer_size 128k;
+        proxy_connect_timeout   90;
+        proxy_send_timeout      90;
+        proxy_read_timeout      300;
+        proxy_buffers           32 4k;
+
+        location / {
+            absolute_redirect off;
+            proxy_pass http://app:8080/;
+            add_header 'Access-Control-Allow-Origin' '*';
+            client_max_body_size 200m;   # adjust to taste
+        }
+
+        location /data/upload {
+            alias /label-studio/data/media/upload/;
+        }
+
+        location /data/avatars {
+            alias /label-studio/data/media/avatars;
+        }
+
+        location /static {
+            alias /label-studio/label_studio/core/static_build/;
+            add_header 'Access-Control-Allow-Origin' '*';
+        }
+
+        location /label-studio-frontend {
+            alias /label-studio/label_studio/frontend/dist/lsf;
+        }
+
+        location /react-app {
+            alias /label-studio/label_studio/frontend/dist/react-app;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts
+  namespace: default
+data:
+  90-replace-subpath.sh: |
+    #!/bin/sh
+    set -e ${DEBUG:+-x}
+
+    LABEL_STUDIO_HOST_NO_SCHEME=${LABEL_STUDIO_HOST#*//}
+    LABEL_STUDIO_HOST_NO_TRAILING_SLASH=${LABEL_STUDIO_HOST_NO_SCHEME%/}
+    LABEL_STUDIO_HOST_SUBPATH=$(echo $LABEL_STUDIO_HOST_NO_TRAILING_SLASH | cut -d'/' -f2- -s)
+    NGINX_CONFIG=/etc/nginx/conf.d/${NGINX_FILE:-default.conf}
+
+    if [ -n "${LABEL_STUDIO_HOST_SUBPATH:-}" ] && [ -w $NGINX_CONFIG ]; then
+      echo >&3 "=> Adding subpath to nginx config $NGINX_CONFIG ..."
+      sed -i "s|^\(\s*\)\(location \/\)|\1\2$LABEL_STUDIO_HOST_SUBPATH\/|g" $NGINX_CONFIG
+      echo >&3 "=> Successfully added subpath to nginx config."
+    else
+      echo >&3 "=> Skipping adding subpath to nginx config."
+    fi
+  91-replace-ssl-cert.sh: |
+    #!/bin/sh
+    set -e ${DEBUG:+-x}
+
+    NGINX_CONFIG=/etc/nginx/conf.d/${NGINX_FILE:-default.conf}
+
+    if [ -n "${NGINX_SSL_CERT:-}" ]; then
+      echo >&3 "=> Replacing nginx certs..."
+      sed -i "s|^\(\s*\)#\(listen 443.*\)$|\1\2|g" $NGINX_CONFIG
+      sed -i "s|^\(\s*\)#\(ssl_certificate .*\)@cert@;$|\1\2$NGINX_SSL_CERT;|g" $NGINX_CONFIG
+      sed -i "s|^\(\s*\)#\(ssl_certificate_key .*\)@certkey@;$|\1\2$NGINX_SSL_CERT_KEY;|g" $NGINX_CONFIG
+      echo >&3 "=> Successfully replaced nginx certs."
+    else
+      echo >&3 "=> Skipping replace nginx certs."
+    fi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - args:
+            - nginx
+            - -g
+            - daemon off;
+          env:
+            - name: LABEL_STUDIO_HOST
+            - name: NGINX_FILE
+              value: default.conf
+          image: nginx:1.21
+          name: nginx
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          resources:
+            requests:
+              cpu: 125m
+              memory: 250Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          volumeMounts:
+            - mountPath: /label-studio/label_studio
+              name: static
+            - mountPath: /label-studio/data
+              name: data
+            - mountPath: /etc/nginx/templates/default.conf.template
+              name: default
+            - mountPath: /docker-entrypoint.d/label-studio
+              name: scripts
+      restartPolicy: Always
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: static
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: default
+          configMap:
+            name: default.conf
+        - name: scripts
+          configMap:
+            name: scripts
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 80
+    - name: https
+      port: 8081
+      targetPort: 443
+  selector:
+    app: nginx

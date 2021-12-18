@@ -1,0 +1,71 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          env:
+            - name: DJANGO_DB
+              value: default
+            - name: LABEL_STUDIO_COPY_STATIC_DATA
+              value: "true"
+            - name: LABEL_STUDIO_HOST
+            - name: POSTGRE_HOST
+              value: db
+            - name: POSTGRE_NAME
+              value: postgres
+            - name: POSTGRE_PASSWORD
+            - name: POSTGRE_PORT
+              value: "5432"
+            - name: POSTGRE_USER
+              value: postgres
+          image: heartexlabs/label-studio:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 125m
+              memory: 250Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /label-studio/data
+              name: data
+            - mountPath: /label-studio/static_volume
+              name: static
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: static
+          persistentVolumeClaim:
+            claimName: static
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: app
