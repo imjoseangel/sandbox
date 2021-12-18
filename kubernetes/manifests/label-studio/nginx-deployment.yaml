@@ -27,7 +27,7 @@ metadata:
   name: default.conf
   namespace: default
 data:
-  default.conf: |
+  default.conf.template: |
     server {
         listen       80;
         server_name  _;
@@ -162,7 +162,7 @@ spec:
               name: static
             - mountPath: /label-studio/data
               name: data
-            - mountPath: /etc/nginx/templates/default.conf.template
+            - mountPath: /etc/nginx/templates
               name: default
             - mountPath: /docker-entrypoint.d/label-studio
               name: scripts
