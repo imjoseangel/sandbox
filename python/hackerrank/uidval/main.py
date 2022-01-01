@@ -22,7 +22,7 @@ def main():
             assert not re.search(r'[^a-zA-Z0-9]', item)
             assert not re.search(r'(.)\1', item)
             assert len(item) == 10
-        except:
+        except AssertionError:
             print('Invalid')
         else:
             print('Valid')
