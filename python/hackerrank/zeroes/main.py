@@ -14,11 +14,10 @@ def main():
     """
     Main function
     """
-    n, m, _ = map(int, input().split())
+    nums = tuple(map(int, input().split()))
 
-    a = np.array([input().split() for _ in range(n + m)], int)
-
-    print(a)
+    print(np.zeros(nums, dtype=np.int32))
+    print(np.ones(nums, dtype=np.int32))
 
 
 if __name__ == '__main__':
