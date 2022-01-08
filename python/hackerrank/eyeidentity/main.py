@@ -15,8 +15,8 @@ def main():
     Main function
     """
     N, M = map(int, input().split())
-
-    print(np.eye(N, M, k=0))
+    np.set_printoptions(legacy='1.13')
+    print(np.eye(N, M))
 
 
 if __name__ == '__main__':
