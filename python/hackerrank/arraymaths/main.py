@@ -14,8 +14,7 @@ def main():
     """
     Main function
     """
-    n, m = map(int, input().split())
-    n, m = map(int, input().split())
+    n, _ = map(int, input().split())
 
     a, b = (numpy.array([input().split() for _ in range(n)], dtype=int)
             for _ in range(2))
