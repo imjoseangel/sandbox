@@ -14,12 +14,12 @@ def main():
     """
     Main function
     """
-    N, M = map(int, input().split())
+    n, m = map(int, input().split())
 
-    a = numpy.array(list(map(int, input().rstrip().split())), float)
-    b = numpy.array(list(map(int, input().rstrip().split())), float)
+    a = numpy.array(list(map(int, input().rstrip().split())))
+    b = numpy.array(list(map(int, input().rstrip().split())))
 
-    print(numpy.add(a, b))
+    print(a + b, a - b, a * b, a // b, a % b, a ** b, sep='\n')
 
 
 if __name__ == '__main__':
