@@ -17,6 +17,8 @@ def main():
     A = numpy.array(list(map(float, input().split())))
 
     print(numpy.floor(A))
+    print(numpy.ceil(A))
+    print(numpy.rint(A))
 
 
 if __name__ == '__main__':
