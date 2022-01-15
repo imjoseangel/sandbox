@@ -15,10 +15,8 @@ def main():
     Main function
     """
     A = numpy.array(list(map(float, input().split())))
-
-    print(numpy.floor(A))
-    print(numpy.ceil(A))
-    print(numpy.rint(A))
+    numpy.set_printoptions(legacy='1.13')
+    print(numpy.floor(A), numpy.ceil(A), numpy.rint(A), sep='\n')
 
 
 if __name__ == '__main__':
