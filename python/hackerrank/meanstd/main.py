@@ -21,7 +21,7 @@ def main():
     print(numpy.mean(my_array, axis=1))
     print(numpy.var(my_array, axis=0))
     numpy.set_printoptions(legacy='1.13')
-    print(numpy.std(my_array))
+    print(round(numpy.std(my_array), 11))
 
 
 if __name__ == '__main__':
