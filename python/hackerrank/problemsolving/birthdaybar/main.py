@@ -28,7 +28,11 @@ import sys
 
 def birthday(s, d, m):
     # Write your code here
-    pass
+    count = 0
+    for i in range(len(s)):
+        if sum(s[i:i + m]) == d:
+            count += 1
+    return count
 
 
 def main():
@@ -36,7 +40,7 @@ def main():
     Main function
     """
 
-    n = int(input().strip())
+    _ = int(input().strip())
     s = list(map(int, input().rstrip().split()))
 
     first_multiple_input = input().rstrip().split()
