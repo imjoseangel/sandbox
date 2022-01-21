@@ -8,7 +8,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 
-def divisibleSumPairs(n, k, ar):
+def divisibleSumPairs(_, k, ar):
     # Write your code here
     count = 0
     for _, i in enumerate(ar):
