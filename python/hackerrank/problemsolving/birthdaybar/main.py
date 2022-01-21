@@ -7,14 +7,6 @@ Python Template
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-#!/bin/python3
-
-import math
-import os
-import random
-import re
-import sys
-
 #
 # Complete the 'birthday' function below.
 #
