@@ -102,7 +102,21 @@ def generate_dice_faces_diagram(dice_values):
     for value in dice_values:
         dice_faces.append(DICE_ART[value])
 
-    return dice_faces
+    # Generate a list containing the dice faces rows
+    dice_faces_rows = []
+    for row_idx in range(DIE_HEIGHT):
+        row_components = []
+        for dice in dice_faces:
+            row_components.append(dice[row_idx])
+        row_string = DIE_FACE_SEPARATOR.join(row_components)
+        dice_faces_rows.append(row_string)
+
+    # Generate header with the word "RESULTS" centered
+    width = len(dice_faces_rows[0])
+    diagram_header = " RESULTS ".center(width, "~")
+
+    dice_faces_diagram = "\n".join([diagram_header] + dice_faces_rows)
+    return dice_faces_diagram
 
 
 def main():
@@ -116,7 +130,7 @@ def main():
 
     # 2. Roll the dice
     roll_results = roll_dice(num_dice)
-    #print(roll_results)  # Remove this line after testing the app
+    # print(roll_results)  # Remove this line after testing the app
 
     # 3. Generate the ASCII diagram of dice faces
     dice_face_diagram = generate_dice_faces_diagram(roll_results)
