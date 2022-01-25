@@ -99,6 +99,10 @@ def generate_dice_faces_diagram(dice_values):
     """
     # Generate a list of dice faces from DICE_ART
     dice_faces = []
+    for value in dice_values:
+        dice_faces.append(DICE_ART[value])
+
+    return dice_faces
 
 
 def main():
@@ -112,8 +116,12 @@ def main():
 
     # 2. Roll the dice
     roll_results = roll_dice(num_dice)
+    #print(roll_results)  # Remove this line after testing the app
 
-    # print(roll_results)  # Remove this line after testing the app
+    # 3. Generate the ASCII diagram of dice faces
+    dice_face_diagram = generate_dice_faces_diagram(roll_results)
+    # 4. Display the diagram
+    print(f"\n{dice_face_diagram}")
 
 
 if __name__ == '__main__':
