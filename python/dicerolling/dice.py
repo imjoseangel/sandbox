@@ -4,6 +4,8 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import random
+
 
 def parse_input(input_string):
     """Return `input_string` as an integer between 1 and 6.
@@ -19,6 +21,19 @@ def parse_input(input_string):
         raise SystemExit(1)
 
 
+def roll_dice(num_dice):
+    """Return a list of integers with length `num_dice`.
+
+    Each integer in the returned list is a random number between
+    1 and 6, inclusive.
+    """
+    roll_results = []
+    for _ in range(num_dice):
+        roll = random.randint(1, 6)
+        roll_results.append(roll)
+    return roll_results
+
+
 def main():
     """
     ~~~ App's main code block ~~~
@@ -27,6 +42,11 @@ def main():
 
     num_dice_input = input("How many dice do you want to roll? [1-6] ")
     num_dice = parse_input(num_dice_input)
+
+    # 2. Roll the dice
+    roll_results = roll_dice(num_dice)
+
+    # print(roll_results)  # Remove this line after testing the app
 
 
 if __name__ == '__main__':
