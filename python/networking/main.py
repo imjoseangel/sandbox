@@ -4,14 +4,17 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
-from scapy.all import *
+from scapy.all import Ether, IP, TCP
+from scapy.contrib.macsec import MACsec
 
 
 def main():
     """
     Main function
     """
-    send(IP(dst="1.2.3.4") / TCP(dport=502, options=[("MSS", 0)]))
+    p = Ether() / IP(dst="www.secdev.org") / TCP()
+    print(p.summary())
+    print(p.show())
 
 
 if __name__ == '__main__':
