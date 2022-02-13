@@ -24,7 +24,7 @@ def main():
 
     pkt = Ether(dst="00:00:01:00:00:01",
                 src="00:10:94:00:00:02") / MACsec() / data
-    sendp(pkt, iface="eth2", count=400)
+    sendp(pkt, iface="en0", count=400)
     print(pkt.summary())
     print(pkt.show())
 
