@@ -89,4 +89,18 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+# .hcl files
+*.hcl
+
 # End of https://www.gitignore.io/api/ansible,windows,osx
