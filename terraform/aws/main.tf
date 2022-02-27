@@ -41,13 +41,22 @@ variable "region" {
   default     = "eu-west-1"
 }
 
-data "aws_vpc" "my_vpc" {
+data "aws_vpc" "main" {
   id = var.vpcid
 }
 
-data "aws_subnets" "example" {
+data "aws_subnets" "main" {
   filter {
     name   = "vpc-id"
     values = var.subnets
+  }
+}
+
+resource "aws_subnet" "main" {
+  vpc_id     = data.aws_vpc.main.id
+  cidr_block = "100.64.0.0/16"
+
+  tags = {
+    Name = "RFC6598"
   }
 }
