@@ -28,9 +28,7 @@ class RunJob:
     auth: str = field(default="")
     encodeauth: str = field(default="")
     headers: dict = field(default_factory=dict)
-    secret: str = os.getenv("ADV_TOKEN", "")
-    organization: str = os.getenv("ADV_ORG", "inc")
-    poolid: str = os.getenv("ADV_POOL", "1")
+    secret: str = os.getenv("secret", "")
 
     def __post_init__(self):
         self.authencode()
@@ -42,34 +40,19 @@ class RunJob:
 
         self.headers = {
             'Authorization':
-            'Basic {0}'.format(self.encodeauth.decode('utf-8'))
+            f'Basic {self.encodeauth.decode("utf-8")}'
         }
 
     def get_running(self):
 
-        url = (
-            f"https://dev.azure.com/{self.organization}/"
-            f"_apis/distributedtask/pools/{self.poolid}/jobrequests")
+        url = ("https://www.google.com")
 
         try:
             response = requests.request("GET", url, headers=self.headers)
         except NameError as e:
             logging.error(e)
 
-        if response.ok:
-            try:
-                data = json.loads(response.text).get("value")
-                results = self.get_data(data)
-                return {'runningjobs': results}
-            except json.JSONDecodeError as e:
-                logging.error(e)
-
-        return {'runningjobs': 0}
-
-    @staticmethod
-    def get_data(data):
-        results = len([item for item in data if "result" not in item])
-        return results
+        return f'{{{response.text}}}'
 
 
 app = Flask(__name__)
