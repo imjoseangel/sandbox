@@ -28,10 +28,11 @@ class RunJob:
 
         try:
             response = requests.request("GET", url)
+
+            logging.info(response.status_code)
+            return f'{{{response.text}}}'
         except NameError as e:
             logging.error(e)
-
-        return f'{{{response.text}}}'
 
 
 app = Flask(__name__)
