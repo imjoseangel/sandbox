@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	kubeconfig := "~/.kube/config"
+	kubeconfig := "/Users/imjoseangel/.kube/config"
 
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
