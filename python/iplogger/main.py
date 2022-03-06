@@ -44,7 +44,7 @@ class RunJob:
         try:
             response = requests.request("GET", url)
             logging.warning(request.environ)
-            return f'{{{response.text}}}'
+            return f'{{{response.status_code}}}'
         except NameError as e:
             logging.error(e)
 
