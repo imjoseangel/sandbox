@@ -35,6 +35,8 @@ class RunJob:
         level=logging.INFO,
         datefmt="%d-%b-%y %H:%M:%S",
         stream=sys.stderr,
+        filename="iplogger.log",
+        filemode="w"
     )
 
     def get_running(self):
@@ -43,7 +45,7 @@ class RunJob:
 
         try:
             response = requests.request("GET", url)
-            logging.warning(request.environ)
+            logging.info(request.environ)
             return response.text
         except NameError as e:
             logging.error(e)
