@@ -36,17 +36,18 @@ class RunJob:
         filemode="w"
     )
 
-    def get_running(self):
+    @staticmethod
+    def get_running():
 
         url = ("https://imjoseangel.eu")
 
         try:
             response = requests.request("GET", url)
             logging.info(request.environ)
-            print(request.environ)
             return response.text
         except NameError as e:
             logging.error(e)
+            return None
 
 
 app = Flask(__name__)
