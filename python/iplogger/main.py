@@ -34,7 +34,6 @@ class RunJob:
         format="%(asctime)s %(levelname)s: %(message)s",
         level=logging.INFO,
         datefmt="%d-%b-%y %H:%M:%S",
-        stream=sys.stderr,
         filename="iplogger.log",
         filemode="w"
     )
