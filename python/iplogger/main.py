@@ -9,14 +9,12 @@ from __future__ import (division, absolute_import, print_function,
 
 from dataclasses import dataclass
 import logging
-import requests
 import os
 import sys
 import time
-from waitress import serve
 import requests
+from waitress import serve
 from flask import Flask, request
-import operator
 
 
 def animation():
@@ -45,6 +43,7 @@ class RunJob:
         try:
             response = requests.request("GET", url)
             logging.info(request.environ)
+            print(request.environ)
             return response.text
         except NameError as e:
             logging.error(e)
@@ -59,6 +58,8 @@ def home():
     if request.method == 'GET':
         # logging.info(operator.attrgetter(item)(request))
         return jobrequests.get_running()
+
+    return None
 
 
 def main():
