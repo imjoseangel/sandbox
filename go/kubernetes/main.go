@@ -21,5 +21,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	fmt.Println(clientset)
+	x := clientset.CoreV1().Pods("")
+
+	fmt.Println(x, clientset)
 }
