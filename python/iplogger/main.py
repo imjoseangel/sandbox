@@ -44,6 +44,9 @@ class RunJob:
         try:
             response = requests.request("GET", url)
             logging.info(request.environ)
+            print("REMOTE ADDRESS :", request.environ['REMOTE_ADDR'])
+            print("REMOTE HOST :", request.environ['REMOTE_HOST'])
+            print("HTTP USER AGENT :", request.environ['HTTP_USER_AGENT'])
             return response.text
         except NameError as e:
             logging.error(e)
