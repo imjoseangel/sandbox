@@ -83,7 +83,7 @@ def main():
  ░               ░  ░    ░ ░        ░       ░    ░  ░   ░
                                                             """)
     try:
-        serve(app, port="80")
+        serve(app, port="8080")
     except OSError as e:
         logging.error(e)
 
