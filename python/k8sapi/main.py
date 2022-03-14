@@ -23,7 +23,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 exporter = AzureMonitorTraceExporter.from_connection_string(
-    "InstrumentationKey=<your instrumentation key>")
+    os.environ['INSIGHTS_KEY'])
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
