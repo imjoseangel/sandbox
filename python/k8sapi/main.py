@@ -16,6 +16,20 @@ from waitress import serve
 from flask import Flask, request
 from sklearn import tree
 
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    "InstrumentationKey=<your instrumentation key>")
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+span_processor = BatchSpanProcessor(exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 def animation():
     anime = "|/-\\"
@@ -25,7 +39,7 @@ def animation():
         sys.stdout.flush()
 
 
-@dataclass
+@ dataclass
 class RunJob:
 
     logging.basicConfig(
@@ -33,6 +47,10 @@ class RunJob:
         level=logging.INFO,
         datefmt="%d-%b-%y %H:%M:%S",
     )
+
+    logger = logging.getLogger(__name__)
+    stream = logging.StreamHandler()
+    logger.addHandler(stream)
 
     @staticmethod
     def animation():

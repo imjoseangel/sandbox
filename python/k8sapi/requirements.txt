@@ -1,3 +1,4 @@
+azure-monitor-opentelemetry-exporter 
 dataclasses
 flask
 sklearn
