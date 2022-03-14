@@ -1,5 +1,5 @@
 # K8S Listener
-FROM python:3.10.2-alpine
+FROM python:3.10.2
 LABEL maintainer="imjoseangel"
 
 ADD main.py /usr/local/sbin/main

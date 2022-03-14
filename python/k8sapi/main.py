@@ -47,6 +47,14 @@ class RunJob:
 
         try:
 
+            syntax = ("Syntax:\n"
+                      "-------\n\n"
+                      "BODY POST:\n\n"
+                      '{\n'
+                      '"size": "<size>",\n'
+                      '"roughness": "<roughness>"\n'
+                      '}')
+
             # logging.info(request.environ)
             # features = [[155, "rough"], [180, "rough"], [135, "smooth"],
             # [110, "smooth"], etc]  # Input to classifier
@@ -63,15 +71,24 @@ class RunJob:
                 features, labels)  # Find patterns in data
 
             # Making predictions
-            result = classifier.predict([[120, 1]])
+            logging.info(request.json)
 
-            # Output is apple
-            logging.info(result[0])
-            return result[0]
+            result = classifier.predict(
+                [[request.json['size'], request.json['roughness']]])
 
-        except NameError as e:
+            # Output is apple for [120, 1]
+            logging.info({result[0]})
+            return f"{{'{result[0]}'}}"
+
+        except KeyError as e:
             logging.error(e)
-            return None
+            return (f"Error: Incorrect {e} \n\n"
+                    f"{syntax}")
+
+        except TypeError as e:
+            logging.error(e)
+            return (f"Error: Incorrect {e} \n\n"
+                    f"{syntax}")
 
 
 app = Flask(__name__)
