@@ -16,19 +16,14 @@ from waitress import serve
 from flask import Flask, request
 from sklearn import tree
 
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s: %(message)s",
+    level=logging.INFO,
+    datefmt="%d-%b-%y %H:%M:%S",
+)
 
-from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-
-exporter = AzureMonitorTraceExporter.from_connection_string(
-    os.environ['INSIGHTS_KEY'])
-
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-span_processor = BatchSpanProcessor(exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def animation():
@@ -42,17 +37,7 @@ def animation():
 @ dataclass
 class RunJob:
 
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)s: %(message)s",
-        level=logging.INFO,
-        datefmt="%d-%b-%y %H:%M:%S",
-    )
-
-    logger = logging.getLogger(__name__)
-    stream = logging.StreamHandler()
-    logger.addHandler(stream)
-
-    @staticmethod
+    @ staticmethod
     def animation():
         anime = "|/-\\"
         for i in range(10):
@@ -60,7 +45,7 @@ class RunJob:
             sys.stdout.write("\r" + anime[i % len(anime)])
             sys.stdout.flush()
 
-    @staticmethod
+    @ staticmethod
     def get_running():
 
         try:
@@ -113,7 +98,7 @@ app = Flask(__name__)
 jobrequests = RunJob()
 
 
-@app.route('/', methods=['POST', 'GET'])
+@ app.route('/', methods=['POST', 'GET'])
 def home():
     if request.method == 'POST':
         return jobrequests.get_running()
@@ -128,7 +113,8 @@ def main():
     """
     os.system('clear')
 
-    logging.info("""██╗  ██╗ █████╗ ███████╗████████╗███████╗███████╗████████╗
+    logging.info("""
+██╗  ██╗ █████╗ ███████╗████████╗███████╗███████╗████████╗
 ██║ ██╔╝██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝
 █████╔╝ ╚█████╔╝███████╗   ██║   █████╗  ███████╗   ██║
 ██╔═██╗ ██╔══██╗╚════██║   ██║   ██╔══╝  ╚════██║   ██║

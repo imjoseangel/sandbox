@@ -1,5 +1,5 @@
-azure-monitor-opentelemetry-exporter 
 dataclasses
 flask
+opencensus-ext-azure
 sklearn
 waitress
