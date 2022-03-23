@@ -17,6 +17,7 @@ from flask import Flask, request
 from sklearn import tree
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry import trace
@@ -48,7 +49,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
+logger.addHandler(AzureLogHandler(connection_string="InstrumentationKey=<your instrumentation key"))
 
 exporter = AzureMonitorTraceExporter.from_connection_string(
     "InstrumentationKey=<your instrumentation key>"
