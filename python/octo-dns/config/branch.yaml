@@ -1,0 +1,33 @@
+---
+'foo.sub':
+  ttl: 60
+  type: A
+  value: 2.2.3.3
+aaaa:
+  ttl: 600
+  type: AAAA
+  value: 2601:644:500:e210:62f8:1dff:feb8:947a
+cname:
+  ttl: 300
+  type: CNAME
+  value: githubtest.net.
+ptr:
+  ttl: 300
+  type: PTR
+  value: foo.bar.com.
+spf:
+  ttl: 600
+  type: TXT
+  value: v=spf1 ip4:192.168.0.1/16 -all
+txt:
+  ttl: 600
+  type: TXT
+  value: Twinkle twinkle little star
+www:
+  ttl: 300
+  type: A
+  value: 2.2.3.7
+www.sub:
+  ttl: 300
+  type: A
+  value: 2.2.3.6

@@ -1,0 +1,74 @@
+---
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+rc[0-9]+'
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get current tag
+        id: currenttag
+        run: echo ::set-output name=tag::"${GITHUB_REF#refs/*/}"
+
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.currenttag.outputs.tag }}
+          name: Release ${{ steps.currenttag.outputs.tag }}
+          body: |
+            # Octodns-verifier
+
+            [![Octodns-verifier](https://github.com/imjoseangel/octo-dns/actions/workflows/build.yml/badge.svg)](https://github.com/imjoseangel/octo-dns/actions/workflows/build.yml)
+
+            A [Python][2] script to check DNS registry and compare with a YAML File.
+
+            By [imjoseangel][3]
+
+            Use as:
+            ```bash
+            verify -c config/expected.yaml -d dns-exercise.dev -n ns-179.awsdns-22.com
+            ```
+
+            You can also build a Dockerfile:
+            ```bash
+            make build
+            ```
+
+            and the test with:
+            ```bash
+            docker run imjoseangel/verify  -c config/expected.yaml -d dns-exercise.dev -n ns-179.awsdns-22.com
+            ```
+
+            When running in local it creates a file `changes.yaml` with the format:
+
+            ```yaml
+            # Zone changes for dns-exercise.dev
+            txt:
+              add: Twinkle twinkle little star
+              delete: Bah bah black sheep
+            www:
+              add: 2.2.3.7
+              delete: 2.2.3.6
+            ```
+
+            ## License
+
+            Licensed under [the MIT License][1].
+
+            [1]: https://github.com/imjoseangel/octo-dns/blob/main/LICENSE
+            [2]: https://www.python.org/
+            [3]: https://imjoseangel.eu/
+          draft: false
+          prerelease: false

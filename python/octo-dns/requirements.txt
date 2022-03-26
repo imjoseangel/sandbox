@@ -1,0 +1,5 @@
+detect-secrets
+dnspython
+pylint
+radon
+yamllint
