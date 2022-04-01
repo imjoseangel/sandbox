@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 from datetime import datetime, timedelta
+
 from airflow.models import DAG
 from airflow.operators.bash import BashOperator
 
@@ -8,7 +9,7 @@ from airflow.operators.bash import BashOperator
 
 DAG_ID = os.path.basename(__file__).replace(".py", "")
 
-default_args = {
+DEFAULT_ARGS = {
     'owner': 'airflow',
     'depends_on_past': False,
     'retries': 10,
@@ -19,7 +20,8 @@ default_args = {
 
 dag = DAG(
     dag_id=DAG_ID,
-    default_args=default_args,
+    default_args=DEFAULT_ARGS,
+    description="Run a dynamic Bash command",
     start_date=datetime.now() + timedelta(days=-1),
     schedule_interval=timedelta(seconds=5)
 )
