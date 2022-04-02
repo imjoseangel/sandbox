@@ -11,7 +11,7 @@ my_dag_id = "my_first_dag"
 default_args = {
     'owner': 'proton',
     'depends_on_past': False,
-    'retries': 10,
+    'retries': 1,
     'concurrency': 1
 }
 
