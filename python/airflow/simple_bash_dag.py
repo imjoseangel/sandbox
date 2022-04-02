@@ -1,35 +1,32 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Import all important packages
+#!/usr/bin/python3
 from datetime import datetime, timedelta
-from airflow import models
-# imported BashOperator method
-from airflow.operators.bash_operator import BashOperator
-from airflow import DAG
-from airflow.utils.dates import days_ago
 
-# Get the yesterday timestamp
-yesterday = datetime.combine(
-    datetime.today() - timedelta(1),
-    datetime.min.time())
+from airflow.models import DAG
+from airflow.operators.bash import BashOperator
 
-# Create a dictionary of default arguments for each task to set the task"s constructor
-default_dag_args = {
-    'start_date': yesterday,
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
-    'project_id': models.Variable.get('gcp_project')
+# let's setup arguments for our dag
+
+my_dag_id = "my_first_dag"
+
+default_args = {
+    'owner': 'proton',
+    'depends_on_past': False,
+    'retries': 10,
+    'concurrency': 1
 }
 
-with DAG(
-        dag_id="any_bash_command_dag",
-        schedule_interval=None,
-        catchup=False,
-        start_date=days_ago(1)) as dag:
-    cli_command = BashOperator(
-        task_id="bash_command",
-        bash_command="{{ dag_run.conf['command'] }}"
-    )
+# dag declaration
+
+dag = DAG(
+    dag_id=my_dag_id,
+    default_args=default_args,
+    start_date=datetime(2019, 6, 17),
+    schedule_interval=timedelta(seconds=5)
+)
+
+
+# Here's a task based on Bash Operator!
+
+bash_task = BashOperator(task_id='bash_task_1',
+                         bash_command="echo 'Hello Airflow!'",
+                         dag=dag)
