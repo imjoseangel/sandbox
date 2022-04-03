@@ -6,6 +6,7 @@ Python Template
 
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
+from asyncio import threads
 
 from dataclasses import dataclass
 import logging
@@ -154,7 +155,7 @@ def main():
 ╚═╝  ╚═╝ ╚════╝ ╚══════╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝
                                                             """)
     try:
-        serve(app, port="8080")
+        serve(app, port="8080", threads=25)
     except OSError as e:
         logging.error(e)
 
