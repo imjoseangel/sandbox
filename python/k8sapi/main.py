@@ -21,7 +21,8 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry import trace
-from opentelemetry.sdk.resources import SERVICE_NAME, SERVICE_NAMESPACE, SERVICE_INSTANCE_ID, Resource
+from opentelemetry.sdk.resources import (SERVICE_NAME, SERVICE_NAMESPACE,
+                                         SERVICE_INSTANCE_ID, Resource)
 
 trace.set_tracer_provider(
     TracerProvider(
