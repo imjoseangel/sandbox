@@ -1,5 +1,1 @@
-Flask
-Flask-Cors
-flask-marshmallow
-Flask-OAuthlib
-Flask-SQLAlchemy
+flask
