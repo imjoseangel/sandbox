@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    url = "https://myapp.com/api/v1/users"
+    url = "https://www.google.com"
     return render_template('index.html', iframe=url)
 
 
