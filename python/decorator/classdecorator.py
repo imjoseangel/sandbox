@@ -29,4 +29,4 @@ class MyClass:
 
 my_obj = MyClass()
 my_obj.complex_calculation()
-# print(complex_calculation())
+print(complex_calculation())
