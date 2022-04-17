@@ -37,9 +37,21 @@ def getMatch(birthdays):
 
     # Compare each birthday to every other birthday.
     for a, birthdayA in enumerate(birthdays):
-        for b, birthdayB in enumerate(birthdays):
-            if a != b and birthdayA == birthdayB:
-                return birthdayA
+        for b, birthdayB in enumerate(birthdays[a + 1:]):
+            if birthdayA == birthdayB:
+                return birthdayA  # Return the matching birthday.
+
+
+# Display the intro:
+print('''Birthday Paradox, by Al Sweigart al@inventwithpython.com
+
+The birthday paradox shows us that in a group of N people, the odds
+that two of them have matching birthdays is surprisingly large.
+This program does a Monte Carlo simulation (that is, repeated random
+simulations) to explore this concept.
+
+(It's not actually a paradox, it's just a surprising result.)
+''')
 
 
 def main():
