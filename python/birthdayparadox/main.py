@@ -28,6 +28,20 @@ def getBirthdays(numberOfBirthdays):
     return birthdays
 
 
+def getMatch(birthdays):
+    """Returns the date object of a birthday that occurs more than once
+    in the list of birthdays."""
+
+    if len(birthdays) == len(set(birthdays)):
+        return None  # All birthdays are unique, so return None.
+
+    # Compare each birthday to every other birthday.
+    for a, birthdayA in enumerate(birthdays):
+        for b, birthdayB in enumerate(birthdays):
+            if a != b and birthdayA == birthdayB:
+                return birthdayA
+
+
 def main():
     """
     Main function
