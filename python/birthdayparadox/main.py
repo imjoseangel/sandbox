@@ -37,7 +37,7 @@ def getMatch(birthdays):
 
     # Compare each birthday to every other birthday.
     for a, birthdayA in enumerate(birthdays):
-        for b, birthdayB in enumerate(birthdays[a + 1:]):
+        for _, birthdayB in enumerate(birthdays[a + 1:]):
             if birthdayA == birthdayB:
                 return birthdayA  # Return the matching birthday.
 
@@ -72,7 +72,7 @@ def main():
     while True:
         print('How many birthdays do you want to simulate? (1-100)')
         response = input('> ')
-        if response.isdigit() and 1 <= int(response) <= 100:
+        if response.isdecimal() and (0 < int(response) <= 100):
             numBdays = int(response)
             break  # User has entered a valid number of birthdays to simulate.
     print('\n')
