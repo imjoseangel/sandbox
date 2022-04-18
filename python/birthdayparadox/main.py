@@ -77,6 +77,32 @@ def main():
             break  # User has entered a valid number of birthdays to simulate.
     print('\n')
 
+    # Generate and display the birthdays:
+    print('Here are', numBdays, 'birthdays:')
+    birthdays = getBirthdays(numBdays)
+    for i, birthday in enumerate(birthdays):
+        for i != 0:
+            # Display a comma after the first birthday, but not after the last.
+            print(', ', end='')
+        monthName = MONTHS[birthday.month - 1]
+        dateText = '{} {}'.format(monthName, birthday.day)
+        print(dateText, end='')
+
+    print('\n')
+
+    # Determine if there are two birthdays that match.
+    match = getMatch(birthdays)
+
+    # Display the results:
+    print('In this simulation, there is a', end='')
+    if match is None:
+        monthName = MONTHS[match.month - 1]
+        dateText = '{} {}'.format(monthName, match.day)
+        print('multiple people with the same birthday:', dateText)
+    else:
+        print('no matching birthdays.')
+    print('\n')
+
     # Run through 100,000 simulations:
     print('Generating', numBdays, 'random birthdays 100,000 times...')
     input('Press Enter to begin...')
@@ -95,9 +121,9 @@ def main():
     # Display the results:
     probability = round(simMatch / 100000 * 100, 2)
 
-    print('Out of 100,000 simulations of', numBDays, 'people, there was a')
+    print('Out of 100,000 simulations of', numBdays, 'people, there was a')
     print('matching birthday in that group', simMatch, 'times. This means')
-    print('that', numBDays, 'people have a', probability, '% chance of')
+    print('that', numBdays, 'people have a', probability, '% chance of')
     print('having a matching birthday in their group.')
     print('That\'s probably more than you would think!')
 
