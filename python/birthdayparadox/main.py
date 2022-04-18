@@ -81,11 +81,11 @@ def main():
     print('Here are', numBdays, 'birthdays:')
     birthdays = getBirthdays(numBdays)
     for i, birthday in enumerate(birthdays):
-        for i != 0:
+        if i != 0:
             # Display a comma after the first birthday, but not after the last.
             print(', ', end='')
         monthName = MONTHS[birthday.month - 1]
-        dateText = '{} {}'.format(monthName, birthday.day)
+        dateText = f'{monthName} {birthday.day}'
         print(dateText, end='')
 
     print('\n')
@@ -94,13 +94,13 @@ def main():
     match = getMatch(birthdays)
 
     # Display the results:
-    print('In this simulation, there is a', end='')
+    print('In this simulation, ', end='')
     if match is None:
         monthName = MONTHS[match.month - 1]
-        dateText = '{} {}'.format(monthName, match.day)
+        dateText = f'{monthName} {match.day}'
         print('multiple people with the same birthday:', dateText)
     else:
-        print('no matching birthdays.')
+        print('there are no matching birthdays.')
     print('\n')
 
     # Run through 100,000 simulations:
