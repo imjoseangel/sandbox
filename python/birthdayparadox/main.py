@@ -32,8 +32,6 @@ def getMatch(birthdays):
     """Returns the date object of a birthday that occurs more than once
     in the list of birthdays."""
 
-    print(f"XXXXXXXX {birthdays} XXXXXXXX")
-
     if len(birthdays) == len(set(birthdays)):
         return None  # All birthdays are unique, so return None.
 
