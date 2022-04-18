@@ -32,6 +32,8 @@ def getMatch(birthdays):
     """Returns the date object of a birthday that occurs more than once
     in the list of birthdays."""
 
+    print(f"XXXXXXXX {birthdays} XXXXXXXX")
+
     if len(birthdays) == len(set(birthdays)):
         return None  # All birthdays are unique, so return None.
 
@@ -95,7 +97,7 @@ def main():
 
     # Display the results:
     print('In this simulation, ', end='')
-    if match is None:
+    if match is not None:
         monthName = MONTHS[match.month - 1]
         dateText = f'{monthName} {match.day}'
         print('multiple people with the same birthday:', dateText)
