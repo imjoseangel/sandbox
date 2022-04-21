@@ -122,7 +122,8 @@ def mountains(game_variables):
             # Is there a blizzard in the mountains? If, there is a loop until the weather clears.
             if random.randint(1, 100) < 81:
                 print(
-                    "You have been caught in a Blizzard in the Mountain Pass - Time and Supplies lost.")
+                    "You have been caught in a Blizzard in the Mountain Pass - \
+                        Time and Supplies lost.")
                 blizzard(game_variables)
 
             else:
@@ -135,11 +136,12 @@ def mountains(game_variables):
             print("\nYou find yourself in some rugged mountains.")
             game_variables["mileage"] = game_variables["mileage"] - 60
 
-            # let's check to see if you have been caught in a blizzard or not. For the rugged mountains, the chance is
-            # only 33%
+            # let's check to see if you have been caught in a blizzard or not.
+            # For the rugged mountains, the chance is only 33%
             if random.randint(1, 100) < 34:
                 print(
-                    "You have been caught in a Blizzard in the Mountain Pass - Time and Supplies lost.")
+                    "You have been caught in a Blizzard in the Mountain Pass - \
+                        Time and Supplies lost.")
                 blizzard(game_variables)
             elif random.randint(1, 100) > 10:
                 print("\nWagon Damaged! - Lose time and supplies.\nThe going gets slow.")
@@ -156,7 +158,8 @@ def mountains(game_variables):
 
 
 def blizzard(game_variables):
-    # Here is a loop that will run until the weather clears. There is a 20% chance that this might happen.
+    # Here is a loop that will run until the weather clears.
+    # There is a 20% chance that this might happen.
     base_chance_of_blizzard_over = 20
     while True:
         print("\nThe Snow and wind continues to rage.")
@@ -181,7 +184,8 @@ def blizzard(game_variables):
 
         if game_variables["mileage"] < 1000:
             print(
-                "\nThrough the wind and snow, you finally make it out of the mountains. But the wrong side.")
+                "\nThrough the wind and snow, you finally make it out of the mountains. \
+                    But the wrong side.")
             break
 
         # You ran out of food, sorry.
@@ -233,16 +237,17 @@ def buying_routine(object_name, min_amount, max_amount, wallet):
     while True:
         try:
             my_purchase = int(builtins.input(
-                "Wallet: " + str(wallet) + ". How much do you want to spend on your " + object_name + ": "))
+                "Wallet: " + str(wallet) + ". How much do you want to spend on your \
+                    " + object_name + ": "))
         except ValueError:
             print("Sorry, I didn't understand that.")
         if my_purchase < min_amount:
             print("Sorry, that is not enough.")
             continue
-        elif my_purchase > max_amount:
+        if my_purchase > max_amount:
             print("Sorry, that is too much.")
             continue
-        elif my_purchase > wallet:
+        if my_purchase > wallet:
             print("You don't have that much - keep your spending down.")
         else:
             break
@@ -276,7 +281,7 @@ def initial_purchases(game_variables):
         initial_purchases(game_variables)
 
     ammo = ammo * 50
-    print("After all your purchases. You now have %d dollars left." % total)
+    print(f"After all your purchases. You now have {total} dollars left.")
 
     game_variables["cash"] = total
     game_variables["animals"] = oxen
@@ -355,8 +360,7 @@ def final_turn(game_variables):
     game_variables["game_turn"] = game_variables["game_turn"] * \
         14 + time_calculation
 
-    if time_calculation < 0:
-        time_calculation = 0
+    time_calculation = max(time_calculation, 0)
 
     if time_calculation > 7:
         time_calculation = 6
@@ -461,7 +465,7 @@ def game_loop(game_variables):
             if input_x < 1 or input_x > 3:
                 input_x = 3
                 break
-            elif input_x == 2 and game_variables["ammunition"] < 39:
+            if input_x == 2 and game_variables["ammunition"] < 39:
                 print("TOUGH -- You need more bullets to go hunting.")
             else:
                 break
@@ -568,7 +572,8 @@ def do_events(game_variables):
             game_variables["mileage"] = game_variables["mileage"] - 25
         elif new_event == 3:
             print(
-                "Bad Luck - Your daughter broke her arm\nYou had to stop and use supplies to make a sling.")
+                "Bad Luck - Your daughter broke her arm\n\
+                    You had to stop and use supplies to make a sling.")
             game_variables["supplies"] = game_variables["supplies"] - 5
             game_variables["mileage"] = game_variables["mileage"] - 5
         elif new_event == 4:
@@ -685,8 +690,7 @@ def riders(game_variables):
                 print("Sorry, I didn't understand that.")
             if my_tactic > 0 or my_tactic < 4:
                 break
-            else:
-                print("Sorry, I didn't understand that.")
+            print("Sorry, I didn't understand that.")
         if riders_hostile:
             if my_tactic == 1:
                 # Run
@@ -762,8 +766,10 @@ def start_game():
     if builtins.input("Do you need instructions (yes/no) ") == 'yes':
         instructions()
 
-    game_week_dates = ["March 29", "April 12", "April 26", "May 10", "May 24", "June 7", "June 21", "July 5", "July 19",
-                       "August 2", "August 16", "August 31", "September 13", "September 27", "October 11", "October 25",
+    game_week_dates = ["March 29", "April 12", "April 26", "May 10", "May 24",
+                       "June 7", "June 21", "July 5", "July 19",
+                       "August 2", "August 16", "August 31", "September 13",
+                       "September 27", "October 11", "October 25",
                        "November 8", "November 22", "December 6", "December 20"]
 
     print("\nHow good a shot are you with your rifle?")
@@ -791,13 +797,15 @@ def start_game():
                 do_events(game_variables)
                 riders(game_variables)
 
-                # Check to see if you went far enough. There are no mountains for the first 1000 miles of the journey.
+                # Check to see if you went far enough. There are no mountains
+                # for the first 1000 miles of the journey.
                 if game_variables["mileage"] > 950:
                     game_variables = mountains(game_variables)
 
             else:
                 print(
-                    "\nYou have been on the trail too long\nYour family dies in the first blizzard of winter.")
+                    "\nYou have been on the trail too long\n\
+                        Your family dies in the first blizzard of winter.")
                 dying("")
 
         except TypeError:
