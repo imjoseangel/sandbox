@@ -674,82 +674,82 @@ def riders(game_variables):
     if random.randint(1, 10) > ((game_variables["mileage"] / 100 - 4) ** 2 + 72) / (
             (game_variables["mileage"] / 100 - 4) ** 2 + 12) - 1:
         return
-    else:
-        if random.randint(1, 10) < 3:
-            print("Riders ahead. They don't look hostile.")
-            riders_hostile = False
-        else:
-            print("Riders ahead. They look hostile.")
-            riders_hostile = True
 
-        while True:
-            try:
-                my_tactic = int(builtins.input(
-                    "\nTactics\n(1) Run (2) Attack (3) Continue (4) Circle Wagons: "))
-            except ValueError:
-                print("Sorry, I didn't understand that.")
-            if my_tactic > 0 or my_tactic < 4:
-                break
+    if random.randint(1, 10) < 3:
+        print("Riders ahead. They don't look hostile.")
+        riders_hostile = False
+    else:
+        print("Riders ahead. They look hostile.")
+        riders_hostile = True
+
+    while True:
+        try:
+            my_tactic = int(builtins.input(
+                "\nTactics\n(1) Run (2) Attack (3) Continue (4) Circle Wagons: "))
+        except ValueError:
             print("Sorry, I didn't understand that.")
-        if riders_hostile:
-            if my_tactic == 1:
-                # Run
-                game_variables["mileage"] = game_variables["mileage"] + 20
+        if my_tactic > 0 or my_tactic < 4:
+            break
+        print("Sorry, I didn't understand that.")
+    if riders_hostile:
+        if my_tactic == 1:
+            # Run
+            game_variables["mileage"] = game_variables["mileage"] + 20
+            game_variables["ammunition"] = game_variables["ammunition"] - 150
+            game_variables["animals"] = game_variables["animals"] - 40
+        elif my_tactic == 2:
+            # attack
+            my_shooting = shooting()
+            game_variables["ammunition"] = game_variables["ammunition"] - \
+                (my_shooting * 40) - 80
+            if my_shooting == 1:
+                print("Nice Shooting Tex - You drove them off.")
+            elif my_shooting > 4:
+                print(
+                    "Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
+                game_variables["injury"] = True
+            else:
+                print("Kinda slow with your Colt .45")
+        elif my_tactic == 3:
+            # continue
+            if random.randint(1, 10) > 7:
+                print("They did not attack.")
+                riders_hostile = False
+            else:
                 game_variables["ammunition"] = game_variables["ammunition"] - 150
-                game_variables["animals"] = game_variables["animals"] - 40
-            elif my_tactic == 2:
-                # attack
-                my_shooting = shooting()
-                game_variables["ammunition"] = game_variables["ammunition"] - \
-                    (my_shooting * 40) - 80
-                if my_shooting == 1:
-                    print("Nice Shooting Tex - You drove them off.")
-                elif my_shooting > 4:
-                    print(
-                        "Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
-                    game_variables["injury"] = True
-                else:
-                    print("Kinda slow with your Colt .45")
-            elif my_tactic == 3:
-                # continue
-                if random.randint(1, 10) > 7:
-                    print("They did not attack.")
-                    riders_hostile = False
-                else:
-                    game_variables["ammunition"] = game_variables["ammunition"] - 150
-                    game_variables["mileage"] = game_variables["mileage"] - 15
-            else:
-                # circle the wagons
-                my_shooting = shooting()
-                game_variables["ammunition"] = game_variables["ammunition"] - \
-                    (my_shooting * 30) - 80
-                game_variables["mileage"] = game_variables["mileage"] - 25
-                if my_shooting == 1:
-                    print("Nice Shooting Tex - You drove them off.")
-                elif my_shooting > 4:
-                    print(
-                        "Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
-                    game_variables["injury"] = True
-                else:
-                    print("Kinda slow with your Colt .45")
+                game_variables["mileage"] = game_variables["mileage"] - 15
         else:
-            # riders not hostile.
-            if my_tactic == 1:
-                # run
-                game_variables["mileage"] = game_variables["mileage"] + 15
-                game_variables["animals"] = game_variables["animals"] - 10
-            elif my_tactic == 2:
-                # attack
-                game_variables["mileage"] = game_variables["mileage"] - 5
-                game_variables["ammunition"] = game_variables["ammunition"] - 100
-            elif my_tactic == 3:
-                # continue
-                game_variables["mileage"] = game_variables["mileage"] - 5
-                print("They did not attack.")
+            # circle the wagons
+            my_shooting = shooting()
+            game_variables["ammunition"] = game_variables["ammunition"] - \
+                (my_shooting * 30) - 80
+            game_variables["mileage"] = game_variables["mileage"] - 25
+            if my_shooting == 1:
+                print("Nice Shooting Tex - You drove them off.")
+            elif my_shooting > 4:
+                print(
+                    "Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
+                game_variables["injury"] = True
             else:
-                # circle the wagons.
-                game_variables["mileage"] = game_variables["mileage"] - 5
-                print("They did not attack.")
+                print("Kinda slow with your Colt .45")
+    else:
+        # riders not hostile.
+        if my_tactic == 1:
+            # run
+            game_variables["mileage"] = game_variables["mileage"] + 15
+            game_variables["animals"] = game_variables["animals"] - 10
+        elif my_tactic == 2:
+            # attack
+            game_variables["mileage"] = game_variables["mileage"] - 5
+            game_variables["ammunition"] = game_variables["ammunition"] - 100
+        elif my_tactic == 3:
+            # continue
+            game_variables["mileage"] = game_variables["mileage"] - 5
+            print("They did not attack.")
+        else:
+            # circle the wagons.
+            game_variables["mileage"] = game_variables["mileage"] - 5
+            print("They did not attack.")
 
     if riders_hostile:
         print("The Riders were hostile - Check for loses.")
