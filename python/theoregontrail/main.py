@@ -341,11 +341,11 @@ def user_stats(game_variables):
     if game_variables["cash"] < 0:
         game_variables["cash"] = 0
 
-    print("Food:            %d" % game_variables["food"])
-    print("Bullets:         %d" % game_variables["ammunition"])
-    print("Clothing:        %d" % game_variables["clothing"])
-    print("Misc. Supplies:  %d" % game_variables["supplies"])
-    print("Cash:            %d" % game_variables["cash"])
+    print(f'Food:            {game_variables["food"]}')
+    print(f'Bullets:         {game_variables["ammunition"]}')
+    print(f'Clothing:        {game_variables["clothing"]}')
+    print(f'Misc. Supplies:  {game_variables["supplies"]}')
+    print(f'Cash:            {game_variables["cash"]}')
     return
 
 
@@ -436,7 +436,7 @@ def game_loop(game_variables):
     if game_variables["South_Pass_Mileage_Flag"]:
         print("Total Mileage:   950")
     else:
-        print("Total Mileage:   %d" % game_variables["mileage"])
+        print(f'Total Mileage:   {game_variables["mileage"]}')
     user_stats(game_variables)
 
     if not game_variables["fort_flag"]:
@@ -449,7 +449,7 @@ def game_loop(game_variables):
             if input_x < 1 or input_x > 2:
                 input_x = 3
                 break
-            elif input_x == 2 and game_variables["ammunition"] < 39:
+            if input_x == 2 and game_variables["ammunition"] < 39:
                 print("TOUGH -- You need more bullets to go hunting.")
             else:
                 game_variables["fort_flag"] = True
