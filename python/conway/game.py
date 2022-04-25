@@ -1,5 +1,5 @@
-import pygame
 import sys
+import pygame
 
 GRAY = (177, 177, 177)
 WHITE = (255, 255, 255)
