@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Single Page Apps for GitHub Pages</title>
+    <meta name="description" content="Lightweight solution for deploying single page apps with GitHub Pages.">
+
+    <style>
+        html {
+            background-color: rgb(255, 255, 255);
+        }
+    </style>
+
+    <!-- favicon -->
+    <meta name="theme-color" content="#000000">
+
+</head>
+
+<body>
+    <div id="root"></div>
+    <!-- single page app in bundle.js -->
+    <script type="text/javascript">
+        // Single Page Apps for GitHub Pages
+        // MIT License
+        // https://github.com/rafgraph/spa-github-pages
+        // This script checks to see if a redirect is present in the query string,
+        // converts it back into the correct url and adds it to the
+        // browser's history using window.history.replaceState(...),
+        // which won't cause the browser to attempt to load the new url.
+        // When the single page app is loaded further down in this file,
+        // the correct url will be waiting in the browser's history for
+        // the single page app to route accordingly.
+        var headers = new Headers();
+        var options = {
+            method: "GET",
+            headers: headers
+        };
+        var graphEndpoint = "http://localhost/inventory";
+
+        fetch(graphEndpoint, options)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => console.error("FETCH ERROR:", error));
+    </script>
+</body>
+
+</html>
