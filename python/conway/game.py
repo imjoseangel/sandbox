@@ -41,16 +41,16 @@ class GameOfLife:
         return count
 
     def check(self):
-        for i in range(len(self.board)):
-            for j in range(len(self.board[0])):
+        for i, _ in enumerate(self.board):
+            for j, _ in enumerate(self.board[0]):
                 neighbors = self.count_neighbors(i, j)
                 if self.board[i][j] == 0 and neighbors == 3:
                     self.board[i][j] = 2
                 if self.board[i][j] == 1 and (neighbors < 2 or neighbors > 3):
                     self.board[i][j] = -1
         # Update the board to the final satate
-        for i in range(len(self.board)):  # Row
-            for j in range(len(self.board[0])):  # Column
+        for i, _ in enumerate(self.board):  # Row
+            for j, _ in enumerate(self.board[0]):  # Column
                 if self.board[i][j] == 2:
                     self.board[i][j] = 1
                 if self.board[i][j] == -1:
@@ -82,8 +82,8 @@ class GameOfLife:
         self.draw_grid()
 
     def draw_all_cells(self):
-        for i in range(len(self.board)):
-            for j in range(len(self.board[0])):
+        for i, _ in enumerate(self.board):
+            for j, _ in enumerate(self.board[0]):
                 if self.board[i][j] == 1:
                     rectangle = pygame.Rect(
                         i * self.block_size, j * self.block_size, self.block_size, self.block_size)
