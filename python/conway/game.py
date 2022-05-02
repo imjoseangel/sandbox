@@ -27,11 +27,11 @@ class GameOfLife:
     def count_neighbors(self, i, j):
         count = 0
         for row in [-1, 0, 1]:
-            # Don't check the upper and lower neighbors if the cell is in in upper / lower boundaries
+            # Don't check the upper and lower neighbors if the cell is in in upper/lower boundaries
             if i + row == -1 or i + row == len(self.board):
                 continue
             for col in [-1, 0, 1]:
-                # Don't check the left and right neighbors if the cell is in left / right boundaries
+                # Don't check the left and right neighbors if the cell is in left/right boundaries
                 if j + col == -1 or j + col == len(self.board[0]):
                     continue
                 if row == 0 and col == 0:  # Don't check the index itself
@@ -93,7 +93,7 @@ class GameOfLife:
         loop = True
         font = pygame.font.SysFont('bahnschrift', 40)
         label = font.render(
-            "Press SPACE to start after drawing the pattern", 1, (0, 0, 0))
+            "Press SPACE to start after drawing the pattern", True, (0, 0, 0))
         text_rect = label.get_rect(
             center=(self.WINDOW_WIDTH / 2, self.WINDOW_HEIGHT / 2))
         self.SCREEN.blit(label, text_rect)
