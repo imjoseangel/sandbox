@@ -1,3 +1,3 @@
-variable "source" {
+variable "sourcetype" {
   default = "modules/random"
 }

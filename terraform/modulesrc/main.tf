@@ -1,3 +1,3 @@
 module "mymodule" {
-  source = var.source
+  source = var.sourcetype
 }
