@@ -1,3 +1,3 @@
 module "mymodule" {
-  source = var.sourcetype
+  source = "terraform/random"
 }
