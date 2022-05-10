@@ -18,4 +18,9 @@ help:  ##   Display this help
 .PHONY: plan
 plan: ##   Plan Terraform
 		$(info Make: Plan Terraform)
-		terraform plan -detailed-exitcode
+		#!/usr/bin/env bash -l
+		if terraform plan -detailed-exitcode ; then \
+			exit 0; \
+		else \
+			echo true > TFPLAN; \
+		fi
