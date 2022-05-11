@@ -6,6 +6,11 @@ class Point:
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y})"
 
+    def __sub__(self, other: Point):
+        x = self.x - other.x
+        y = self.y - other.y
+        return Point(x, y)
+
 
 p = Point(10, 5)
 print(p)
