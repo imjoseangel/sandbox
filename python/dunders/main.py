@@ -35,3 +35,5 @@ print(points_dict)
 p = Point(0, 0)
 q = Point(1, 2)
 print(q - p)
+
+print(len(Point(3, 4)))
