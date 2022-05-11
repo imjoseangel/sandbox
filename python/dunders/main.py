@@ -3,6 +3,9 @@ class Point:
         self.x = x
         self.y = y
 
+    def __repr__(self):
+        return f"Point(x={self.x}, y={self.y})"
+
 
 p = Point(10, 5)
 print(p)
