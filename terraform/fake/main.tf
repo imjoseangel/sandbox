@@ -21,10 +21,6 @@ resource "fakewebservices_database" "prod_db" {
   size = 256
 }
 
-output "servers" {
-  value = fakewebservices_server.servers
-}
-
 resource "null_resource" "servers" {
   # Changes to any instance of the cluster requires re-provisioning
   triggers = {
@@ -35,5 +31,12 @@ resource "null_resource" "servers" {
   # So we just choose the first in this case
   connection {
     host = element(fakewebservices_server.servers.*.id, 0)
+  }
+
+  provisioner "remote-exec" {
+    # Bootstrap script called with private_ip of each node in the cluster
+    inline = [
+      "bootstrap-cluster.sh ${join(" ", fakewebservices_server.servers.*.id)}",
+    ]
   }
 }
