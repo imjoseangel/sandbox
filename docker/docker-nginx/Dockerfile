@@ -1,3 +1,4 @@
+ARG build_for=linux/amd64
 # build environment
 FROM node:lts-alpine as build
 
