@@ -23,7 +23,13 @@ RUN npm run build
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+RUN apk add --no-cache openssh
+COPY sshd_config /etc/ssh/sshd_config
+RUN echo -n 'root:Docker!' | chpasswd
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY init.sh /usr/local/bin/init.sh
+RUN chmod u+x /usr/local/bin/init.sh
+
+EXPOSE 80 2222
+ENTRYPOINT ["init.sh"]
