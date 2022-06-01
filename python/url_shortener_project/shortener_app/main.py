@@ -30,11 +30,17 @@ def raise_not_found(request):
     raise HTTPException(status_code=404, detail=message)
 
 
+@app.get("/")
+def read_root():
+    return "Welcome to the URL shortener API :)"
+
+
 @app.get("/{url_key}")
 def forward_to_target_url(
-        url_key: str,
-        request: Request,
-        db: Session = Depends(get_db)):
+    url_key: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
     db_url = (
         db.query(models.URL)
         .filter(models.URL.key == url_key, models.URL.is_active)
