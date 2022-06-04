@@ -17,3 +17,4 @@ namespace: argocd
 
 # az acr import --name acrname --source ghcr.io/dexidp/dex:v2.30.2 --image dexidp/dex:v2.30.2
 # az acr import --name acrname --source docker.io/library/redis:7.0.0-alpine --image redis:7.0.0
+# kubectl get secrets -n argocd argocd-initial-admin-secret -o json | jq -r .data.password | base64 -d
