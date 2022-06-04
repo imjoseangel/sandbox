@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml
+
+namespace: argocd
+
+# images:
+# - name: ghcr.io/dexidp/dex
+#   newName: myacr.azurecr.io/dexidp/dex
+#   newTag: v2.30.2
+# - name: redis
+#   newName: myacr.azurecr.io/redis
+#   newTag: 7.0.0-alpine
+
+# az acr import --name acrname --source ghcr.io/dexidp/dex:v2.30.2 --image dexidp/dex:v2.30.2
+# az acr import --name acrname --source docker.io/library/redis:7.0.0-alpine --image redis:7.0.0
