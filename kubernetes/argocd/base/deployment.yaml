@@ -18,3 +18,20 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: self-config
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: kubernetes/selfconfig
+    repoURL: git@github.com:imjoseangel/sandbox.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      selfHeal: true
