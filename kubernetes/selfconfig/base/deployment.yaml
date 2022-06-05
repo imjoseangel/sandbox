@@ -2,22 +2,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keda
+  name: self-config
   namespace: argocd
 spec:
   destination:
-    namespace: keda
     server: https://kubernetes.default.svc
   project: default
   source:
-    chart: keda
-    helm:
-      valueFiles:
-      - values.yaml
-    repoURL: https://kedacore.github.io/charts
-    targetRevision: 2.7.2
+    path: kubernetes/selfconfig
+    repoURL: git@github.com:imjoseangel/sandbox.git
+    targetRevision: HEAD
   syncPolicy:
     automated:
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
