@@ -76,6 +76,8 @@ spec:
             enabled: true
             minReplicas: 3
             maxReplicas: 8
+          service:
+            type: ClusterIP
     chart: ingress-nginx
   destination:
     server: 'https://kubernetes.default.svc'
