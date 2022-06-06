@@ -74,8 +74,8 @@ spec:
         controller:
           autoscaling:
             enabled: true
-            minReplicas: 3
-            maxReplicas: 8
+            minReplicas: 1
+            maxReplicas: 3
           service:
             type: ClusterIP
     chart: ingress-nginx
