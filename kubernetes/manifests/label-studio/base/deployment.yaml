@@ -58,6 +58,8 @@ spec:
             - name: POSTGRE_PASSWORD
             - name: LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK
               value: "true"
+            - name: LOCAL_FILES_SERVING_ENABLED
+              value: "true"
             - name: LABEL_STUDIO_USERNAME
               valueFrom:
                 configMapKeyRef:
