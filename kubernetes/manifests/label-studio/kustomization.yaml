@@ -1,0 +1,9 @@
+---
+resources:
+  - base/configmap.yaml
+  - base/deployment.yaml
+  - base/namespace.yaml
+  - base/pvc.yaml
+  - base/secret.yaml
+  - base/service.yaml
+  - base/serviceaccount.yaml

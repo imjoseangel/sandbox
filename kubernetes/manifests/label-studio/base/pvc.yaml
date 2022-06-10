@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/instance: labelstudio
+    app.kubernetes.io/name: labelstudio
+    app.kubernetes.io/version: 1.4.1
+  name: labelstudio
+  namespace: labelstudio
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/instance: labelstudiodb
+    app.kubernetes.io/name: labelstudiodb
+    app.kubernetes.io/version: 1.4.1
+  name: labelstudiodb
+  namespace: labelstudio
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard

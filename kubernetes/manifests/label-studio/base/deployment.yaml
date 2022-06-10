@@ -61,10 +61,6 @@ spec:
                   name: labelstudio
                   key: PGSSLMODE
             - name: POSTGRE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: labelstudio
-                  key: POSTGRE_PASSWORD
             - name: LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK
               value: "true"
             - name: LABEL_STUDIO_USERNAME
@@ -115,5 +111,64 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: labelstudio
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: labelstudiodb
+    app.kubernetes.io/name: labelstudiodb
+    app.kubernetes.io/version: 1.4.1
+  name: labelstudiodb
+  namespace: labelstudio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: labelstudiodb
+      app.kubernetes.io/name: labelstudiodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: labelstudiodb
+        app.kubernetes.io/name: labelstudiodb
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '2'
+      serviceAccountName: labelstudio
+      containers:
+        - env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
+          image: postgres:11.16
+          imagePullPolicy: IfNotPresent
+          name: labelstudiodb
+          ports:
+            - containerPort: 5432
+              name: pgsql
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data
+      hostname: labelstudiodb
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: labelstudiodb
       nodeSelector:
         kubernetes.io/os: linux
