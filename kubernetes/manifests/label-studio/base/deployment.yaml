@@ -55,11 +55,6 @@ spec:
                 configMapKeyRef:
                   name: labelstudio
                   key: POSTGRE_PORT
-            - name: PGSSLMODE
-              valueFrom:
-                configMapKeyRef:
-                  name: labelstudio
-                  key: PGSSLMODE
             - name: POSTGRE_PASSWORD
             - name: LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK
               value: "true"
