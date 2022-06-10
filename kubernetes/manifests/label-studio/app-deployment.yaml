@@ -85,4 +85,4 @@ spec:
   selector:
     app: app
   finalizers:
-    - service.kubernetes.io/load-balancer-cleanu
+    - service.kubernetes.io/load-balancer-cleanup

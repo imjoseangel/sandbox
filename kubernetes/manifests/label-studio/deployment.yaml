@@ -1,0 +1,119 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: labelstudio
+    app.kubernetes.io/name: labelstudio
+    app.kubernetes.io/version: 1.4.1
+  name: labelstudio
+  namespace: labelstudio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: labelstudio
+      app.kubernetes.io/name: labelstudio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: labelstudio
+        app.kubernetes.io/name: labelstudio
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '2'
+      serviceAccountName: labelstudio
+      containers:
+        - env:
+            - name: DJANGO_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: DJANGO_DB
+            - name: POSTGRE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: POSTGRE_HOST
+            - name: POSTGRE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: POSTGRE_NAME
+            - name: POSTGRE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: POSTGRE_USER
+            - name: POSTGRE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: POSTGRE_PORT
+            - name: PGSSLMODE
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: PGSSLMODE
+            - name: POSTGRE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: labelstudio
+                  key: POSTGRE_PASSWORD
+            - name: LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK
+              value: "true"
+            - name: LABEL_STUDIO_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: labelstudio
+                  key: LABEL_STUDIO_USERNAME
+            - name: LABEL_STUDIO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: labelstudio
+                  key: LABEL_STUDIO_PASSWORD
+          image: heartexlabs/label-studio:v1.4.1
+          imagePullPolicy: IfNotPresent
+          name: labelstudio
+          ports:
+            - containerPort: 8080
+              name: labelstudio
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 10
+            failureThreshold: 10
+          resources:
+            requests:
+              cpu: 125m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - mountPath: /label-studio/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: labelstudio
+      nodeSelector:
+        kubernetes.io/os: linux
