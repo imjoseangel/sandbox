@@ -50,7 +50,7 @@ def login():
 
     # get request params
     query_params = {'client_id': os.environ['CLIENT_ID'],
-                    'redirect_uri': "http://localhost:5000/authorization-code/callback",
+                    'redirect_uri': "http://localhost:8080/authorization-code/callback",
                     'scope': "openid email profile",
                     'state': session['app_state'],
                     'code_challenge': code_challenge,
@@ -129,4 +129,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=5000, debug=True)
+    app.run(host="localhost", port=8080, debug=True)
