@@ -1,0 +1,7 @@
+requests
+Flask
+flask-cors
+python-dotenv
+pyOpenSSL
+Flask-Login
+Werkzeug
