@@ -1,0 +1,9 @@
+{% if current_user.is_authenticated %}
+<form method="post" action="{{ url_for(" logout") }}">
+    <button id="logout-button" type="submit">Logout</button>
+</form>
+{% else %}
+<form method="get" action="login">
+    <button id="login-button" type="submit">Login</button>
+</form>
+{% endif %}
