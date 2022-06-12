@@ -1,0 +1,101 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: ckan
+    app.kubernetes.io/name: ckan
+  name: ckan
+  namespace: ckan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ckan
+      app.kubernetes.io/name: ckan
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: ckan
+        app.kubernetes.io/name: ckan
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '2'
+      serviceAccountName: ckan
+      containers:
+        - env:
+            - name: POSTGRE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ckan
+                  key: POSTGRE_HOST
+            - name: POSTGRE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: ckan
+                  key: POSTGRE_NAME
+            - name: POSTGRE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ckan
+                  key: POSTGRE_USER
+            - name: POSTGRE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ckan
+                  key: POSTGRE_PORT
+            - name: PGSSLMODE
+              valueFrom:
+                configMapKeyRef:
+                  name: ckan
+                  key: PGSSLMODE
+            - name: POSTGRE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ckan
+                  key: POSTGRE_PASSWORD
+          image: ckan/ckan:latest
+          imagePullPolicy: IfNotPresent
+          name: ckan
+          ports:
+            - containerPort: 5000
+              name: ckan
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 10
+            failureThreshold: 10
+          resources:
+            requests:
+              cpu: 125m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - mountPath: /ckan/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ckan
+      nodeSelector:
+        kubernetes.io/os: linux
