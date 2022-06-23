@@ -10,15 +10,15 @@
     <py-config>
         - autoclose_loader: true
         - runtimes:
-        -
-        src: "/pyodide.js"
-        name: pyodide-0.20
-        lang: python
+          -
+            src: "/pyodide.js"
+            name: pyodide-0.20
+            lang: python
     </py-config>
 </head>
 
 <body>
-    <py-script>import sys; print(f"Python {sys.version}")</py-script>
+    <py-script>import pyodide_js; print(pyodide_js.version)</py-script>
 </body>
 
 </html>
