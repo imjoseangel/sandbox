@@ -70,6 +70,7 @@ extern "C" {
 
 extern void helloWorld();
 extern void hello(char* namePtr);
+extern char* farewell();
 
 #ifdef __cplusplus
 }

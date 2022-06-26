@@ -16,6 +16,11 @@ func hello(namePtr *C.char) {
 	log.Println("Hello", name)
 }
 
+//export farewell
+func farewell() *C.char {
+	return C.CString("Bye!")
+}
+
 func main() {
 
 }
