@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import ctypes
 
 library = ctypes.cdll.LoadLibrary('./library.so')
@@ -25,3 +26,12 @@ farewell_bytes = ctypes.string_at(farewell_output)
 farewell_string = farewell_bytes.decode('utf-8')
 
 print(farewell_output, farewell_bytes, farewell_string)
+
+
+from_json = library.fromJSON
+from_json.argtypes = [ctypes.c_char_p]
+document = {
+    "name": "john",
+    "last_name": "smith"
+}
+from_json(json.dumps(document).encode('utf-8'))
