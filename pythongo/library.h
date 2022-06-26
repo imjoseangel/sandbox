@@ -71,6 +71,7 @@ extern "C" {
 extern void helloWorld();
 extern void hello(char* namePtr);
 extern char* farewell();
+extern void fromJSON(char* documentPtr);
 
 #ifdef __cplusplus
 }

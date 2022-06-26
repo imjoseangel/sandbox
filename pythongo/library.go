@@ -4,6 +4,7 @@ import (
 	"C"
 	"log"
 )
+import "encoding/json"
 
 //export helloWorld
 func helloWorld() {
@@ -19,6 +20,17 @@ func hello(namePtr *C.char) {
 //export farewell
 func farewell() *C.char {
 	return C.CString("Bye!")
+}
+
+//export fromJSON
+func fromJSON(documentPtr *C.char) {
+	documentString := C.GoString(documentPtr)
+	var jsonDocument map[string]interface{}
+	err := json.Unmarshal([]byte(documentString), &jsonDocument)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(jsonDocument)
 }
 
 func main() {
