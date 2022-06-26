@@ -2,9 +2,9 @@ package main
 
 import (
 	"C"
+	"encoding/json"
 	"log"
 )
-import "encoding/json"
 
 //export helloWorld
 func helloWorld() {
