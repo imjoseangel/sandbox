@@ -69,6 +69,7 @@ extern "C" {
 #endif
 
 extern void helloWorld();
+extern void hello(char* namePtr);
 
 #ifdef __cplusplus
 }
