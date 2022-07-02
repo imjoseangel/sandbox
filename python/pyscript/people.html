@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loading Data</title>
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+
+<body>
+    <py-env>
+        - paths:
+            - data/people.csv
+            - data/people.db
+    </py-env>
+    <py-script>
+        with open("people.csv") as file:
+            print(file.read())
+    </py-script>
+    <py-script>
+        import sqlite3
+
+        with sqlite3.connect("people.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM employees")
+            for row in cursor.fetchall():
+                print(row)
+    </py-script>
+</body>
+</html>
