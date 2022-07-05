@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sine Wave Interference</title>
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="theme.css" />
+    <py-env>
+        - numpy
+        - paths:
+            - src/waves.py
+    </py-env>
+</head>
+
+<body>
+    <fieldset>
+        <legend>Frequency<sub>1</sub></legend>
+        <input id="range1" type="range" min="440" max="442" step="0.1" value="440">
+        <label for="range1">440</label> Hz
+    </fieldset>
+    <fieldset>
+        <legend>Frequency<sub>2</sub></legend>
+        <input id="range2" type="range" min="440" max="442" step="0.1" value="441">
+        <label for="range2">441</label> Hz
+    </fieldset>
+    <canvas id="chart"></canvas>
+    <py-script src="src/controls.py"></py-script>
+    <script src="src/plotting.js"></script>
+</body>
+
+</html>
