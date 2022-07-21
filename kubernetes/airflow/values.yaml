@@ -1,0 +1,278 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# Run with helm upgrade --install airflow apache-airflow/airflow -n airflow --create-namespace -f values.yaml --debug
+---
+# Default airflow repository -- overrides all the specific images below
+defaultAirflowRepository: myacr.azurecr.io/airflow
+
+# Images
+images:
+  airflow:
+    repository: ~
+    tag: ~
+    pullPolicy: IfNotPresent
+  # To avoid images with user code, you can turn this to 'true' and
+  # all the 'run-airflow-migrations' and 'wait-for-airflow-migrations' containers/jobs
+  # will use the images from 'defaultAirflowRepository:defaultAirflowTag' values
+  # to run and wait for DB migrations .
+  useDefaultImageForMigration: false
+  # timeout (in seconds) for airflow-migrations to complete
+  migrationsWaitTimeout: 60
+  pod_template:
+    repository: ~
+    tag: ~
+    pullPolicy: IfNotPresent
+  flower:
+    repository: ~
+    tag: ~
+    pullPolicy: IfNotPresent
+  statsd:
+    repository: myacr.azurecr.io/apache/airflow
+    tag: airflow-statsd-exporter-2021.04.28-v0.17.0
+    pullPolicy: IfNotPresent
+  redis:
+    repository: myacr.azurecr.io/redis
+    tag: 6-buster
+    pullPolicy: IfNotPresent
+  pgbouncer:
+    repository: myacr.azurecr.io/apache/airflow
+    tag: airflow-pgbouncer-2021.04.28-1.14.0
+    pullPolicy: IfNotPresent
+  pgbouncerExporter:
+    repository: myacr.azurecr.io/apache/airflow
+    tag: airflow-pgbouncer-exporter-2021.09.22-0.12.0
+    pullPolicy: IfNotPresent
+  gitSync:
+    repository: myacr.azurecr.io/git-sync/git-sync
+    tag: v3.4.0
+    pullPolicy: IfNotPresent
+
+postgresql:
+  enabled: false
+
+data:
+  metadataSecretName: airflow-metadata
+  resultBackendSecretName: airflow-result-backend
+
+triggerer:
+  enabled: false
+
+flower:
+  # Enable flower.
+  # If True, and using CeleryExecutor/CeleryKubernetesExecutor, will deploy flower app.
+  enabled: false
+
+# Git sync
+dags:
+  persistence:
+    # Enable persistent volume for storing dags
+    enabled: true
+    # Volume size for dags
+    size: 1Gi
+    # If using a custom storageClass, pass name here
+    storageClassName: azurefile-airflow
+    # access mode of the persistent volume
+    accessMode: ReadWriteMany
+    ## the name of an existing PVC to use
+    existingClaim: airflow-data
+  gitSync:
+    enabled: false
+
+# Fernet key settings
+# Note: fernetKey can only be set during install, not upgrade
+fernetKeySecretName: fernet-key
+
+# Flask secret key for Airflow Webserver: `[webserver] secret_key` in airflow.cfg
+webserverSecretKeySecretName: webserver-secret-key
+
+# Airflow webserver settings
+webserver:
+  # Mount additional volumes into webserver.
+  extraVolumes:
+    - name: tls
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: tls
+    - name: airflow-secrets
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: airflow-secrets
+  extraVolumeMounts:
+    - mountPath: /mnt/secrets/tls
+      name: tls
+      readOnly: true
+    - mountPath: /mnt/secrets/airflowsecrets
+      name: airflow-secrets
+      readOnly: true
+
+  # This string (can be templated) will be mounted into the Airflow Webserver as a custom
+  # webserver_config.py. You can bake a webserver_config.py in to your image instead.
+  webserverConfig:  |
+
+      import os
+      import logging
+
+      from airflow.configuration import conf
+      from airflow.utils.log.logging_mixin import LoggingMixin
+      from flask_appbuilder.security.manager import AUTH_OAUTH
+      from airflow.www.security import AirflowSecurityManager
+
+      SQLALCHEMY_DATABASE_URI = conf.get("core", "SQL_ALCHEMY_CONN")
+      basedir = os.path.abspath(os.path.dirname(__file__))
+
+      AUTH_TYPE = AUTH_OAUTH
+
+      AZURE_TENANT_ID = os.environ.get("AZURE_TENANT_ID")
+      API_BASE = f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/oauth2"
+      ACCESS_TOKEN_URL = f"{API_BASE}/token"
+      AUTHORIZE_URL = f"{API_BASE}/authorize"
+
+      OAUTH_PROVIDERS = [
+        {
+          "name": "azure",
+          "icon": "fa-windows",
+          "token_key": "access_token",
+          "remote_app": {
+              "client_id": os.environ.get("AZURE_CLIENT_ID"),
+              "client_secret":  os.environ.get("AZURE_CLIENT_SECRET"),
+              "api_base_url": API_BASE,
+              "redirect_uri": "https://airflow.example.com/oauth-authorized/azure",
+              "client_kwargs": {
+                  "scope": "User.read name preferred_username email profile upn",
+                  "resource": os.environ.get("AZURE_CLIENT_ID"),
+              },
+              "request_token_url": None,
+              "access_token_url": ACCESS_TOKEN_URL,
+              "authorize_url": AUTHORIZE_URL,
+          },
+        }
+      ]
+
+      AUTH_ROLES_MAPPING = {
+          "airflow_user":["User"],
+          "airflow_admin": ["Admin"],
+          "airflow_op": ["Op"],
+          "airflow_viewer": ["Viewer"]
+      }
+
+      AUTH_ROLES_SYNC_AT_LOGIN = True
+      PERMANENT_SESSION_LIFETIME = 1800 # force users to reauth after inactivity period time in seconds
+      AUTH_USER_REGISTRATION_ROLE = "Public"
+      AUTH_USER_REGISTRATION = True
+
+      class AzureCustomSecurity(AirflowSecurityManager, LoggingMixin):
+        def get_oauth_user_info(self, provider, response=None):
+            if provider == "azure":
+                id_token = response["id_token"]
+                self.log.debug(str(id_token))
+                me = self._azure_jwt_token_parse(id_token)
+                parsed_token = {
+                    "name": me["name"],
+                    "email": me["email"],
+                    "first_name": me["given_name"],
+                    "last_name": me["family_name"],
+                    "id": me["oid"],
+                    "username": me["preferred_username"],
+                    "role_keys": me["roles"],
+                }
+                return parsed_token
+            else:
+                return {}
+
+      SECURITY_MANAGER_CLASS = AzureCustomSecurity
+
+logs:
+  persistence:
+    # Enable persistent volume for storing logs
+    enabled: true
+    # Volume size for logs
+    size: 100Gi
+    # If using a custom storageClass, pass name here
+    storageClassName: azurefile-airflow
+    ## the name of an existing PVC to use
+    existingClaim: airflow-logs
+
+# Ingress configuration
+ingress:
+  # Enable ingress resource
+  enabled: true
+
+  # Configs for the Ingress of the web Service
+  web:
+    # Annotations for the web Ingress
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
+    # The path for the web Ingress
+    path: "/"
+
+    # The pathType for the above path (used only with Kubernetes v1.19 and above)
+    pathType: "ImplementationSpecific"
+
+    # The hostnames or hosts configuration for the web Ingress
+    hosts:
+      - name: airflow.example.com
+        # configs for web Ingress TLS
+        tls:
+          # Enable TLS termination for the web Ingress
+          enabled: true
+          # the name of a pre-created Secret containing a TLS private key and certificate
+          secretName: "ingress-tls-csi"
+
+pgbouncer:
+  # Enable PgBouncer
+  enabled: true
+
+config:
+  secrets:
+    backend: airflow.providers.microsoft.azure.secrets.key_vault.AzureKeyVaultBackend
+    backend_kwargs: '{"connections_prefix": "airflow-connections", "variables_prefix": "airflow-variables", "vault_url": "https://mykv.vault.azure.net/"}'
+  webserver:
+    authenticate: 'True'
+
+# Extra env 'items' that will be added to the definition of airflow containers
+# a string is expected (can be templated).
+# TODO: difference from `env`? This is a templated string. Probably should template `env` and remove this.
+extraEnv: |
+  - name: AIRFLOW__SCHEDULER__SCHEDULE_AFTER_TASK_EXECUTION
+    value: 'False'
+# eg:
+# extraEnv: |
+#   - name: AIRFLOW__CORE__LOAD_EXAMPLES
+#     value: 'True'
+
+# Extra envFrom 'items' that will be added to the definition of airflow containers
+# A string is expected (can be templated).
+extraEnvFrom: |
+  - secretRef:
+      name: 'az-client-id'
+  - secretRef:
+      name: 'az-client-secret'
+  - secretRef:
+      name: 'az-tenant-id'
+# eg:
+# extraEnvFrom: |
+#   - secretRef:
+#       name: '{{ .Release.Name }}-airflow-connections'
+#   - configMapRef:
+#       name: '{{ .Release.Name }}-airflow-variables'
