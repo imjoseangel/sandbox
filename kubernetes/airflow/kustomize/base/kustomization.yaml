@@ -1,0 +1,7 @@
+---
+resources:
+  - pvc.yaml
+  - secret.yaml
+  - storageclass.yaml
+
+# helm template airflow --values base/values.yaml --version 1.6.0 --repo https://airflow.apache.org airflow > airflow.yaml
