@@ -31,8 +31,8 @@ def not_cached():
 
 print(
     timeit(cached, number=loop_squared)
-)  # = > 7.906315469997935
+)  # = > 10.985265999999683
 
 print(
     timeit(not_cached, number=loop_squared)
-)  # => 11.306420319997414
+)  # => 12.54908033400352
