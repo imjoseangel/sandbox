@@ -8,6 +8,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import json
+import os
 import requests
 import sys
 import urllib
@@ -32,6 +33,11 @@ def main():
     Main function
     """
     sts_connection = boto3.client('sts')
+
+    assumed_role_object = sts_connection.assume_role(
+        RoleArn=f"arn:aws:iam::{os.environ.get('AWS_ACCOUNT_ID')}:role/ROLE-NAME",
+        RoleSessionName="AssumeRoleSession",
+    )
 
 
 if __name__ == '__main__':
