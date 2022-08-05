@@ -1,13 +1,7 @@
-import os
-import time
 import sys
-import fnmatch
-import requests
 import subprocess
 import logging
-import urllib.request
-from bs4 import BeautifulSoup
-from multiprocessing.dummy import Pool as ThreadPool
+
 
 logging.basicConfig(format="%(asctime)s - %(message)s",
                     datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout,
