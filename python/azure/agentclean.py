@@ -6,6 +6,17 @@ from __future__ import (division, absolute_import, print_function,
 
 import os
 import base64
+import json
+import logging
+import sys
+import requests
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s: %(message)s",
+    level=logging.INFO,
+    datefmt="%d-%b-%y %H:%M:%S",
+    stream=sys.stderr,
+)
 
 secret = os.getenv("ADV_TOKEN", "")
 organization = os.getenv("ADV_ORG", "inc")
@@ -21,4 +32,20 @@ headers = {
 
 url = (
     f"https://dev.azure.com/{organization}/"
-    f"_apis/distributedtask/pools/{poolid}/jobrequests")
+    f"_apis/distributedtask/pools/{poolid}/agents")
+
+response = requests.request("GET", url, headers=headers)
+
+if response.ok:
+    try:
+        data = json.loads(response.text).get("value")
+
+        try:
+            for item in data:
+                if item['status'] == 'offline':
+                    print(item)
+        except NameError as e:
+            logging.error(e)
+
+    except json.JSONDecodeError as e:
+        logging.error(e)
