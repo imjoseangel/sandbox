@@ -30,11 +30,11 @@ headers = {
     f'Basic {encodeauth.decode("utf-8")}'
 }
 
-url = (
+agents = (
     f"https://dev.azure.com/{organization}/"
     f"_apis/distributedtask/pools/{poolid}/agents")
 
-response = requests.request("GET", url, headers=headers)
+response = requests.request("GET", agents, headers=headers)
 
 if response.ok:
     try:
@@ -43,7 +43,15 @@ if response.ok:
         try:
             for item in data:
                 if item['status'] == 'offline':
-                    print(item)
+                    logging.info(f"{item['id']} is offline")
+                    url = (
+                        f"https://dev.azure.com/{organization}/"
+                        f"_apis/distributedtask/pools/{poolid}/agents/{item['id']}?api-version=4.1")
+                    response = requests.request("DELETE", url, headers=headers)
+                    if response.ok:
+                        logging.info(f"{item['id']} is deleted")
+                    else:
+                        logging.error(f"{item['id']} is not deleted")
         except NameError as e:
             logging.error(e)
 
