@@ -18,9 +18,9 @@ logging.basicConfig(
     stream=sys.stderr,
 )
 
-secret = os.getenv("ADV_TOKEN", "")
-organization = os.getenv("ADV_ORG", "inc")
-poolid = os.getenv("ADV_POOL", "1")
+secret = os.getenv("AZP_TOKEN", "")
+organization = os.getenv("AZP_ORG", "inc")
+poolname = os.getenv("AZP_POOL", "1")
 
 auth = f':{secret}'
 encodeauth = base64.b64encode(auth.encode('utf-8'))
@@ -30,30 +30,49 @@ headers = {
     f'Basic {encodeauth.decode("utf-8")}'
 }
 
-agents = (
+agentpools = (
     f"https://dev.azure.com/{organization}/"
-    f"_apis/distributedtask/pools/{poolid}/agents")
+    f"_apis/distributedtask/pools?poolName={poolname}")
 
-response = requests.request("GET", agents, headers=headers)
+agentpoolres = requests.request("GET", agentpools, headers=headers)
 
-if response.ok:
+if agentpoolres.ok:
     try:
-        data = json.loads(response.text).get("value")
+        data = json.loads(agentpoolres.text).get("value")
+        poolid = data[0]['id']
 
-        try:
-            for item in data:
-                if item['status'] == 'offline':
-                    logging.info(f"{item['id']} is offline")
-                    url = (
-                        f"https://dev.azure.com/{organization}/"
-                        f"_apis/distributedtask/pools/{poolid}/agents/{item['id']}?api-version=4.1")
-                    response = requests.request("DELETE", url, headers=headers)
-                    if response.ok:
-                        logging.info(f"{item['id']} is deleted")
-                    else:
-                        logging.error(f"{item['id']} is not deleted")
-        except NameError as e:
-            logging.error(e)
+        logging.info(f"Pool ID: {poolid}")
+
+        agents = (
+            f"https://dev.azure.com/{organization}/"
+            f"_apis/distributedtask/pools/{poolid}/agents")
+
+        poolres = requests.request("GET", agents, headers=headers)
+
+        if poolres.ok:
+            try:
+                data = json.loads(poolres.text).get("value")
+                logging.info(data)
+
+                try:
+                    for item in data:
+                        if item['status'] == 'offline':
+                            logging.info(f"{item['id']} is offline")
+                            url = (
+                                f"https://dev.azure.com/{organization}/"
+                                f"_apis/distributedtask/pools/{poolid}/agents/"
+                                f"{item['id']}?api-version=4.1")
+                            response = requests.request(
+                                "DELETE", url, headers=headers)
+                            if response.ok:
+                                logging.info(f"{item['id']} is deleted")
+                            else:
+                                logging.error(f"{item['id']} is not deleted")
+                except NameError as e:
+                    logging.error(e)
+
+            except json.JSONDecodeError as e:
+                logging.error(f'JSONDecodeError: {e}')
 
     except json.JSONDecodeError as e:
-        logging.error(e)
+        logging.error(f'JSONDecodeError: {e}')
