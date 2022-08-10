@@ -31,9 +31,19 @@ def main():
     raw_game = f'https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{game_id}.json'
     page = requests.get(raw_game)
     j = json.loads(page.content)
+
+    print(j)
+
     df = pd.DataFrame(j['game']['actions'])
 
     print(df)
+
+    ndf = df[['clock', 'period', 'description',
+              'teamTricode', 'shotResult', 'actionType']]
+    ndf = ndf[ndf['shotResult'] == 'Made']
+    ndf = ndf[ndf['actionType'] != 'freethrow']
+
+    print(ndf)
 
 
 if __name__ == '__main__':
