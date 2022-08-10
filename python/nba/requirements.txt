@@ -1,0 +1,6 @@
+
+moviepy
+opencv-python
+pandas
+pytesseract
+requests
