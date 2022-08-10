@@ -1,3 +1,5 @@
+# In Mac do:
+# brew install ffmpeg
 
 moviepy
 opencv-python
