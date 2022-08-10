@@ -19,7 +19,7 @@ def main():
     Main function
     """
 
-    date = '2017-11-01'
+    date = '20181019'
 
     jsn = f"https://data.nba.net/10s/prod/v1/{date}/scoreboard.json"
     page = requests.get(jsn)
