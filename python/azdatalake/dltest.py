@@ -105,10 +105,12 @@ def get_json():
 
             scoreboard = f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json"
             gameday = requests.get(scoreboard)
-            j = json.loads(gameday.content)
+            games = json.loads(gameday.content)
 
-            pdObj = pd.read_json(json.dumps(j['games']))
-            # pdObj.to_csv(f"{nbadate}.csv", index=False)
+            pdObj = pd.read_json(json.dumps(games['games']))
+            csvData = pdObj.to_csv(index=False)
+
+            logger.info(csvData)
 
         except ValueError:
             pass
