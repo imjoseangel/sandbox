@@ -10,6 +10,7 @@ import datetime
 import json
 import logging
 import requests
+import pandas as pd
 
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
@@ -105,6 +106,9 @@ def get_json():
             scoreboard = f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json"
             gameday = requests.get(scoreboard)
             j = json.loads(gameday.content)
+
+            pdObj = pd.read_json(json.dumps(j['games']))
+            # pdObj.to_csv(f"{nbadate}.csv", index=False)
 
         except ValueError:
             pass
