@@ -137,6 +137,8 @@ def get_json(service_client):
 
             os.remove(f"{nbadate}.csv")
 
+            return pdObj
+
         except ValueError:
             pass
 
