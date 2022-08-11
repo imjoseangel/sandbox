@@ -146,6 +146,8 @@ class RunJob:
 
                 os.remove(f"{nbadate}.csv")
 
+                logger.info(pdObj)
+
             except ValueError:
                 pass
 
