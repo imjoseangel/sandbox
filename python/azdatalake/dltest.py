@@ -47,8 +47,12 @@ def initialize_storage_account_ad(storage_account_name, client_id,
     except ResourceNotFoundError as e:
         logger.info(e)
 
+        return None
+
     except HttpResponseError as e:
         logger.info(e)
+
+        return None
 
 
 def create_file_system(service_client):
@@ -66,6 +70,8 @@ def create_file_system(service_client):
 
     except HttpResponseError as e:
         logger.info(e)
+
+        return None
 
 
 def create_directory(file_system_client):
