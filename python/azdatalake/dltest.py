@@ -6,7 +6,10 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import os
+import datetime
+import json
 import logging
+import requests
 
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
@@ -87,12 +90,34 @@ def create_directory(file_system_client):
         logger.info(e)
 
 
+def get_json():
+
+    mainjsn = "https://data.nba.net/data/10s/prod/v1/calendar.json"
+
+    nbanet = requests.get(mainjsn)
+    nbadates = json.loads(nbanet.content)
+
+    for nbadate in nbadates:
+
+        try:
+            datetime.datetime.strptime(nbadate, '%Y%m%d')
+
+            scoreboard = f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json"
+            gameday = requests.get(scoreboard)
+            j = json.loads(gameday.content)
+
+        except ValueError:
+            pass
+
+
 def main():
 
-    client = initialize_storage_account_ad(
-        storageAccountName, clientid, clientsecret, tenantid)
-    file_system = create_file_system(client)
-    create_directory(file_system)
+    # client = initialize_storage_account_ad(
+    #     storageAccountName, clientid, clientsecret, tenantid)
+    # file_system = create_file_system(client)
+    # create_directory(file_system)
+
+    get_json()
 
 
 if __name__ == '__main__':
