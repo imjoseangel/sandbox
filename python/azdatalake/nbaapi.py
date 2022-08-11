@@ -8,6 +8,7 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 from dataclasses import dataclass
+import asyncio
 import logging
 import datetime
 import json
@@ -189,8 +190,11 @@ jobrequests = RunJob()
 @app.route('/', methods=['GET'])
 def home():
     if request.method == 'GET':
-        logger.info("Running Keyvault")
-        return jobrequests.get_running()
+
+        logger.info("Running NBA")
+        jobrequests.get_running()
+        return "Running NBA"
+
     else:
         return 'healthy'
 
