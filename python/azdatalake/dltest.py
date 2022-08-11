@@ -10,7 +10,7 @@ import logging
 
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, HttpResponseError
 
 
 clientid = os.getenv('AZURE_CLIENT_ID')
@@ -29,21 +29,26 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def initialize_storage_account_ad(storage_account_name, client_id, client_secret, tenant_id):
+def initialize_storage_account_ad(storage_account_name, client_id,
+                                  client_secret, tenant_id):
 
     try:
         credential = ClientSecretCredential(
             tenant_id, client_id, client_secret)
 
-        service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
-            "https", storage_account_name), credential=credential)
+        service_client = DataLakeServiceClient(
+            account_url=f"https://{storage_account_name}.dfs.core.windows.net",
+            credential=credential)
 
         logger.info(f"connected to {service_client.account_name}")
 
         return service_client
 
     except ResourceNotFoundError as e:
-        print(e)
+        logger.info(e)
+
+    except HttpResponseError as e:
+        logger.info(e)
 
 
 def create_file_system(service_client):
@@ -53,8 +58,14 @@ def create_file_system(service_client):
 
         return file_system_client
 
-    except ResourceExistsError as e:
-        print(e)
+    except ResourceExistsError:
+        file_system_client = service_client.get_file_system_client(
+            file_system="my-file-system")
+
+        return file_system_client
+
+    except HttpResponseError as e:
+        logger.info(e)
 
 
 def create_directory(file_system_client):
@@ -62,7 +73,10 @@ def create_directory(file_system_client):
         file_system_client.create_directory("my-directory")
 
     except ResourceExistsError as e:
-        print(e)
+        logger.info(e)
+
+    except HttpResponseError as e:
+        logger.info(e)
 
 
 def main():
