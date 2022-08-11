@@ -91,7 +91,29 @@ def create_directory(file_system_client):
         logger.info(e)
 
 
-def get_json():
+def upload_file_to_directory_bulk(service_client, filename):
+    try:
+
+        file_system_client = service_client.get_file_system_client(
+            file_system=containerName)
+
+        directory_client = file_system_client.get_directory_client(
+            directoryName)
+
+        file_client = directory_client.get_file_client(filename)
+
+        local_file = open(filename, "r", encoding="utf-8")
+
+        file_contents = local_file.read()
+        file_client.upload_data(file_contents, overwrite=True)
+
+        logger.info(f"uploaded {filename} to {directoryName}")
+
+    except HttpResponseError as e:
+        logger.info(e)
+
+
+def get_json(service_client):
 
     mainjsn = "https://data.nba.net/data/10s/prod/v1/calendar.json"
 
@@ -108,9 +130,12 @@ def get_json():
             games = json.loads(gameday.content)
 
             pdObj = pd.read_json(json.dumps(games['games']))
-            csvData = pdObj.to_csv(index=False)
+            pdObj.to_csv(f"{nbadate}.csv", index=False)
 
-            logger.info(csvData)
+            upload_file_to_directory_bulk(
+                service_client, filename=f"{nbadate}.csv")
+
+            os.remove(f"{nbadate}.csv")
 
         except ValueError:
             pass
@@ -118,12 +143,12 @@ def get_json():
 
 def main():
 
-    # client = initialize_storage_account_ad(
-    #     storageAccountName, clientid, clientsecret, tenantid)
-    # file_system = create_file_system(client)
-    # create_directory(file_system)
+    client = initialize_storage_account_ad(
+        storageAccountName, clientid, clientsecret, tenantid)
+    file_system = create_file_system(client)
+    create_directory(file_system)
 
-    get_json()
+    get_json(client)
 
 
 if __name__ == '__main__':
