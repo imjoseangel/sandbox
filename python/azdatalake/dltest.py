@@ -52,9 +52,9 @@ def create_directory():
 
 
 def main():
-    """
-    Main function
-    """
+
+    initialize_storage_account_ad(
+        storageAccountName, clientid, clientsecret, tenantid)
 
 
 if __name__ == '__main__':
