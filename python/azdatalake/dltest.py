@@ -17,6 +17,8 @@ clientid = os.getenv('AZURE_CLIENT_ID')
 clientsecret = os.getenv('AZURE_CLIENT_SECRET')
 tenantid = os.getenv('AZURE_TENANT_ID')
 storageAccountName = os.getenv('AZURE_STORAGE_NAME')
+containerName = "sports"
+directoryName = "nba"
 
 
 logging.basicConfig(
@@ -58,13 +60,13 @@ def initialize_storage_account_ad(storage_account_name, client_id,
 def create_file_system(service_client):
     try:
         file_system_client = service_client.create_file_system(
-            file_system="sports")
+            file_system=containerName)
 
         return file_system_client
 
     except ResourceExistsError:
         file_system_client = service_client.get_file_system_client(
-            file_system="sports")
+            file_system=containerName)
 
         return file_system_client
 
@@ -76,7 +78,7 @@ def create_file_system(service_client):
 
 def create_directory(file_system_client):
     try:
-        file_system_client.create_directory("nba")
+        file_system_client.create_directory(directoryName)
 
     except ResourceExistsError as e:
         logger.info(e)
