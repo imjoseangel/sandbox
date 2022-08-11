@@ -58,13 +58,13 @@ def initialize_storage_account_ad(storage_account_name, client_id,
 def create_file_system(service_client):
     try:
         file_system_client = service_client.create_file_system(
-            file_system="my-file-system")
+            file_system="sports")
 
         return file_system_client
 
     except ResourceExistsError:
         file_system_client = service_client.get_file_system_client(
-            file_system="my-file-system")
+            file_system="sports")
 
         return file_system_client
 
@@ -76,7 +76,7 @@ def create_file_system(service_client):
 
 def create_directory(file_system_client):
     try:
-        file_system_client.create_directory("my-directory")
+        file_system_client.create_directory("nba")
 
     except ResourceExistsError as e:
         logger.info(e)
