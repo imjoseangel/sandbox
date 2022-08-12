@@ -5,6 +5,7 @@
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import asyncio
 import os
 import datetime
 import json
@@ -130,7 +131,7 @@ def upload_file_to_directory_bulk(service_client, filename):
         logger.error(e)
 
 
-def get_json(service_client):
+async def get_json(service_client):
 
     mainjsn = "https://data.nba.net/data/10s/prod/v1/calendar.json"
 
@@ -169,7 +170,9 @@ def main():
         file_system = create_file_system(client)
         create_directory(file_system)
 
-        get_json(client)
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(get_json(client))
+        loop.close()
 
     except KeyError as e:
         logger.error(e)

@@ -7,6 +7,7 @@ Python Template
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
+import asyncio
 import logging
 import datetime
 import json
@@ -93,15 +94,12 @@ def create_directory(file_system_client):
 
     except ResourceExistsError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except HttpResponseError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except ValueError as e:
         logger.error(e)
-        return f"Error: {e}"
 
 
 def upload_file_to_directory_bulk(service_client, filename):
@@ -132,7 +130,7 @@ def upload_file_to_directory_bulk(service_client, filename):
         logger.error(e)
 
 
-def get_json(service_client):
+async def get_json(service_client):
 
     mainjsn = "https://data.nba.net/data/10s/prod/v1/calendar.json"
 
@@ -171,7 +169,9 @@ def get_running():
         file_system = create_file_system(client)
         create_directory(file_system)
 
-        get_json(client)
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(get_json(client))
+        loop.close()
 
     except KeyError as e:
         logger.error(e)
