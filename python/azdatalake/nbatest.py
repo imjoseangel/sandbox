@@ -162,12 +162,26 @@ def get_json(service_client):
 
 def main():
 
-    client = initialize_storage_account_ad(
-        storageAccountName, clientid, clientsecret, tenantid)
-    file_system = create_file_system(client)
-    create_directory(file_system)
+    try:
 
-    get_json(client)
+        client = initialize_storage_account_ad(
+            storageAccountName, clientid, clientsecret, tenantid)
+        file_system = create_file_system(client)
+        create_directory(file_system)
+
+        get_json(client)
+
+    except KeyError as e:
+        logger.error(e)
+
+    except TypeError as e:
+        logger.error(e)
+
+    except ValueError as e:
+        logger.error(e)
+
+    except AttributeError as e:
+        logger.error(e)
 
 
 if __name__ == '__main__':

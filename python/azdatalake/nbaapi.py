@@ -173,19 +173,17 @@ def get_running():
 
         get_json(client)
 
-        return "Done"
-
     except KeyError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except TypeError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except ValueError as e:
         logger.error(e)
-        return f"Error: {e}"
+
+    except AttributeError as e:
+        logger.error(e)
 
 
 app = Flask(__name__)
