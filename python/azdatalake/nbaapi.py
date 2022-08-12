@@ -53,15 +53,16 @@ def initialize_storage_account_ad(storage_account_name, client_id,
         return service_client
 
     except ResourceNotFoundError as e:
-        logger.info(e)
-
-        return None
+        logger.error(e)
+        return f"Error: {e}"
 
     except HttpResponseError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
 
     except ValueError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
 
 
 def create_file_system(service_client):
@@ -78,9 +79,12 @@ def create_file_system(service_client):
         return file_system_client
 
     except HttpResponseError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
 
-        return None
+    except ValueError as e:
+        logger.error(e)
+        return f"Error: {e}"
 
 
 def create_directory(file_system_client):
@@ -88,10 +92,16 @@ def create_directory(file_system_client):
         file_system_client.create_directory(directoryName)
 
     except ResourceExistsError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
 
     except HttpResponseError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
+
+    except ValueError as e:
+        logger.error(e)
+        return f"Error: {e}"
 
 
 def upload_file_to_directory_bulk(service_client, filename):
@@ -112,8 +122,17 @@ def upload_file_to_directory_bulk(service_client, filename):
 
         logger.info(f"uploaded {filename} to {directoryName}")
 
+    except ResourceExistsError as e:
+        logger.error(e)
+        return f"Error: {e}"
+
     except HttpResponseError as e:
-        logger.info(e)
+        logger.error(e)
+        return f"Error: {e}"
+
+    except ValueError as e:
+        logger.error(e)
+        return f"Error: {e}"
 
 
 def get_json(service_client):
@@ -161,15 +180,11 @@ def get_running():
 
     except KeyError as e:
         logger.error(e)
-        return f"Error: Incorrect {e}"
+        return f"Error: {e}"
 
     except TypeError as e:
         logger.error(e)
-        return f"Error: Incorrect {e}"
-
-    except Exception as e:
-        logger.error(e)
-        return f"Error: Incorrect {e}"
+        return f"Error: {e}"
 
 
 app = Flask(__name__)
