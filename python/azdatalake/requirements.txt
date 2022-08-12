@@ -1,5 +1,6 @@
-azure_storage==0.37.0
-Flask==2.2.2
-pandas==1.4.3
-requests==2.28.1
-waitress==2.1.2
+azure-identity
+azure-storage-file-datalake
+Flask
+pandas
+requests
+waitress
