@@ -124,15 +124,12 @@ def upload_file_to_directory_bulk(service_client, filename):
 
     except ResourceExistsError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except HttpResponseError as e:
         logger.error(e)
-        return f"Error: {e}"
 
     except ValueError as e:
         logger.error(e)
-        return f"Error: {e}"
 
 
 def get_json(service_client):
@@ -183,6 +180,10 @@ def get_running():
         return f"Error: {e}"
 
     except TypeError as e:
+        logger.error(e)
+        return f"Error: {e}"
+
+    except ValueError as e:
         logger.error(e)
         return f"Error: {e}"
 
