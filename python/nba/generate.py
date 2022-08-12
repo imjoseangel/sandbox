@@ -16,16 +16,17 @@ def get_json():
 
     mainjsn = "https://data.nba.net/data/10s/prod/v1/calendar.json"
     nbanet = requests.get(mainjsn)
+
     nbadates = json.loads(nbanet.content)
 
-    output = (datetime.datetime.strptime(nbadate, '%Y%m%d')
-              for nbadate in nbadates)
+    output = (nbadate for nbadate in nbadates if nbadate.startswith('20'))
 
 
 def main():
     """
     Main function
     """
+    get_json()
 
 
 if __name__ == '__main__':
