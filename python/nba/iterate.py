@@ -19,13 +19,11 @@ def get_json():
 
     nbadates = json.loads(nbanet.content)
 
-    gameday = (requests.get(
-        f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json")
-        for nbadate in (nbadate for nbadate in nbadates
-                        if nbadate.startswith('20')))
-
-    for game in gameday:
-        print(game.content)
+    pdObj = (pd.read_json(json.dumps(game['games'])) for game in
+             (json.loads(gameday.content) for gameday in (requests.get(
+                 f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json")
+                 for nbadate in (nbadate for nbadate in nbadates
+                                 if nbadate.startswith('20')))))
 
 
 def main():
