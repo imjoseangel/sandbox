@@ -9,7 +9,6 @@ from __future__ import (division, absolute_import, print_function,
 
 import json
 import requests
-import pandas as pd
 from celery import Celery
 
 app = Celery('tasks', backend='redis://localhost', broker='pyamqp://')
@@ -24,13 +23,15 @@ def get_json():
 
     nbadates = json.loads(nbanet.content)
 
-    pdObj = (pd.read_json(json.dumps(games['games'])) for games in
-             (json.loads(gameday.content) for gameday in (requests.get(
-                 f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json")
-                 for nbadate in (nbadate for nbadate in nbadates
-                                 if nbadate.startswith('20')))))
+    gameday = (requests.get(
+        f"https://data.nba.net/10s/prod/v1/{nbadate}/scoreboard.json")
+        for nbadate in (nbadate for nbadate in nbadates
+                        if nbadate.startswith('20')))
 
-    print(list(pdObj))
+    for game in gameday:
+        obj = json.loads(game.content)['games']
+
+        print(obj)
 
 
 def main():
