@@ -29,7 +29,11 @@ def get_json():
                         if nbadate.startswith('20')))
 
     for game in gameday:
-        obj = json.loads(game.content)['games']
+        try:
+            obj = json.loads(game.content)['games']
+        except KeyError as e:
+            print(e)
+            continue
 
         print(obj)
 
