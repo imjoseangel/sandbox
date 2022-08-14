@@ -8,11 +8,21 @@ from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
 
 import json
+import logging
 import requests
 from celery import Celery
 
 app = Celery('tasks', backend='redis://localhost', broker='pyamqp://')
 app.conf.broker_url = 'redis://localhost:6379/0'
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s: %(message)s",
+    level=logging.INFO,
+    datefmt="%d-%b-%y %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @app.task
