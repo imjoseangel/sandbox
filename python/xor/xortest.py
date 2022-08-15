@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 ciphertext = bytes.fromhex('5e8d11e2250c69229d9b851be3be854cfec95721c46d')
 flag = bytes.fromhex(
     '6b871bf560037d6a95d19a12fda4ca51eac85734d67e')
