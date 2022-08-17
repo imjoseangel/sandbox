@@ -4,4 +4,4 @@ spec:
     spec:
       containers:
       - name: tcpdumper
-        image: docker.io/imjoseangel/tcpdump:v0.0.3
+        image: docker.io/imjoseangel/tcpdump:v0.0.9
