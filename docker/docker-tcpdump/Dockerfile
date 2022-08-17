@@ -7,4 +7,4 @@ LABEL maintainer="imjoseangel"
 RUN apk add --no-cache \
     tcpdump
 
-ENTRYPOINT ["tcpdump" "-i" "eth0"]
+CMD ["/bin/sh" "-c" "tcpdump -i eth0"]
