@@ -8,4 +8,4 @@ RUN apk add --no-cache \
     tcpdump
 
 ENTRYPOINT [ "tcpdump" ]
-CMD [ "-i", "eth0" ]
+CMD [ "-i", "any" ]
