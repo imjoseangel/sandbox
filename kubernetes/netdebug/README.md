@@ -17,3 +17,7 @@ DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.
 There are many tools to analyze network traffic, but needless to say, the most common one is **Wireshark**. It is a powerful tool that allows you to analyze network traffic and extract information from it. We will analyze DNS traffic from our computers and will compare later with the traffic from a pod in a Kubernetes cluster.
 
 ## What happens when calling a web page?
+
+To understand what happens with your DNS when requesting a web page, you can start with this amazing [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham.
+
+
