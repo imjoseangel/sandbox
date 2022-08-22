@@ -14,10 +14,16 @@ DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.
 
 ## How to debug DNS network traffic - Wireshark
 
-There are many tools to analyze network traffic, but needless to say, the most common one is **Wireshark**. It is a powerful tool that allows you to analyze network traffic and extract information from it. We will analyze DNS traffic from our computers and will compare later with the traffic from a pod in a Kubernetes cluster.
+There are many tools to analyze network traffic, but needless to say, the most common one is *Wireshark*. It is a powerful tool that allows you to analyze network traffic and extract information from it. We will analyze DNS traffic from our computers and will compare later with the traffic from a pod in a Kubernetes cluster.
 
 ## What happens when calling a web page?
 
-To understand what happens with your DNS when requesting a web page, you can start with this amazing [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham.
+To understand what happens with the DNS when requesting a web page, this amazing [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
+The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Chart*:
 
+![Flow Chart](./files/example.com-http.png)
+
+In the next section we will learn how to create it.
+
+## Creating and Understanding the Wireshark Flow Chart
