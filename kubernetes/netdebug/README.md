@@ -10,7 +10,7 @@ With your comments and help, I would like to improve this small article as much 
 
 ## What is DNS?
 
-DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.to* written by a human to an **IP address** so browsers can load Internet resources. DNS is the phonebook of the Internet.
+DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.to* written by a human to an **IP address** so browsers can load Internet resources. DNS is called the phonebook of the Internet.
 
 ## How to debug DNS network traffic - Wireshark
 
