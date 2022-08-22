@@ -2,11 +2,11 @@
 
 ## Introduction
 
-One of the most common bottlenecks I have found during my latest years administering Kubernetes is probably DNS resolution.
+One of the most common bottlenecks when communicating Kubernetes pods is DNS resolution. Analyzing network traffic within Kubernetes is not trivial.
 
-This article will help you to understand how to debug HTTP and DNS network traffic in Kubernetes.
+This article will help you to understand how to analyze and debug HTTP and DNS network traffic in Kubernetes.
 
-I have always had the feeling of explaining *black magic* to my colleages. With your comments and help, I would like to improve it as much as possible and reach every single profile and help any developer, network engineer, or Kubernetes enthusiast.
+With your comments and help, I would like to improve this small article as much as possible to reach every single profile and help any developer, network engineer, or Kubernetes enthusiast.
 
 ## What is DNS?
 
