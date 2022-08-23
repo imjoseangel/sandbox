@@ -26,4 +26,11 @@ The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP
 
 In the next section we will learn how to create it.
 
-## Creating and Understanding the Wireshark Flow Chart
+## Creating the Wireshark Flow Chart
+
+Install Wireshark on your favourite Operating System (Mac, Windows or Linux) and open it.
+
+The initial screen is like this:
+
+![Wireshark Initial Screen](./files/startup-wireshark.png)
+
