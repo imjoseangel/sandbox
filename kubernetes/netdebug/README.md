@@ -38,4 +38,26 @@ Find what of all the interfaces shown is the one being used more actively:
 
 ![Active Interface](./files/wireshark-traffic-initial.png)
 
+Before start capturing traffic, let's find the IP of the domain *www.example.com*.
+
+Open a Terminal or CMD Console and run:
+
+```shell
+nslookup www.example.com
+```
+
 Just select it to start capturing traffic.
+
+If you are using Linux or Mac, run the following from a Terminal:
+
+```shell
+curl http://example.com
+```
+
+From Windows, use Powershell and run:
+
+```powershell
+Invoke-WebRequest http://www.example.com
+```
+
+In order
