@@ -30,11 +30,11 @@ In the next section we will learn how to create it.
 
 Install Wireshark on your favourite Operating System (Mac, Windows or Linux) and open it.
 
-The initial screen is like this:
+The initial screen should be like:
 
 ![Wireshark Initial Screen](./files/startup-wireshark.png)
 
-Find what of all the interfaces shown is the one being used more actively:
+Locate what of all the interfaces shown is the one being used more actively:
 
 ![Active Interface](./files/wireshark-traffic-initial.png)
 
@@ -45,6 +45,21 @@ Open a Terminal or CMD Console and run:
 ```shell
 nslookup www.example.com
 ```
+
+The answer will looks like:
+
+```shell
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+Name:	www.example.com
+Address: 93.184.216.34
+```
+
+The `Server and Address` indicate the DNS server configured in our environment to which we will request to resolve the name `www.example.com`
+
+Under `Non-authoritative answer:` we will see the name we just requested and the IP associated to it. In our example `93.184.216.34`.
 
 Just select it to start capturing traffic.
 
