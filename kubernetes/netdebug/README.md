@@ -34,3 +34,8 @@ The initial screen is like this:
 
 ![Wireshark Initial Screen](./files/startup-wireshark.png)
 
+Find what of all the interfaces shown is the one being used more actively:
+
+![Active Interface](./files/wireshark-traffic-initial.png)
+
+Just select it to start capturing traffic.
