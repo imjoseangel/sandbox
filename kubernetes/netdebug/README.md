@@ -34,9 +34,7 @@ The initial screen should be like:
 
 ![Wireshark Initial Screen](./files/startup-wireshark.png)
 
-Locate what of all the interfaces shown is the one being used more actively:
-
-![Active Interface](./files/wireshark-traffic-initial.png)
+### Preparing the filter
 
 Before start capturing traffic, let's find the IP of the domain *www.example.com*.
 
@@ -57,11 +55,27 @@ Name:	www.example.com
 Address: 93.184.216.34
 ```
 
-The `Server and Address` indicate the DNS server configured in our environment to which we will request to resolve the name `www.example.com`
+The `Server` field indicates the DNS server configured in our environment to which we will request to resolve the name `www.example.com`.
 
 Under `Non-authoritative answer:` we will see the name we just requested and the IP associated to it. In our example `93.184.216.34`.
 
-Just select it to start capturing traffic.
+Under *...using this filter:* option in the main screen, input:
+
+`tcp port http or port 53 or dst host 93.184.216.34`
+
+where `93.184.216.34` is the address resolved with `nslookup`.
+
+### Capturing traffic
+
+Select the interface on which packets need to be captured. This will usually be the interface where the Packet/s column is constantly changing, which would indicate the presence of live traffic).
+
+![Active Interface](./files/wireshark-traffic-initial.png)
+
+It is time to press the *blue fin* icon to start the traffic capture.
+
+![Capture Traffic](./files/capture-traffic.png)
+
+### Request the URL
 
 If you are using Linux or Mac, run the following from a Terminal:
 
@@ -75,4 +89,6 @@ From Windows, use Powershell and run:
 Invoke-WebRequest http://www.example.com
 ```
 
-In order
+Stop capturing traffic just pressing the big red button. Your screen should looks like:
+
+![http traffic](./files/example.com-http-traffic.png)
