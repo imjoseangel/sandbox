@@ -92,3 +92,7 @@ Invoke-WebRequest http://www.example.com
 Stop capturing traffic just pressing the big red button. Your screen should looks like:
 
 ![http traffic](./files/example.com-http-traffic.png)
+
+## Undertanding the captured traffic
+
+Looking carefully to the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
