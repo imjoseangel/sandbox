@@ -47,11 +47,11 @@ nslookup www.example.com
 The answer will looks like:
 
 ```shell
-Server:		8.8.8.8
-Address:	8.8.8.8#53
+Server: 8.8.8.8
+Address: 8.8.8.8#53
 
 Non-authoritative answer:
-Name:	www.example.com
+Name: www.example.com
 Address: 93.184.216.34
 ```
 
