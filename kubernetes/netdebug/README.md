@@ -157,3 +157,5 @@ search default.svc.cluster.local svc.cluster.local cluster.local
 nameserver 10.96.0.10
 options ndots:5
 ```
+
+We can find 3 or more search Domains in the configuration depending on the cloud. The example above comes from a Minikube Cluster.
