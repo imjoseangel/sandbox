@@ -20,13 +20,13 @@ There are many tools to analyze network traffic, but needless to say, the most c
 
 To understand what happens with the DNS when requesting a web page, this amazing [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
-The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Chart*:
+The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Graph*:
 
-![Flow Chart](./files/example.com-http.png)
+![Flow Graph](./files/example.com-http.png)
 
 In the next section we will learn how to create it.
 
-## Creating the Wireshark Flow Chart
+## Creating the Wireshark Flow Graph
 
 Install Wireshark on your favourite Operating System (Mac, Windows or Linux) and open it.
 
@@ -96,3 +96,5 @@ Stop capturing traffic just pressing the big red button. Your screen should look
 ## Undertanding the captured traffic
 
 Looking carefully to the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
+
+To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
