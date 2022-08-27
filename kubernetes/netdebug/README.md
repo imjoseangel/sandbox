@@ -22,7 +22,7 @@ To understand what happens with the DNS when requesting a web page, this amazing
 
 The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Graph*:
 
-![Flow Graph](./files/example.com-http.png)
+![Flow Graph](/sandbox/kubernetes/netdebug/files/example.com-http.png)
 
 In the next section we will learn how to create it.
 
@@ -32,7 +32,7 @@ Install Wireshark on your favourite Operating System (Mac, Windows or Linux) and
 
 The initial screen should be like:
 
-![Wireshark Initial Screen](./files/startup-wireshark.png)
+![Wireshark Initial Screen](/sandbox/kubernetes/netdebug/files/startup-wireshark.png)
 
 ### Preparing the filter
 
@@ -69,11 +69,11 @@ where `93.184.216.34` is the address resolved with `nslookup`.
 
 Select the interface on which packets need to be captured. This will usually be the interface where the Packet/s column is constantly changing, which would indicate the presence of live traffic).
 
-![Active Interface](./files/wireshark-traffic-initial.png)
+![Active Interface](/sandbox/kubernetes/netdebug/files/wireshark-traffic-initial.png)
 
 It is time to press the *blue fin* icon to start the traffic capture.
 
-![Capture Traffic](./files/capture-traffic.png)
+![Capture Traffic](/sandbox/kubernetes/netdebug/files/capture-traffic.png)
 
 ### Request the URL
 
@@ -91,10 +91,26 @@ Invoke-WebRequest http://www.example.com
 
 Stop capturing traffic just pressing the big red button. Your screen should looks like:
 
-![http traffic](./files/example.com-http-traffic.png)
+![http traffic](/sandbox/kubernetes/netdebug/files/example.com-http-traffic.png)
+
+To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
 
 ## Undertanding the captured traffic
 
 Looking carefully to the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
 
-To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
+The first line (In *cyan*), shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
+
+The second *cyan* line shows the DNS response. Selecting it, we can find the IP Address of the requested domain in the *Packet Details Window*. Under **Domain Name System (Response)** - **Answers** like shown in the image below.
+
+![DNS response](/sandbox/kubernetes/netdebug/files/DNS-example.com-IP.png)
+
+### The 3 Way Handshaking (SYN ACK)
+
+Reflected in the next three lines (in *green*).
+
+Before a client and a server can exchange data (payload), the client and server must established a TCP connection. This is done via the TCP 3 way handshake.
+
+**SYN** - The client sends a SYN (Synchronize) packet to the server.
+**SYN ACK**- The server sends a SYN ACK (Synchronize Acknowledge) packet to the client.
+**ACK** - The client sends an ACK (Acknowledge) packet to the server.
