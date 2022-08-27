@@ -126,3 +126,34 @@ After that, we can find the HTTP GET and the ACK from the Server with the HTTP r
 Finally we can find the TCP close requests with FIN ACK Packets to close the connection.
 
 ![fin-acl](/sandbox/kubernetes/netdebug/files/example.com-finack.png)
+
+## DNS on Kubernetes
+
+To understand how a *Domain Name* is resolved in a pod, first let's create a single deployment:
+
+```shell
+kubectl create deployment nginx --image nginx
+```
+
+We can find the pod name
+
+```shell
+kubectl get pods
+```
+
+```shell
+NAME                    READY   STATUS    RESTARTS   AGE
+nginx-8f458dc5b-kc8r7   1/1     Running   0          89s
+```
+
+and see the resolv.conf of the pod
+
+```shell
+kubectl exec -it nginx-8f458dc5b-kc8r7 -- cat /etc/resolv.conf
+```
+
+```ini
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+```
