@@ -114,3 +114,15 @@ Before a client and a server can exchange data (payload), the client and server 
 **SYN** - The client sends a SYN (Synchronize) packet to the server.
 **SYN ACK**- The server sends a SYN ACK (Synchronize Acknowledge) packet to the client.
 **ACK** - The client sends an ACK (Acknowledge) packet to the server.
+
+In the image, we can find it after the DNS request.
+
+![3-way](/sandbox/kubernetes/netdebug/files/example.com-3-way.png)
+
+### The Request and Connection Close (FIN ACK)
+
+After that, we can find the HTTP GET and the ACK from the Server with the HTTP response.
+
+Finally we can find the TCP close requests with FIN ACK Packets to close the connection.
+
+![fin-acl](/sandbox/kubernetes/netdebug/files/example.com-finack.png)
