@@ -199,7 +199,7 @@ First of all, let's create a `tcpdump` debug image. Wireshark will use it to dis
 ARG build_for=linux/amd64,linux/arm64
 FROM alpine:latest as base
 
-LABEL maintainer="imjoseangel"
+LABEL maintainer="<yourusername>"
 
 # Packages to build image requirements
 RUN apk add --no-cache \
@@ -208,3 +208,39 @@ RUN apk add --no-cache \
 ENTRYPOINT [ "tcpdump" ]
 CMD [ "-i", "any" ]
 ```
+
+### The build command
+
+To create a multi-platform image in *dockerhub* let's create a builder instance and use the extended build capabilities with BuildKit.
+
+```shell
+docker buildx create --name buildx --driver-opt network=host --use
+docker buildx inspect --bootstrap
+docker buildx build -t <yourusername>/tcpdump:v1.0.0 --platform linux/amd64 --platform linux/arm64 --file Dockerfile --push .
+docker buildx imagetools inspect <yourusername>/tcpdump:v1.0.0
+docker buildx rm buildx
+```
+
+The last output will show both images with their platforms:
+
+```shell
+Name:      docker.io/<yourusername>/tcpdump:v1.0.0
+MediaType: application/vnd.docker.distribution.manifest.list.v2+json
+Digest:    sha256:9dd8cb1d4b77b7d02d41ff8418cd442c01badfe8ecd0c0a3a58f43f528eba378
+
+Manifests:
+  Name:      docker.io/<yourusername>/tcpdump:v1.0.0@sha256:0c341c671566dbc3cdded9da05120bb2216142f46516c14cf3d10b6c38997195
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/amd64
+
+  Name:      docker.io/<yourusername>/tcpdump:v1.0.0@sha256:c6de3ab95521c9e7e07a05d99935d19686b8d6e81ab85ce631312cffe57d2ce3
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/arm64
+```
+
+### Attaching the ephemeral container to the NGINX Pod
+
+Now that the tcpdump image is prepared, just run:
+
+```shell
+kubectl debug -i nginx-8f458dc5b-kc8r7 --image=<yourusername>/tcpdump:v1.0.0 --target=nginx -- tcpdump -i any -w - | wireshark -kni -
