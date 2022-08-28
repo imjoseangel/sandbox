@@ -143,13 +143,13 @@ kubectl get pods
 
 ```shell
 NAME                    READY   STATUS    RESTARTS   AGE
-nginx-8f458dc5b-hj7m5   1/1     Running   0          89s
+nginx-68f67d74bd-p49bt   1/1     Running   0          89s
 ```
 
 Remember that the DNS resolution inside a container - like any Linux system - is driven by the `/etc/resolv.conf` config file.
 
 ```shell
-kubectl exec -it nginx-8f458dc5b-hj7m5 -- cat /etc/resolv.conf
+kubectl exec -it nginx-68f67d74bd-p49bt -- cat /etc/resolv.conf
 ```
 
 The /etc/resolv.conf file inside the container looks like this by default:
@@ -243,17 +243,9 @@ Manifests:
 Now that the tcpdump image is prepared, just run:
 
 ```shell
-kubectl debug --image imjoseangel/tcpdump:v1.0.0 nginx-8f458dc5b-lgkp2 --target=nginx
+kubectl debug --image imjoseangel/tcpdump:v1.0.0 nginx-68f67d74bd-p49bt  -c debugger
 ```
 
-output:
-
 ```shell
-Defaulting debug container name to debugger-tchm2.
-```
-
-Take note of the [ephemeral container name](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) and launch Wireshark.
-
-```shell
-kubectl exec nginx-8f458dc5b-lgkp2 -c debugger-tchm2 -- tcpdump -s 0 -n -w - -U -i any  | Wireshark -kni -
+kubectl exec nginx-68f67d74bd-p49bt -c debugger -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
 ```
