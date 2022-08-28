@@ -146,11 +146,13 @@ NAME                    READY   STATUS    RESTARTS   AGE
 nginx-8f458dc5b-kc8r7   1/1     Running   0          89s
 ```
 
-and see the resolv.conf of the pod
+Remember that the DNS resolution inside a container - like any Linux system - is driven by the `/etc/resolv.conf` config file.
 
 ```shell
 kubectl exec -it nginx-8f458dc5b-kc8r7 -- cat /etc/resolv.conf
 ```
+
+The /etc/resolv.conf file inside the container looks like this by default:
 
 ```ini
 search default.svc.cluster.local svc.cluster.local cluster.local
@@ -158,4 +160,6 @@ nameserver 10.96.0.10
 options ndots:5
 ```
 
-We can find 3 or more search Domains in the configuration depending on the cloud. The example above comes from a Minikube Cluster.
+We can find 3 or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster where there are 3 local search domains specified.
+
+Take a look also to the `ndots:5` option. It is important to understand how both `search` and `ndots` settings work together.
