@@ -207,5 +207,4 @@ RUN apk add --no-cache \
 
 ENTRYPOINT [ "tcpdump" ]
 CMD [ "-i", "any" ]
-
 ```
