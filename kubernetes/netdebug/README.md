@@ -190,3 +190,22 @@ option single-request
 ## Capturing Traffic in a Kubernetes Pod
 
 There are different ways to capture traffic in a Kubernetes Pod. All the examples are based in the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
+
+First of all, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. We will use a multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
+
+### The Dockerfile
+
+```dockerfile
+ARG build_for=linux/amd64,linux/arm64
+FROM alpine:latest as base
+
+LABEL maintainer="imjoseangel"
+
+# Packages to build image requirements
+RUN apk add --no-cache \
+    tcpdump
+
+ENTRYPOINT [ "tcpdump" ]
+CMD [ "-i", "any" ]
+
+```
