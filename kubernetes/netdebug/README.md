@@ -75,7 +75,7 @@ It is time to press the *blue fin* icon to start the traffic capture.
 
 ![Capture Traffic](/sandbox/kubernetes/netdebug/files/capture-traffic.png)
 
-### Request the URL
+### Request the URL in Local Client
 
 If you are using Linux or Mac, run the following from a Terminal:
 
@@ -254,7 +254,7 @@ Once created, run Wireshark and connect it to the just created container.
 kubectl exec -c debugger $(kubectl get pod -l app=nginx -o name) -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
 ```
 
-### 
+### Request the URL from the POD
 
 As in the local machine, we can `curl http://example.com` in the nginx pod
 
