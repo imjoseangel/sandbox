@@ -135,21 +135,21 @@ To understand how a *Domain Name* is resolved in a pod, first let's create a sin
 kubectl create deployment nginx --image nginx
 ```
 
-We can find the pod name
+We can see if the deployment is ready:
 
 ```shell
-kubectl get pods
+kubectl get deployments -o wide
 ```
 
 ```shell
-NAME                    READY   STATUS    RESTARTS   AGE
-nginx-68f67d74bd-p49bt   1/1     Running   0          89s
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES   SELECTOR
+nginx   1/1     1            1           26m   nginx        nginx    app=nginx
 ```
 
 Remember that the DNS resolution inside a container - like any Linux system - is driven by the `/etc/resolv.conf` config file.
 
 ```shell
-kubectl exec -it nginx-68f67d74bd-p49bt -- cat /etc/resolv.conf
+kubectl exec deployments/nginx -- cat /etc/resolv.conf
 ```
 
 The /etc/resolv.conf file inside the container looks like this by default:
@@ -240,12 +240,20 @@ Manifests:
 
 ### Attaching the ephemeral container to the NGINX Pod
 
-Now that the tcpdump image is prepared, just run:
+Now that the tcpdump image is prepared, we can create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
-kubectl debug --image imjoseangel/tcpdump:v1.0.0 nginx-68f67d74bd-p49bt  -c debugger
+kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
+Once created, run Wireshark and connect it to the just created container.
+
 ```shell
-kubectl exec nginx-68f67d74bd-p49bt -c debugger -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+kubectl exec -c debugger $(kubectl get pod -l app=nginx -o name) -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+```
+
+As in the local machine, we can `curl http://example.com` in the nginx pod
+
+```shell
+kubectl exec deployments/nginx -c nginx -- curl http://example.com
 ```
