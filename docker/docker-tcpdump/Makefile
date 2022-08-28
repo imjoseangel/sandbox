@@ -21,6 +21,6 @@ buildx: ## Build Dockerfile
 		$(info Make: Build Dockerfile)
 		@docker buildx create --name buildx --driver-opt network=host --use
 		@docker buildx inspect --bootstrap
-		@docker buildx build -t imjoseangel/tcpdump:1.0.0 --platform linux/amd64 --platform linux/arm64 --file Dockerfile --push .
-		@docker buildx imagetools inspect imjoseangel/tcpdump:1.0.0
+		@docker buildx build -t imjoseangel/tcpdump:v1.0.0 --platform linux/amd64 --platform linux/arm64 --file Dockerfile --push .
+		@docker buildx imagetools inspect imjoseangel/tcpdump:v1.0.0
 		@docker buildx rm buildx
