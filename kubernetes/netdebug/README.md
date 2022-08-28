@@ -243,5 +243,17 @@ Manifests:
 Now that the tcpdump image is prepared, just run:
 
 ```shell
-kubectl debug -i nginx-8f458dc5b-hj7m5 --target=nginx --image=imjoseangel/tcpdump:v1.0.0 -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+kubectl debug --image imjoseangel/tcpdump:v1.0.0 nginx-8f458dc5b-lgkp2 --target=nginx
+```
+
+output:
+
+```shell
+Defaulting debug container name to debugger-tchm2.
+```
+
+Take note of the [ephemeral container name](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) and launch Wireshark.
+
+```shell
+kubectl exec nginx-8f458dc5b-lgkp2 -c debugger-tchm2 -- tcpdump -s 0 -n -w - -U -i any  | Wireshark -kni -
 ```
