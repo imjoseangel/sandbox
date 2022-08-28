@@ -1,4 +1,4 @@
-# Learn how to Speed Up Kubernetes microservices by debugging DNS network traffic
+# Increase Kubernetes microservices performance by tunning up DNS configuration and learn how to analyze your pod network traffic all at once
 
 ## Introduction
 
@@ -6,7 +6,7 @@ One of the most common bottlenecks when communicating Kubernetes pods is DNS res
 
 This article will help you to understand how to analyze and debug HTTP and DNS network traffic in Kubernetes.
 
-With your comments and help, I would like to improve this small article as much as possible to reach every single profile and help any developer, network engineer, or Kubernetes enthusiast.
+With your comments and help, I would like to improve this small article as much as possible to reach every profile and help any developer, network engineer, or Kubernetes enthusiast.
 
 ## What is DNS?
 
@@ -14,29 +14,29 @@ DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.
 
 ## How to debug DNS network traffic - Wireshark
 
-There are many tools to analyze network traffic, but needless to say, the most common one is *Wireshark*. It is a powerful tool that allows you to analyze network traffic and extract information from it. We will analyze DNS traffic from our computers and will compare later with the traffic from a pod in a Kubernetes cluster.
+There are many tools to analyze network traffic, but needless to say, the most common one is *Wireshark*. It is a powerful tool that allows you to analyze network traffic and extract information from it. We will analyze DNS traffic from our computers and compare it with the traffic from a pod in a Kubernetes cluster.
 
 ## What happens when calling a web page?
 
-To understand what happens with the DNS when requesting a web page, this amazing [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
+To understand what happens with the DNS when requesting a web page, this [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
 The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Graph*:
 
 ![Flow Graph](./files/example.com-http.png)
 
-In the next section we will learn how to create it.
+In the next section, we will learn how to create it.
 
 ## Creating the Wireshark Flow Graph
 
-Install Wireshark on your favourite Operating System (Mac, Windows or Linux) and open it.
+Install Wireshark on your favorite Operating System (Mac, Windows, or Linux) and open it.
 
-The initial screen should be like:
+The initial screen should be like this:
 
 ![Wireshark Initial Screen](./files/startup-wireshark.png)
 
 ### Preparing the filter
 
-Before start capturing traffic, let's find the IP of the domain *www.example.com*.
+Before capturing traffic, let's find the IP of the domain *www.example.com*.
 
 Open a Terminal or CMD Console and run:
 
@@ -44,7 +44,7 @@ Open a Terminal or CMD Console and run:
 nslookup www.example.com
 ```
 
-The answer will looks like:
+The answer will look like this:
 
 ```shell
 Server: 8.8.8.8
@@ -55,27 +55,27 @@ Name: www.example.com
 Address: 93.184.216.34
 ```
 
-The `Server` field indicates the DNS server configured in our environment to which we will request to resolve the name `www.example.com`.
+The `Server` field indicates the DNS server configured in the environment to which we will request to resolve the name `www.example.com`
 
-Under `Non-authoritative answer:` we will see the name we just requested and the IP associated to it. In our example `93.184.216.34`.
+Find the name under `Non-authoritative answer:` and the IP associated. In the example `93.184.216.34`.
 
-Under *...using this filter:* option in the main screen, input:
+Under *using this filter:* option in the main screen, input:
 
 `tcp port http or port 53 or dst host 93.184.216.34`
 
-where `93.184.216.34` is the address resolved with `nslookup`.
+`93.184.216.34` is the address resolved with `nslookup`
 
 ### Capturing traffic
 
-Select the interface on which packets need to be captured. This will usually be the interface where the Packet/s column is constantly changing, which would indicate the presence of live traffic).
+Select the interface to start capturing network traffic. Usually, it should be the interface where the Packet/s column is constantly changing, which would indicate the presence of live traffic).
 
 ![Active Interface](./files/wireshark-traffic-initial.png)
 
-It is time to press the *blue fin* icon to start the traffic capture.
+Press the *blue fin* icon to start the traffic capture.
 
 ![Capture Traffic](./files/capture-traffic.png)
 
-### Request the URL in Local Client
+### Request the URL in the Local Client
 
 If you are using Linux or Mac, run the following from a Terminal:
 
@@ -89,15 +89,15 @@ From Windows, use Powershell and run:
 Invoke-WebRequest http://www.example.com
 ```
 
-Stop capturing traffic just pressing the big red button. Your screen should looks like:
+Stop capturing traffic by just pressing the big red button. Your screen should look like this:
 
 ![http traffic](./files/example.com-http-traffic.png)
 
 To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
 
-## Undertanding the captured traffic
+## Understanding the captured traffic
 
-Looking carefully to the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
+Looking carefully at the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
 
 The first line (In *cyan*), shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
 
@@ -105,14 +105,14 @@ The second *cyan* line shows the DNS response. Selecting it, we can find the IP 
 
 ![DNS response](./files/DNS-example.com-IP.png)
 
-### The 3 Way Handshaking (SYN ACK)
+### The 3 Way Handshaking (SYN-ACK)
 
 Reflected in the next three lines (in *green*).
 
-Before a client and a server can exchange data (payload), the client and server must established a TCP connection. This is done via the TCP 3 way handshake.
+Before a client and a server can exchange data (payload), the client and server must establish a TCP connection. This is done via the TCP 3-way handshake.
 
 **SYN** - The client sends a SYN (Synchronize) packet to the server.
-**SYN ACK**- The server sends a SYN ACK (Synchronize Acknowledge) packet to the client.
+**SYN ACK**- The server sends a SYN-ACK (Synchronize Acknowledge) packet to the client.
 **ACK** - The client sends an ACK (Acknowledge) packet to the server.
 
 In the image, we can find it after the DNS request.
@@ -123,13 +123,13 @@ In the image, we can find it after the DNS request.
 
 After that, we can find the HTTP GET and the ACK from the Server with the HTTP response.
 
-Finally we can find the TCP close requests with FIN ACK Packets to close the connection.
+Finally, we can find the TCP close requests with FIN ACK Packets to close the connection.
 
 ![fin-acl](./files/example.com-finack.png)
 
 ## DNS on Kubernetes
 
-To understand how a *Domain Name* is resolved in a pod, first let's create a single deployment:
+To understand how a *Domain Name* is resolved in a pod, first, let's create a single deployment:
 
 ```shell
 kubectl create deployment nginx --image nginx
@@ -162,13 +162,13 @@ options ndots:5
 
 We can find 3 or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster where there are 3 local search domains specified.
 
-Take a look also to the `ndots:5` option. It is important to understand how both `search` and `ndots` settings work together.
+Take a look also at the `ndots:5` option. It is important to understand how both `search` and `ndots` settings work together.
 
 To understand both concepts, we can refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
-The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with . (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the . themselves. So dev.to. is an FQDN but dev.to is not.
+The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN but dev.to is not.
 
-One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and will generate a lot of network traffic if the servers for the listed domains are not local, and that queries will time out if no server is available for one of the domains.
+One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and will generate a lot of network traffic if the servers for the listed domains are not local and that queries will time out if no server is available for one of the domains.
 
 The `ndots` represents the threshold value of the number of dots in a query name to consider it as a "fully qualified" domain name.
 
@@ -181,7 +181,7 @@ For instance, if we request `www.example.com`, the query iterates through all se
 1. `www.google.cluster.local`
 1. `www.google.com`
 
-It is important to remark that A and AAAA records are requested in parallel. This is because single-request option in /etc/resolv.conf has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
+It is important to remark that A and AAAA records are requested in parallel. This is because the `single-request` option in /etc/resolv.conf has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
 
 ```ini
 option single-request
@@ -189,7 +189,7 @@ option single-request
 
 ## Capturing Traffic in a Kubernetes Pod
 
-There are different ways to capture traffic in a Kubernetes Pod. All the examples are based in the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
+There are different ways to capture traffic in a Kubernetes Pod. All the examples are based on the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 
 First of all, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. We will use a multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
 
@@ -221,7 +221,7 @@ docker buildx imagetools inspect <yourusername>/tcpdump:v1.0.0
 docker buildx rm buildx
 ```
 
-The last output will show both images with their platforms:
+The output shows both images with their platforms:
 
 ```shell
 Name:      docker.io/<yourusername>/tcpdump:v1.0.0
@@ -238,17 +238,17 @@ Manifests:
   Platform:  linux/arm64
 ```
 
-### Attaching the ephemeral container to the NGINX Pod
+### Attaching an ephemeral container to the Nginx Pod
 
-Now that the tcpdump image is prepared, we can create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
+Now that the tcpdump image is ready, we can create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
 kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
-### Attaching Wireshark to the ephemeral container
+### Connecting Wireshark to the ephemeral container
 
-Once created, run Wireshark and connect it to the just created container.
+Once created, run Wireshark and connect it to the just-created container.
 
 ```shell
 kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
@@ -256,7 +256,7 @@ kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | W
 
 ### Request the URL from the POD
 
-As in the local machine, we can `curl http://example.com` in the nginx pod
+As in the local machine, we can `curl http://example.com` in the Nginx pod
 
 ```shell
 kubectl exec deployments/nginx -c nginx -- curl http://example.com
