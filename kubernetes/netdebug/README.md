@@ -251,7 +251,7 @@ kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -
 Once created, run Wireshark and connect it to the just created container.
 
 ```shell
-kubectl exec -c debugger $(kubectl get pod -l app=nginx -o name) -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
 ```
 
 ### Request the URL from the POD
