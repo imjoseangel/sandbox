@@ -186,3 +186,7 @@ It is important to remark that A and AAAA records are requested in parallel. Thi
 ```ini
 option single-request
 ```
+
+## Capturing Traffic in a Kubernetes Pod
+
+There are different ways to capture traffic in a Kubernetes Pod. All the examples are based in the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
