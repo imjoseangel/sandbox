@@ -163,3 +163,26 @@ options ndots:5
 We can find 3 or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster where there are 3 local search domains specified.
 
 Take a look also to the `ndots:5` option. It is important to understand how both `search` and `ndots` settings work together.
+
+To understand both concepts, we can refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
+
+The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with . (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the . themselves. So dev.to. is an FQDN but dev.to is not.
+
+One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and will generate a lot of network traffic if the servers for the listed domains are not local, and that queries will time out if no server is available for one of the domains.
+
+The `ndots` represents the threshold value of the number of dots in a query name to consider it as a "fully qualified" domain name.
+
+If `ndots` is set to **5** like the default in Kubernetes, and the name contains less than 5 dots inside it, the syscall will try to resolve it sequentially going through all local search domains first and - in case none succeed - will resolve it as an absolute name only at last.
+
+For instance, if we request `www.example.com`, the query iterates through all search paths until the answer contains a NOERROR code.
+
+1. `www.example.com.<namespace>.svc.cluster.local`
+1. `www.google.com.svc.cluster.local`
+1. `www.google.cluster.local`
+1. `www.google.com`
+
+It is important to remark that A and AAAA records are requested in parallel. This is because single-request option in /etc/resolv.conf has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
+
+```ini
+option single-request
+```
