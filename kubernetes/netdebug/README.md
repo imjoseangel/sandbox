@@ -246,11 +246,15 @@ Now that the tcpdump image is prepared, we can create an [ephemeral container](h
 kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
+### Attaching Wireshark to the ephemeral container
+
 Once created, run Wireshark and connect it to the just created container.
 
 ```shell
 kubectl exec -c debugger $(kubectl get pod -l app=nginx -o name) -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
 ```
+
+### 
 
 As in the local machine, we can `curl http://example.com` in the nginx pod
 
