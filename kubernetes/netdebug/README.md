@@ -162,7 +162,7 @@ options ndots:5
 
 By default, there are three or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster with three local search domains specified.
 
-Take a look also at the `ndots:5` option. It is important how both `search` and `ndots` settings work together.
+Take a look also at the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
 
 To understand both concepts, we can refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
