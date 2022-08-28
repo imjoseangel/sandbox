@@ -105,11 +105,11 @@ The second *cyan* line shows the DNS response. Selecting it, we can find the IP 
 
 ![DNS response](./files/DNS-example.com-IP.png)
 
-### The 3 Way Handshaking (SYN-ACK)
+### The 3-Way Handshaking (SYN-ACK)
 
-Reflected in the next three lines (in *green*).
+Found in the following three lines (in *green*).
 
-Before a client and a server can exchange data (payload), the client and server must establish a TCP connection. This is done via the TCP 3-way handshake.
+Before a client and a server can exchange data (payload), they must establish a TCP connection via the TCP 3-way handshake.
 
 **SYN** - The client sends a SYN (Synchronize) packet to the server.
 **SYN ACK**- The server sends a SYN-ACK (Synchronize Acknowledge) packet to the client.
@@ -121,7 +121,7 @@ In the image, we can find it after the DNS request.
 
 ### The Request and Connection Close (FIN ACK)
 
-After that, we can find the HTTP GET and the ACK from the Server with the HTTP response.
+After that, we can find the HTTP GET and the ACK from the server with the HTTP response.
 
 Finally, we can find the TCP close requests with FIN ACK Packets to close the connection.
 
@@ -160,19 +160,19 @@ nameserver 10.96.0.10
 options ndots:5
 ```
 
-We can find 3 or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster where there are 3 local search domains specified.
+By default, there are three or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster with three local search domains specified.
 
-Take a look also at the `ndots:5` option. It is important to understand how both `search` and `ndots` settings work together.
+Take a look also at the `ndots:5` option. It is important how both `search` and `ndots` settings work together.
 
 To understand both concepts, we can refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
-The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN but dev.to is not.
+The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
 
 One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and will generate a lot of network traffic if the servers for the listed domains are not local and that queries will time out if no server is available for one of the domains.
 
-The `ndots` represents the threshold value of the number of dots in a query name to consider it as a "fully qualified" domain name.
+The `ndots` represents the threshold value of the number of dots in a query name to consider it a "fully qualified" domain name.
 
-If `ndots` is set to **5** like the default in Kubernetes, and the name contains less than 5 dots inside it, the syscall will try to resolve it sequentially going through all local search domains first and - in case none succeed - will resolve it as an absolute name only at last.
+If `ndots` is **5** (the default in Kubernetes), and the name contains less than five(5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last.
 
 For instance, if we request `www.example.com`, the query iterates through all search paths until the answer contains a NOERROR code.
 
@@ -181,7 +181,7 @@ For instance, if we request `www.example.com`, the query iterates through all se
 1. `www.google.cluster.local`
 1. `www.google.com`
 
-It is important to remark that A and AAAA records are requested in parallel. This is because the `single-request` option in /etc/resolv.conf has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
+It is important to remark that A and AAAA records are requested in parallel. The `single-request` option in `/etc/resolv.conf` has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
 
 ```ini
 option single-request
@@ -256,7 +256,7 @@ kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | W
 
 ### Request the URL from the POD
 
-As in the local machine, we can `curl http://example.com` in the Nginx pod
+As in the local machine, we can `curl http://example.com` in the Nginx Pod.
 
 ```shell
 kubectl exec deployments/nginx -c nginx -- curl http://example.com
