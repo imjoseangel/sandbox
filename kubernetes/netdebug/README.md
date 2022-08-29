@@ -261,3 +261,9 @@ As in the local machine, we can `curl http://example.com` in the Nginx Pod.
 ```shell
 kubectl exec deployments/nginx -c nginx -- curl http://example.com
 ```
+
+### Analyzing the Traffic
+
+As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No such name* answer for every pair request until reaching the end of the search list and trying with `example.com`
+
+![Kubernetes DNS Request](./files/example.com-k8s-dns.png)
