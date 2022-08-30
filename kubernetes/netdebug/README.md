@@ -407,3 +407,9 @@ Address: 10.96.0.10
 And Wireshark loops properly over DNS `search` until reaching `cluster.local`
 
 ![k8s-dns-ndots5](./files/k8s-service-ndots5.png)
+
+## `ndots:5` can negatively affect to performance
+
+The default `ndots` configuration is perfect for Kubernetes services but shouldn't it be for later deployed microservices.
+
+The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness.
