@@ -283,17 +283,33 @@ A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, 
 
 ### Resolve DNS with `ndots=4`
 
-Restart the nginx deployment to start from scratch:
+First, restart the nginx deployment to start from scratch:
 
 ```shell
 kubectl rollout restart deployment nginx
 ```
 
+Install `nslookup` in the pod for testing purposes
 
+```shell
+kubectl exec deployments/nginx -c nginx -- bash -c "apt-get update && apt-get install dnsutils -y"
+```
 
+### Preparing the ephemeral container for ndots testing
 
-Following the same procedure with Wireshark and using the ephemeral container called `debugger` from the previous test, run a new Wireshark instance.
+Following the same procedure with Wireshark create the [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
+
+```shell
+kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
+```
+
+### Connecting Wireshark for ndots testing
+
+Once created, run Wireshark and connect it to the just-created container.
 
 ```shell
 kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
 ```
+
+### Resolve the DNS Service
+
