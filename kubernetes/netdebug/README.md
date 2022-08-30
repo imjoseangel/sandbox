@@ -55,7 +55,7 @@ Name: www.example.com
 Address: 93.184.216.34
 ```
 
-The `Server` field indicates the DNS server configured in the environment to which we will request to resolve the name `www.example.com`
+The `Server` field indicates the DNS server configured in the environment to which `nslookup` will request to resolve the name `www.example.com`
 
 Find the name under `Non-authoritative answer:` and the IP associated. In the example `93.184.216.34`.
 
@@ -97,11 +97,11 @@ To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
 
 ## Understanding the captured traffic
 
-Looking carefully at the captured traffic, we could find two parts. The DNS (In *cyan*) and the HTTP (in *green*)
+Looking at the captured traffic, there are two parts differenciated. The DNS (In *cyan*) and the HTTP (in *green*)
 
 The first line (In *cyan*), shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
 
-The second *cyan* line shows the DNS response. Selecting it, we can find the IP Address of the requested domain in the *Packet Details Window*. Under **Domain Name System (Response)** - **Answers** like shown in the image below.
+The second *cyan* line shows the DNS response. Select it to find the IP Address of the requested domain in the *Packet Details Window*. Under **Domain Name System (Response)** - **Answers** like shown in the image below.
 
 ![DNS response](./files/DNS-example.com-IP.png)
 
@@ -115,15 +115,15 @@ Before a client and a server can exchange data (payload), they must establish a 
 **SYN ACK**- The server sends a SYN-ACK (Synchronize Acknowledge) packet to the client.
 **ACK** - The client sends an ACK (Acknowledge) packet to the server.
 
-In the image, we can find it after the DNS request.
+In the image, it is after the DNS request.
 
 ![3-way](./files/example.com-3-way.png)
 
 ### The Request and Connection Close (FIN ACK)
 
-After that, we can find the HTTP GET and the ACK from the server with the HTTP response.
+Next to the SYN-ACK, it comes the HTTP GET and the ACK from the server with the HTTP response.
 
-Finally, we can find the TCP close requests with FIN ACK Packets to close the connection.
+And finally, the TCP close requests with FIN ACK Packets to close the connection.
 
 ![fin-acl](./files/example.com-finack.png)
 
@@ -135,7 +135,7 @@ To understand how a *Domain Name* is resolved in a pod, first, let's create a si
 kubectl create deployment nginx --image nginx
 ```
 
-We can see if the deployment is ready:
+To check if the deployment is ready, run:
 
 ```shell
 kubectl get deployments -o wide
@@ -164,7 +164,7 @@ By default, there are three or more search Domains in a Kubernetes configuration
 
 Take a look also at the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
 
-To understand both concepts, we can refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
+To understand both concepts, refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
 The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
 
@@ -191,7 +191,7 @@ option single-request
 
 There are different ways to capture traffic in a Kubernetes Pod. All the examples are based on the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 
-First of all, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. We will use a multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
+First of all, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. The build process creates multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
 
 ### The Dockerfile
 
@@ -240,7 +240,7 @@ Manifests:
 
 ### Attaching an ephemeral container to the Nginx Pod
 
-Now that the tcpdump image is ready, we can create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
+Now that the tcpdump image is ready, create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
 kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
@@ -256,7 +256,7 @@ kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | W
 
 ### Request the URL from the POD
 
-As in the local machine, we can `curl http://example.com` in the Nginx Pod.
+As in the local machine, do `curl http://example.com` in the Nginx Pod.
 
 ```shell
 kubectl exec deployments/nginx -c nginx -- curl http://example.com
@@ -280,3 +280,20 @@ There are two comments in the code that explain why ndots should be five(5) in K
 The reason why `ndots` is set to five(5) is to allow SRV record lookups to be relative to the cluster's domain.
 
 A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then looks like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four(4) it would be considered a FQDN and would fail to resolve. With ndots to five(5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
+
+### Resolve DNS with `ndots=4`
+
+Restart the nginx deployment to start from scratch:
+
+```shell
+kubectl rollout restart deployment nginx
+```
+
+
+
+
+Following the same procedure with Wireshark and using the ephemeral container called `debugger` from the previous test, run a new Wireshark instance.
+
+```shell
+kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+```
