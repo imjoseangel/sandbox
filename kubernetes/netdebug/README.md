@@ -172,7 +172,7 @@ One important point from the [resolv.conf(5) Linux man page](https://man7.org/li
 
 The `ndots` represents the threshold value of the number of dots in a query name to consider it a "fully qualified" domain name.
 
-If `ndots` is **5** (the default in Kubernetes), and the name contains less than five(5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.) and the number of dots (.) is less than the value of ndots.
+If `ndots` is **five(5)** (the default in Kubernetes), and the name contains less than five(5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.) and the number of dots (.) is less than the value of ndots.
 
 Therefore, when this domain name is queried, the DNS query iterates through all search paths until the answer contains a NOERROR code.
 
@@ -268,11 +268,15 @@ As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No su
 
 ![Kubernetes DNS Request](./files/example.com-k8s-dns.png)
 
-### Why NDOTS 5?
+### Why NDOTS five(5)?
 
-Whe have seen that the value 5 it generates unnecessary DNS queries. So why five(5) is the default value?
+Whe have seen that the value five(5) it generates unnecessary DNS queries. So why five(5) is the default value?
 
 There are two comments in the code that explain why ndots should be five(5) in Kubernetes:
 
 1. [tradeoff between functionality and performance](https://github.com/kubernetes/kubernetes/issues/33554#issuecomment-266251056)
 1. [SRV lookup names](https://github.com/kubernetes/kubernetes/blob/v1.2.0/pkg/kubelet/dockertools/manager.go#L65-L68)
+
+The reason why `ndots` is set to five(5) is to allow SRV record lookups to be relative to the cluster's domain.
+
+A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then looks like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four(4) it would be considered a FQDN and would fail to resolve. With ndots to five(5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
