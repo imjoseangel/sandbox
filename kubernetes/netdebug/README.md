@@ -268,7 +268,7 @@ As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No su
 
 ![Kubernetes DNS Request](./files/example.com-k8s-dns.png)
 
-### Why NDOTS five(5)?
+## Why `ndots:5`?
 
 Whe have seen that the value five(5) it generates unnecessary DNS queries. So why five(5) is the default value?
 
@@ -281,12 +281,31 @@ The reason why `ndots` is set to five(5) is to allow SRV record lookups to be re
 
 A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then looks like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four(4) it would be considered a FQDN and would fail to resolve. With ndots to five(5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
 
-### Resolve DNS with `ndots=4`
+## Testing the theory with `ndots=4`
+
+Let's see in practice how `ndots=4` behaves with the DNS service.
 
 First, restart the nginx deployment to start from scratch:
 
 ```shell
 kubectl rollout restart deployment nginx
+```
+
+Prepare a file to patch the current deployment with the new `ndots` configuration and apply.
+
+```yaml
+---
+spec:
+  template:
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '4'
+```
+
+```shell
+kubectl patch deployments.apps nginx --patch-file ndots-patch.yaml
 ```
 
 Install `nslookup` in the pod for testing purposes
@@ -313,3 +332,78 @@ kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | W
 
 ### Resolve the DNS Service
 
+Run `nslookup _dns._udp.kube-dns.kube-system.svc` in the Nginx Pod.
+
+```shell
+kubectl exec deployments/nginx -c nginx -- nslookup _dns._udp.kube-dns.kube-system.svc
+```
+
+In the console, the error is clear:
+
+```shell
+** server can't find _dns._udp.kube-dns.kube-system.svc: NXDOMAIN
+```
+
+Also in the Wireshark traffic:
+
+![k8s-dns-ndots4](./files/k8s-service-ndots4.png)
+
+The test with `ndots:5` passes by changing the patch to"
+
+```yaml
+---
+spec:
+  template:
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '5'
+```
+
+Apply the same way:
+
+```shell
+kubectl patch deployments.apps nginx --patch-file ndots-patch.yaml
+```
+
+Install `nslookup` in the pod for testing purposes
+
+```shell
+kubectl exec deployments/nginx -c nginx -- bash -c "apt-get update && apt-get install dnsutils -y"
+```
+
+and repeat the process:
+
+```shell
+kubectl exec deployments/nginx -c nginx -- nslookup _dns._udp.kube-dns.kube-system.svc
+```
+
+Create the [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
+
+```shell
+kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
+```
+
+Launch Wireshark:
+
+```shell
+kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
+```
+
+And run `nslookup _dns._udp.kube-dns.kube-system.svc` in the Nginx Pod.
+
+```shell
+kubectl exec deployments/nginx -c nginx -- nslookup _dns._udp.kube-dns.kube-system.svc
+```
+
+The console shows:
+
+```shell
+Name:	_dns._udp.kube-dns.kube-system.svc.cluster.local
+Address: 10.96.0.10
+```
+
+And Wireshark loops properly over DNS `search` until reaching `cluster.local`
+
+![k8s-dns-ndots5](./files/k8s-service-ndots5.png)

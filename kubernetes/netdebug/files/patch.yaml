@@ -1,0 +1,8 @@
+---
+spec:
+  template:
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '5'
