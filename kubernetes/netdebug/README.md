@@ -1,4 +1,4 @@
-# Increase Kubernetes microservices performance by tunning up DNS configuration and learn how to analyze your pod network traffic all at once
+  # Increase Kubernetes microservices performance by tunning up DNS configuration and learn how to analyze your pod network traffic all at once
 
 ## Introduction
 
@@ -20,7 +20,7 @@ There are many tools to analyze network traffic, but needless to say, the most c
 
 To understand what happens with the DNS when requesting a web page, this [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
-The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easiliy displayed using different filters and the *Statistics - Flow Graph*:
+The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easily displayed using different filters and the *Statistics - Flow Graph*:
 
 ![Flow Graph](./files/example.com-http.png)
 
@@ -97,9 +97,9 @@ To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
 
 ## Understanding the captured traffic
 
-Looking at the captured traffic, there are two parts differenciated. The DNS (In *cyan*) and the HTTP (in *green*)
+Looking at the captured traffic, there are two parts differentiated. The DNS (In *cyan*) and the HTTP (in *green*)
 
-The first line (In *cyan*), shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
+The first line (In *cyan*) shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
 
 The second *cyan* line shows the DNS response. Select it to find the IP Address of the requested domain in the *Packet Details Window*. Under **Domain Name System (Response)** - **Answers** like shown in the image below.
 
@@ -162,17 +162,17 @@ options ndots:5
 
 By default, there are three or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster with three local search domains specified.
 
-Take a look also at the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
+Look also at the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
 
 To understand both concepts, refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
-The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is considered to be FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
+The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
 
 One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and can generate a lot of network traffic if the servers for the listed domains are not local and that queries will time out if no server is available for one of the domains.
 
 The `ndots` represents the threshold value of the number of dots in a query name to consider it a "fully qualified" domain name.
 
-If `ndots` is **five(5)** (the default in Kubernetes), and the name contains less than five(5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.) and the number of dots (.) is less than the value of ndots.
+If `ndots` is **five (5)** (the default in Kubernetes), and the name contains less than five (5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.) and the number of dots (.) is less than the value of ndots.
 
 Therefore, when this domain name is queried, the DNS query iterates through all search paths until the answer contains a NOERROR code.
 
@@ -191,7 +191,7 @@ option single-request
 
 There are different ways to capture traffic in a Kubernetes Pod. All the examples are based on the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 
-First of all, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. The build process creates multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
+First, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. The build process creates multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
 
 ### The Dockerfile
 
@@ -248,7 +248,7 @@ kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -
 
 ### Connecting Wireshark to the ephemeral container
 
-Once created, run Wireshark and connect it to the just-created container.
+Once created, run Wireshark, and connect it to the just-created container.
 
 ```shell
 kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
@@ -270,16 +270,16 @@ As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No su
 
 ## Why `ndots:5`?
 
-Whe have seen that the value five(5) it generates unnecessary DNS queries. So why five(5) is the default value?
+Whe have seen that the value five (5) it generates unnecessary DNS queries. So why five (5) is the default value?
 
-There are two comments in the code that explain why ndots should be five(5) in Kubernetes:
+There are two comments in the code that explain why ndots should be five (5) in Kubernetes:
 
 1. [tradeoff between functionality and performance](https://github.com/kubernetes/kubernetes/issues/33554#issuecomment-266251056)
 1. [SRV lookup names](https://github.com/kubernetes/kubernetes/blob/v1.2.0/pkg/kubelet/dockertools/manager.go#L65-L68)
 
-The reason why `ndots` is set to five(5) is to allow SRV record lookups to be relative to the cluster's domain.
+The reason why `ndots` is set to five (5) is to allow SRV record lookups to be relative to the cluster's domain.
 
-A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then looks like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four(4) it would be considered a FQDN and would fail to resolve. With ndots to five(5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
+A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then look like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four (4) it would be considered a FQDN and would fail to resolve. With ndots to five (5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
 
 ## Testing the theory with `ndots=4`
 
@@ -324,7 +324,7 @@ kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -
 
 ### Connecting Wireshark for ndots testing
 
-Once created, run Wireshark and connect it to the just-created container.
+Once created, run Wireshark, and connect it to the just-created container.
 
 ```shell
 kubectl exec -c debugger deployments/nginx -- tcpdump -s 0 -n -w - -U -i any | Wireshark -kni -
