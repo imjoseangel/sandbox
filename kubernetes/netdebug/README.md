@@ -412,4 +412,4 @@ And Wireshark loops properly over DNS `search` until reaching `cluster.local`
 
 The default `ndots` configuration is perfect for Kubernetes services but shouldn't it be for later deployed microservices.
 
-The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness.
+The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
