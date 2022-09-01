@@ -418,9 +418,9 @@ The Cluster and applications, if connecting with other external components may s
 
 1. Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
 
-Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a "workaround" in different resources, but
+Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I personally see it as a proper implementation.
 
-When the application has lots of DNS request this change will increase the its performace and latency.
+When the application has lots of DNS requests, this change increases its performace and latency.
 
 ```yaml
 ---
