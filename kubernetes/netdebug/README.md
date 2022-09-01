@@ -413,3 +413,38 @@ And Wireshark loops properly over DNS `search` until reaching `cluster.local`
 The default `ndots` configuration is perfect for Kubernetes services but shouldn't it be for later deployed microservices.
 
 The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
+
+## Recommendation
+
+1. Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
+
+Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a "workaround" in different resources, but
+
+When the application has lots of DNS request this change will increase the its performace and latency.
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app.kubernetes.io/name: myapp
+    app.kubernetes.io/version: 1.0.0
+  name: myapp
+  namespace: myapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: myapp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: myapp
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '2'
+```
