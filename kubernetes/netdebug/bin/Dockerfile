@@ -3,9 +3,14 @@ FROM python:alpine3.10 as base
 
 LABEL maintainer="imjoseangel"
 
-# Packages to build image requirements
-RUN apk add --no-cache \
-    tcpdump
+RUN mkdir /app
+COPY dnsbench.py /app/dnsbench.py
+ADD requirements.txt requirements.txt
 
-ENTRYPOINT [ "tcpdump" ]
-CMD [ "-i", "any" ]
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt && chmod +x /app/dnsbench.py && adduser -S none
+USER none
+
+WORKDIR /app
+
+ENTRYPOINT ["python", "dnsbench.py"]
