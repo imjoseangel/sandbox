@@ -1,4 +1,4 @@
-  # Increase Kubernetes microservices performance by tunning up DNS configuration and learn how to analyze your pod network traffic all at once
+# Increase Kubernetes microservices performance by tunning up DNS configuration and learn how to analyze your pod network traffic all at once
 
 ## Introduction
 
@@ -20,7 +20,7 @@ There are many tools to analyze network traffic, but needless to say, the most c
 
 To understand what happens with the DNS when requesting a web page, this [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
-The **DNS request**, the **TCP Connection**, the **HTTP Request**, and the **HTTP Response** can be easily displayed using different filters and the *Statistics - Flow Graph*:
+The **DNS request**, the **TCP Connection**, the **HTTP Request**, and the **HTTP Response** can be displayed using different filters and the *Statistics - Flow Graph*:
 
 ![Flow Graph](./files/example.com-http.png)
 
@@ -97,7 +97,7 @@ To get the promised Flow Graph, select the *Statistics* menu and *Flow Graph*
 
 ## Understanding the captured traffic
 
-Looking at the captured traffic, there are two parts differentiated. The DNS (In *cyan*) and the HTTP (in *green*)
+When analyzing the captured traffic, there are two parts differentiated. The DNS (In *cyan*) and the HTTP (in *green*)
 
 The first line (In *cyan*) shows the DNS request from our IP address to the DNS Server (8.8.8.8 in the example).
 
@@ -162,26 +162,26 @@ options ndots:5
 
 By default, there are three or more search Domains in a Kubernetes configuration. The example above comes from a Minikube Cluster with three local search domains specified.
 
-Look also at the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
+Pay attention to the `ndots:5` option. It is important to understand, how both `search` and `ndots` settings work together.
 
 To understand both concepts, refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
-The `search` represent the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
+The `search` represent the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the Domain is FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
 
 One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and can generate a lot of network traffic if the servers for the listed domains are not local and that queries will time out if no server is available for one of the domains.
 
 The `ndots` represents the threshold value of the number of dots in a query name to consider it a "fully qualified" domain name.
 
-If `ndots` is **five (5)** (the default in Kubernetes), and the name contains less than five (5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.) and the number of dots (.) is less than the value of ndots.
+If `ndots` is **five (5)** (the default in Kubernetes), and the name contains less than five (5) dots inside it, the syscall will try to resolve it sequentially through all local search domains first and - in case none succeed - it will resolve as an absolute name only at last. For instance, the domain name `www.example.com` contains two dots (.), and the number of dots (.) is less than the value of ndots.
 
-Therefore, when this domain name is queried, the DNS query iterates through all search paths until the answer contains a NOERROR code.
+Therefore, when querying a domain name, the DNS query iterates through all search paths until the answer contains a NOERROR code.
 
 1. `www.example.com.<namespace>.svc.cluster.local`
 1. `www.google.com.svc.cluster.local`
 1. `www.google.cluster.local`
 1. `www.google.com`
 
-It is important to remark that A and AAAA records are requested in parallel. The `single-request` option in `/etc/resolv.conf` has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
+It is important to remark that the DNS requests the A and AAAA records in parallel. The `single-request` option in `/etc/resolv.conf` has a default configuration to perform parallel IPv4 and IPv6 lookups. This option can be disabled using the configuration option `single-request` in the `/etc/resolv.conf` configuration file.
 
 ```ini
 option single-request
@@ -264,7 +264,7 @@ kubectl exec deployments/nginx -c nginx -- curl http://example.com
 
 ### Analyzing the Traffic
 
-As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No such name* answer for every pair request until reaching the end of the search list and trying with `example.com`
+As expected, there are eight (8) requests to the DNS (A and AAAA) with a negative *No such name* answer for every pair request until reaching the end of the search list and trying with `example.com`
 
 ![Kubernetes DNS Request](./files/example.com-k8s-dns.png)
 
@@ -277,9 +277,9 @@ Two comments in the Kubernetes code explain why ndots should be five (5) in Kube
 1. [The tradeoff between functionality and performance](https://github.com/kubernetes/kubernetes/issues/33554#issuecomment-266251056)
 1. [SRV lookup names](https://github.com/kubernetes/kubernetes/blob/v1.2.0/pkg/kubelet/dockertools/manager.go#L65-L68)
 
-The reason why `ndots` is set to five (5) is to allow SRV record lookups to be relative to the cluster's domain.
+The reason `ndots` is five (5) is to allow SRV record lookups to be relative to the cluster domain.
 
-A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then look like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four (4) it would be considered an FQDN and would fail to resolve. With ndots to five (5), it won't be considered an FQDN and will be searched relative to `cluster.local`.
+A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will look like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four (4), it would be considered an FQDN and will fail to resolve. With ndots to five (5), it won't be considered an FQDN and will be searched relative to `cluster.local`.
 
 ## Testing the theory with `ndots=4`
 
@@ -410,15 +410,15 @@ And Wireshark loops properly over DNS `search` until reaching `cluster.local`
 
 ## `ndots:5` can negatively affect performance
 
-The default `ndots` configuration is perfect for Kubernetes services but it shouldn't be for later deployed microservices.
+The default `ndots` configuration is perfect for Kubernetes services, but it shouldn't be for later deployed microservices.
 
-The Cluster and applications, when connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
+Cluster and applications, when connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
 
 ## Testing CoreDNS Performance with multiple requests
 
 So far, we have a rich theory but no data. **Observability** needs both enough **data** and a **theory** within which that data can be refined.
 
-Let's create the test from inside the Kubernetes Cluster by using a small pod that creates between 60 and 80 requests per minute. This request range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
+Let's create the test inside the Kubernetes Cluster using a small pod. It will launch between 60 and 80 requests per minute. This request range is enough to avoid Cluster overloading and to test the `ndots` behavior.
 
 ### Building the application
 
@@ -488,7 +488,7 @@ WORKDIR /app
 ENTRYPOINT ["python", "dnsrequest.py"]
 ```
 
-The python file is called `dnsrequest.py` and the `requirements.txt` contains one line:
+The python file is called `dnsrequest.py`, and the `requirements.txt` contains one line:
 
 ```requirements
 requests
@@ -553,19 +553,19 @@ CPU decreases radically. CoreDNS Log shows:
 [INFO] 10.244.0.11:54982 - 63571 "AAAA IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 76 0.000119333s
 ```
 
-The behavior can be observed in the *CoreDNS* CPU diagram below:
+Find the CPU load in the *CoreDNS* CPU diagram below:
 
 ![CoreDNS-CPU](./files/dns-cpu.png)
 
-The application CPU doesn't change, the requests have the same frequency:
+The application CPU doesn't change, and the requests have the same frequency:
 
 ![Application-CPU](./files/app-cpu.png)
 
-Regarding network traffic in the CoreDNS, there is also clear exhaustion when `ndots:5`:
+Regarding network traffic in the CoreDNS, there is also exhaustion when `ndots:5`:
 
 ![CoreDNS-net](./files/dns-net.png)
 
-And also in the application:
+And in the application:
 
 ![Application-net](./files/app-net.png)
 
@@ -573,33 +573,6 @@ And also in the application:
 
 Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
 
-Using the aggressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I see it as a proper implementation.
+The aggressive `ndots:1` forces to use the full domain for every intra-node communication. Using fully qualified names can be described as a *"workaround"* in different resources. I see it as a proper implementation.
 
-When the application has lots of DNS requests, `ndots:2` increases DNS performance and latency.
-
-```yaml
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  generation: 2
-  labels:
-    app.kubernetes.io/name: myapp
-    app.kubernetes.io/version: 1.0.0
-  name: myapp
-  namespace: myapp
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: myapp
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: myapp
-    spec:
-      dnsConfig:
-        options:
-          - name: ndots
-            value: '2'
-```
+When the application has many DNS requests, `ndots:2` increases DNS performance and latency.
