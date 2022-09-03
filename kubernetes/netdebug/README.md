@@ -418,8 +418,7 @@ The Cluster and applications, if connecting with other external components may s
 
 So far, we have a rich theory but no data. **Observability** needs both enough **data** and a **theory** within which that data can be refined.
 
-To do the test, I prefer doing from inside with a small pod creating 20 requests in an infinite loop.
-
+I prefer performing the test from inside the Kubernetes Cluster. Using with a small pod that creates between 60 and 80 requests per minute. This range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
 
 ## Recommendation
 
