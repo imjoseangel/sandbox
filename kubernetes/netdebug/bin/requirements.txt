@@ -1,2 +1,3 @@
+aiodns
 aiohttp
 requests
