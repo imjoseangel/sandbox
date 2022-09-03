@@ -512,7 +512,7 @@ Minikube under Docker is enough to perform the test. To create the deployment ru
 kubectl create deployment dnsbench --image <yourusername>/dnsbench:v1.0.0
 ```
 
-Once launched, the CPU from CoreDNS will increase inmediately with the default configuration. Checking the Logs we can see all the work performed by the DNS from a single request:
+Once launched, the CPU from CoreDNS will increase inmediately with the default configuration. The dns log shows all the work performed from a single request:
 
 ```log
 [INFO] 10.244.0.7:33509 - 64525 "AAAA IN www.example.com.default.svc.cluster.local. udp 59 false 512" NXDOMAIN qr,aa,rd 152 0.000022583s
