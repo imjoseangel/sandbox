@@ -243,7 +243,7 @@ Manifests:
 Now that the tcpdump image is ready, create an [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
-kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
+kubectl debug --image <yourusername>/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
 ### Connecting Wireshark to the ephemeral container
@@ -319,7 +319,7 @@ kubectl exec deployments/nginx -c nginx -- bash -c "apt-get update && apt-get in
 Following the same procedure with Wireshark create the [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
-kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
+kubectl debug --image <yourusername>/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
 ### Connecting Wireshark for ndots testing
@@ -382,7 +382,7 @@ kubectl exec deployments/nginx -c nginx -- nslookup _dns._udp.kube-dns.kube-syst
 Create the [ephemeral container](https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/) called `debugger`:
 
 ```shell
-kubectl debug --image imjoseangel/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
+kubectl debug --image <yourusername>/tcpdump:v1.0.0 -c debugger $(kubectl get pod -l app=nginx -o name)
 ```
 
 Launch Wireshark:
@@ -418,16 +418,160 @@ The Cluster and applications, if connecting with other external components may s
 
 So far, we have a rich theory but no data. **Observability** needs both enough **data** and a **theory** within which that data can be refined.
 
-I prefer performing the test from inside the Kubernetes Cluster. Using with a small pod that creates between 60 and 80 requests per minute. This range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
+Let's create the test from inside the Kubernetes Cluster by using with a small pod that creates between 60 and 80 requests per minute. This request range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
 
-## Recommendation
+### Building the application
+
+The python code used is:
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import asyncio
+import concurrent.futures
+import logging
+import sys
+import os
+import requests
+
+logging.basicConfig(format="%(asctime)s %(levelname)s:%(name)s: %(message)s",
+                    datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout, level=logging.INFO)
+
+logger = logging.getLogger('httprequests')
+logging.getLogger("chardet.charsetprober").disabled = True
+
+benchuri = os.environ.get('BENCHURI', 'http://www.example.com')
+
+
+async def main():
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+
+        fetch = asyncio.get_event_loop()
+        futures = [
+            fetch.run_in_executor(
+                executor,
+                requests.get,
+                benchuri
+            )
+            for i in range(20)
+        ]
+        for request in await asyncio.gather(*futures):
+            logger.info(request)
+
+if __name__ == '__main__':
+
+    while True:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+```
+
+And the *Dockerfile*:
+
+```dockerfile
+ARG build_for=linux/amd64,linux/arm64
+FROM python:alpine3.10 as base
+
+LABEL maintainer="<yournamehere>"
+
+RUN mkdir /app
+COPY dnsrequest.py /app/dnsrequest.py
+ADD requirements.txt requirements.txt
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt && chmod +x /app/dnsrequest.py && adduser -S none
+USER none
+
+WORKDIR /app
+
+ENTRYPOINT ["python", "dnsrequest.py"]
+```
+
+The python file is called `dnsrequest.py` and the `requirements.txt` contains one line:
+
+```requirements
+requests
+```
+
+The process to build the Dockerfile is exactly the same as explained with `tcpdump` above.
+
+```shell
+docker buildx create --name buildx --driver-opt network=host --use
+docker buildx inspect --bootstrap
+docker buildx build -t <yourusername>/dnsbench:v1.0.0 --platform linux/amd64 --platform linux/arm64 --file Dockerfile --push .
+docker buildx imagetools inspect <yourusername>/dnsbench:v1.0.0
+docker buildx rm buildx
+```
+
+### Launching the Application
+
+Minikube under Docker is enough to perform the test. To create the deployment run:
+
+```shell
+kubectl create deployment dnsbench --image <yourusername>/dnsbench:v1.0.0
+```
+
+Once launched, the CPU from CoreDNS will increase inmediately with the default configuration. Checking the Logs we can see all the work performed by the DNS from a single request:
+
+```log
+[INFO] 10.244.0.7:33509 - 64525 "AAAA IN www.example.com.default.svc.cluster.local. udp 59 false 512" NXDOMAIN qr,aa,rd 152 0.000022583s
+[INFO] 10.244.0.7:33509 - 64400 "A IN www.example.com.default.svc.cluster.local. udp 59 false 512" NXDOMAIN qr,aa,rd 152 0.00005575s
+[INFO] 10.244.0.7:35864 - 8087 "AAAA IN www.example.com.svc.cluster.local. udp 51 false 512" NXDOMAIN qr,aa,rd 144 0.000044s
+[INFO] 10.244.0.7:35864 - 8004 "A IN www.example.com.svc.cluster.local. udp 51 false 512" NXDOMAIN qr,aa,rd 144 0.000053792s
+[INFO] 10.244.0.7:35569 - 21607 "AAAA IN www.example.com.cluster.local. udp 47 false 512" NXDOMAIN qr,aa,rd 140 0.00004025s
+[INFO] 10.244.0.7:35569 - 21524 "A IN www.example.com.cluster.local. udp 47 false 512" NXDOMAIN qr,aa,rd 140 0.000065667s
+[INFO] 10.244.0.7:53735 - 22419 "AAAA IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 76 0.000035041s
+[INFO] 10.244.0.7:53735 - 22335 "A IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 64 0.000027542s
+```
+
+Changing the DNS `ndots:5` option to `ndots:1` with:
+
+```yaml
+---
+spec:
+  template:
+    spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: '1'
+```
+
+```shell
+kubectl patch deployments.apps dnsbench --patch-file ndots-patch.yaml
+```
+
+The CPU decreases radically and the CoreDNS Log shows:
+
+```log
+[INFO] 10.244.0.11:54982 - 63488 "A IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 64 0.000057167s
+[INFO] 10.244.0.11:54982 - 63571 "AAAA IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 76 0.000119333s
+```
+
+The behavior can be observed in the *CoreDNS* CPU diagram below:
+
+![CoreDNS-CPU](./files/dns-cpu.png)
+
+The application CPU doesn't change, the requests have the same frequency:
+
+![Application-CPU](./files/app-cpu.png)
+
+Regarding network traffic, there is also a clear exhaustion when `ndots:5`:
+
+![CoreDNS-net](./files/dns-net.png)
+
+And also in the application:
+
+![Application-net](./files/app-net.png)
+
+## Conclusion
 
 Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
 
 Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I personally see it as a proper implementation.
 
 When the application has lots of DNS requests, this change increases its performace and latency.
-
 
 ```yaml
 ---
