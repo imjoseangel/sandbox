@@ -414,13 +414,21 @@ The default `ndots` configuration is perfect for Kubernetes services but shouldn
 
 The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
 
+## Testing CoreDNS Performance with multiple requests
+
+So far, we have a rich theory but no data. **Observability** needs both enough **data** and a **theory** within which that data can be refined.
+
+To do the test, I prefer doing from inside with a small pod creating 20 requests in an infinite loop.
+
+
 ## Recommendation
 
-1. Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
+Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
 
 Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I personally see it as a proper implementation.
 
 When the application has lots of DNS requests, this change increases its performace and latency.
+
 
 ```yaml
 ---
