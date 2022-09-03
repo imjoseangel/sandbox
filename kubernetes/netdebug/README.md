@@ -10,7 +10,7 @@ With your comments and help, I would like to improve this small article as much 
 
 ## What is DNS?
 
-DNS is a protocol that allows a computer to resolve a **Domain Name** like *dev.to* written by a human to an **IP address** so browsers can load Internet resources. DNS is called the phonebook of the Internet.
+DNS is a protocol that allows a computer to resolve a **Domain Name** (like *dev.to*) written by a human to an **IP address** so browsers can load Internet resources. DNS is called the phonebook of the Internet.
 
 ## How to debug DNS network traffic - Wireshark
 
@@ -20,7 +20,7 @@ There are many tools to analyze network traffic, but needless to say, the most c
 
 To understand what happens with the DNS when requesting a web page, this [diagram](https://dev.to/wassimchegham/ever-wondered-what-happens-when-you-type-in-a-url-in-an-address-bar-in-a-browser-3dob) from @wassimchegham is a good start.
 
-The **DNS request**, the **TCP Connection**, the **HTTP Request** and the **HTTP Response** can be easily displayed using different filters and the *Statistics - Flow Graph*:
+The **DNS request**, the **TCP Connection**, the **HTTP Request**, and the **HTTP Response** can be easily displayed using different filters and the *Statistics - Flow Graph*:
 
 ![Flow Graph](./files/example.com-http.png)
 
@@ -59,7 +59,7 @@ The `Server` field indicates the DNS server configured in the environment to whi
 
 Find the name under `Non-authoritative answer:` and the IP associated. In the example `93.184.216.34`.
 
-Under *using this filter:* option in the main screen, input:
+Under *using this filter:* option on the main screen, input:
 
 `tcp port http or port 53 or dst host 93.184.216.34`
 
@@ -112,7 +112,7 @@ Found in the following three lines (in *green*).
 Before a client and a server can exchange data (payload), they must establish a TCP connection via the TCP 3-way handshake.
 
 **SYN** - The client sends a SYN (Synchronize) packet to the server.
-**SYN ACK**- The server sends a SYN-ACK (Synchronize Acknowledge) packet to the client.
+**SYN-ACK**- The server sends a SYN-ACK (Synchronize Acknowledge) packet to the client.
 **ACK** - The client sends an ACK (Acknowledge) packet to the server.
 
 In the image, it is after the DNS request.
@@ -121,9 +121,9 @@ In the image, it is after the DNS request.
 
 ### The Request and Connection Close (FIN ACK)
 
-Next to the SYN-ACK, it comes the HTTP GET and the ACK from the server with the HTTP response.
+Next to the SYN-ACK, comes the HTTP GET and the ACK from the server with the HTTP response.
 
-And finally, the TCP close requests with FIN ACK Packets to close the connection.
+And finally, the TCP requests FIN-ACK Packets to close the connection.
 
 ![fin-acl](./files/example.com-finack.png)
 
@@ -166,7 +166,7 @@ Look also at the `ndots:5` option. It is important to understand, how both `sear
 
 To understand both concepts, refer to the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html)
 
-The `search` represents the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
+The `search` represent the search path for a particular domain. Interestingly dev.to or example.com are not FQDN (fully qualified domain name). A standard convention that most DNS resolvers follow is that if a domain ends with a dot (.) (representing the root zone), the domain is FQDN. Some resolvers try to act smart and append the dot (.) themselves. So dev.to. is an FQDN, dev.to is not.
 
 One important point from the [resolv.conf(5) Linux man page](https://man7.org/linux/man-pages/man5/resolv.conf.5.html) For environments with multiple subdomains please read options `ndots:n` to avoid unnecessary traffic for the root-dns-servers. Note that this process may be slow and can generate a lot of network traffic if the servers for the listed domains are not local and that queries will time out if no server is available for one of the domains.
 
@@ -191,7 +191,7 @@ option single-request
 
 There are different ways to capture traffic in a Kubernetes Pod. All the examples are based on the latest Kubernetes functionality using [Ephemeral Debug Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container)
 
-First, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. The build process creates multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
+First, let's create a `tcpdump` debug image. Wireshark will use it to display the attached pod traffic. The build process creates a multi-platform image to be able to run in `linux/amd64` and `linux/arm64`
 
 ### The Dockerfile
 
@@ -270,16 +270,16 @@ As expected, there are 8 requests to the DNS (A and AAAA) with a negative *No su
 
 ## Why `ndots:5`?
 
-Whe have seen that the value five (5) it generates unnecessary DNS queries. So why five (5) is the default value?
+`ndots:5` generates unnecessary DNS queries. So why five (5) is the default value?
 
-There are two comments in the code that explain why ndots should be five (5) in Kubernetes:
+Two comments in the Kubernetes code explain why ndots should be five (5) in Kubernetes:
 
-1. [tradeoff between functionality and performance](https://github.com/kubernetes/kubernetes/issues/33554#issuecomment-266251056)
+1. [The tradeoff between functionality and performance](https://github.com/kubernetes/kubernetes/issues/33554#issuecomment-266251056)
 1. [SRV lookup names](https://github.com/kubernetes/kubernetes/blob/v1.2.0/pkg/kubelet/dockertools/manager.go#L65-L68)
 
 The reason why `ndots` is set to five (5) is to allow SRV record lookups to be relative to the cluster's domain.
 
-A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then look like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four (4) it would be considered a FQDN and would fail to resolve. With ndots to five (5), it won't be considered a FQDN and will be searched relative to `cluster.local`.
+A typical SRV record has the form `_service._protocol.name.` and in Kubernetes, the name has the form `service.namespace.svc`. The formed record will then look like `_service._protocol.service.namespace.svc`. This query contains four dots. If `ndots` is four (4) it would be considered an FQDN and would fail to resolve. With ndots to five (5), it won't be considered an FQDN and will be searched relative to `cluster.local`.
 
 ## Testing the theory with `ndots=4`
 
@@ -408,17 +408,17 @@ And Wireshark loops properly over DNS `search` until reaching `cluster.local`
 
 ![k8s-dns-ndots5](./files/k8s-service-ndots5.png)
 
-## `ndots:5` can negatively affect to performance
+## `ndots:5` can negatively affect performance
 
-The default `ndots` configuration is perfect for Kubernetes services but shouldn't it be for later deployed microservices.
+The default `ndots` configuration is perfect for Kubernetes services but it shouldn't be for later deployed microservices.
 
-The Cluster and applications, if connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
+The Cluster and applications, when connecting with other external components may suffer a negative performance impact and slowness. The DNS can become a bottleneck in case of heavy traffic.
 
 ## Testing CoreDNS Performance with multiple requests
 
 So far, we have a rich theory but no data. **Observability** needs both enough **data** and a **theory** within which that data can be refined.
 
-Let's create the test from inside the Kubernetes Cluster by using with a small pod that creates between 60 and 80 requests per minute. This request range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
+Let's create the test from inside the Kubernetes Cluster by using a small pod that creates between 60 and 80 requests per minute. This request range is enough to not overload the Lab Cluster and to test the `ndots` behavior.
 
 ### Building the application
 
@@ -494,7 +494,7 @@ The python file is called `dnsrequest.py` and the `requirements.txt` contains on
 requests
 ```
 
-The process to build the Dockerfile is exactly the same as explained with `tcpdump` above.
+The process to build the Dockerfile is the same as explained with `tcpdump` above.
 
 ```shell
 docker buildx create --name buildx --driver-opt network=host --use
@@ -512,7 +512,9 @@ Minikube under Docker is enough to perform the test. To create the deployment ru
 kubectl create deployment dnsbench --image <yourusername>/dnsbench:v1.0.0
 ```
 
-Once launched, the CPU from CoreDNS will increase inmediately with the default configuration. The dns log shows all the work performed from a single request:
+Once launched, the CPU from CoreDNS will increase immediately with the default configuration. The DNS log shows all the work performed from a single request.
+
+>Note: To activate the CoreDNS Logs, edit the DNS `configmap` and add the word `log` in the coredns configuration:
 
 ```log
 [INFO] 10.244.0.7:33509 - 64525 "AAAA IN www.example.com.default.svc.cluster.local. udp 59 false 512" NXDOMAIN qr,aa,rd 152 0.000022583s
@@ -525,7 +527,7 @@ Once launched, the CPU from CoreDNS will increase inmediately with the default c
 [INFO] 10.244.0.7:53735 - 22335 "A IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 64 0.000027542s
 ```
 
-Changing the DNS `ndots:5` option to `ndots:1` with:
+By changing the DNS `ndots:5` option to `ndots:1` with
 
 ```yaml
 ---
@@ -542,7 +544,9 @@ spec:
 kubectl patch deployments.apps dnsbench --patch-file ndots-patch.yaml
 ```
 
-The CPU decreases radically and the CoreDNS Log shows:
+Or changing the request URI from `http://www.example.com` to `http://www.example.com.` (Note the dot (.) at the end)
+
+CPU decreases radically. CoreDNS Log shows:
 
 ```log
 [INFO] 10.244.0.11:54982 - 63488 "A IN www.example.com. udp 33 false 512" NOERROR qr,aa,rd,ra 64 0.000057167s
@@ -557,7 +561,7 @@ The application CPU doesn't change, the requests have the same frequency:
 
 ![Application-CPU](./files/app-cpu.png)
 
-Regarding network traffic, there is also a clear exhaustion when `ndots:5`:
+Regarding network traffic in the CoreDNS, there is also clear exhaustion when `ndots:5`:
 
 ![CoreDNS-net](./files/dns-net.png)
 
@@ -569,9 +573,9 @@ And also in the application:
 
 Use specific `ndots` for your application under `spec - dnsConfig`. Remember that `ndots:1` ignores the `search` list because the query name satisfies the ndots threshold (At least one dot).
 
-Using the agressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I personally see it as a proper implementation.
+Using the aggressive `ndots:1` forces to use a full domain for every intra-node communication. The use of fully qualified names can be described as a *"workaround"* in different resources. I see it as a proper implementation.
 
-When the application has lots of DNS requests, this change increases its performace and latency.
+When the application has lots of DNS requests, `ndots:2` increases DNS performance and latency.
 
 ```yaml
 ---
