@@ -21,7 +21,7 @@ benchuri = os.environ.get('BENCHURI', 'http://www.example.com')
 
 async def main():
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 
         fetch = asyncio.get_event_loop()
         futures = [
@@ -30,7 +30,7 @@ async def main():
                 requests.get,
                 benchuri
             )
-            for i in range(100)
+            for i in range(20)
         ]
         for request in await asyncio.gather(*futures):
             logger.info(request)
