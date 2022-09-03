@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Python Template
-"""
 
 from __future__ import (division, absolute_import, print_function,
                         unicode_literals)
@@ -38,11 +35,8 @@ async def main():
         for request in await asyncio.gather(*futures):
             logger.info(request)
 
-while True:
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-
-
 if __name__ == '__main__':
-    main()
+
+    while True:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
