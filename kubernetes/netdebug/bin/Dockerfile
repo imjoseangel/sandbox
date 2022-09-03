@@ -4,13 +4,13 @@ FROM python:alpine3.10 as base
 LABEL maintainer="imjoseangel"
 
 RUN mkdir /app
-COPY dnstest.py /app/dnstest.py
+COPY dnsrequest.py /app/dnsrequest.py
 ADD requirements.txt requirements.txt
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt && chmod +x /app/dnstest.py && adduser -S none
+RUN pip install -r requirements.txt && chmod +x /app/dnsrequest.py && adduser -S none
 USER none
 
 WORKDIR /app
 
-ENTRYPOINT ["python", "dnstest.py"]
+ENTRYPOINT ["python", "dnsrequest.py"]
