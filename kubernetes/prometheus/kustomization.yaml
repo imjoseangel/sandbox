@@ -1,9 +1,7 @@
 ---
-namespace: monitoring
-
 resources:
-  # - github.com/prometheus-operator/kube-prometheus?ref=v0.11.0
-  - base
+  - github.com/prometheus-operator/kube-prometheus?ref=v0.11.0
+  # - base
 
 helmCharts:
   - name: kube-prometheus-stack
