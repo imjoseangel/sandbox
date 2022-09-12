@@ -7,14 +7,14 @@ bases:
 
 resources:
   # - github.com/prometheus-operator/kube-prometheus?ref=v0.11.0
-  - resources/0alertmanagerConfigCustomResourceDefinition.yaml
-  - resources/0alertmanagerCustomResourceDefinition.yaml
-  - resources/0podmonitorCustomResourceDefinition.yaml
-  - resources/0probeCustomResourceDefinition.yaml
-  - resources/0prometheusCustomResourceDefinition.yaml
-  - resources/0prometheusruleCustomResourceDefinition.yaml
-  - resources/0servicemonitorCustomResourceDefinition.yaml
-  - resources/0thanosrulerCustomResourceDefinition.yaml
+  - resources/crd-alertmanagerconfigs.yaml
+  - resources/crd-alertmanagers.yaml
+  - resources/crd-podmonitors.yaml
+  - resources/crd-probes.yaml
+  - resources/crd-prometheuses.yaml
+  - resources/crd-prometheusrules.yaml
+  - resources/crd-servicemonitors.yaml
+  - resources/crd-thanosrulers.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
