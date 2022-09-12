@@ -7,14 +7,14 @@ bases:
 
 resources:
   # - github.com/prometheus-operator/kube-prometheus?ref=v0.11.0
-  - resources/crd-alertmanagerconfigs.yaml
-  - resources/crd-alertmanagers.yaml
-  - resources/crd-podmonitors.yaml
-  - resources/crd-probes.yaml
-  - resources/crd-prometheuses.yaml
-  - resources/crd-prometheusrules.yaml
-  - resources/crd-servicemonitors.yaml
-  - resources/crd-thanosrulers.yaml
+  - resources/0crd-alertmanagerconfigs.yaml
+  - resources/0crd-alertmanagers.yaml
+  - resources/0crd-podmonitors.yaml
+  - resources/0crd-probes.yaml
+  - resources/0crd-prometheuses.yaml
+  - resources/0crd-prometheusrules.yaml
+  - resources/0crd-servicemonitors.yaml
+  - resources/0crd-thanosrulers.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
@@ -22,3 +22,4 @@ helmCharts:
     version: 39.12.1
     releaseName: monitoring
     namespace: monitoring
+    valuesFile: values.yaml
