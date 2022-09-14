@@ -1,5 +1,7 @@
-# some-code.py
-from decimal import *
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from decimal import Decimal, getcontext
 
 
 def exp(x):
