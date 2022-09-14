@@ -4,6 +4,7 @@
 from decimal import Decimal, getcontext
 
 
+# @profile
 def exp(x):
     getcontext().prec += 2
     i, lasts, s, fact, num = 0, 0, 1, 1, 1

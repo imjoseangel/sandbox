@@ -23,3 +23,9 @@ profile: check ## Profiling
 		$(info Make: $@)
 		$(info )
 		@python -m cProfile -s cumulative $(scr)
+
+pidcheck: ## Input check
+		@[ "${pid}" ] || ( echo "\033[36mpid\033[0m is not set"; exit 1 )
+
+py-spy: pidcheck ## Py-Spy
+		@sudo py-spy top --pid $(pid)
