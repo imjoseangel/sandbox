@@ -17,7 +17,6 @@ help:  ## Display this help
 all: profile
 
 check: ## Input check
-		$(info Make: $@)
 		@[ "${scr}" ] || ( echo "\033[36mscr\033[0m is not set"; exit 1 )
 
 profile: check ## Profiling
