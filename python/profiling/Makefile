@@ -16,16 +16,22 @@ help:  ## Display this help
 
 all: profile
 
-check: ## Input check
+check:
 		@[ "${scr}" ] || ( echo "\033[36mscr\033[0m is not set"; exit 1 )
 
-profile: check ## Profiling
+pidcheck:
+		@[ "${pid}" ] || ( echo "\033[36mpid\033[0m is not set"; exit 1 )
+
+cprofile: check ## cProfile
 		$(info Make: $@)
 		$(info )
 		@python -m cProfile -s cumulative $(scr)
 
-pidcheck: ## Input check
-		@[ "${pid}" ] || ( echo "\033[36mpid\033[0m is not set"; exit 1 )
+lprofile: check ## Line Profiler
+		kernprof -l -v $(scr)
+
+py-heat: check ## Py-Heat
+		@pyheat $(scr) --out image_file.png
 
 py-spy: pidcheck ## Py-Spy
 		@sudo py-spy top --pid $(pid)

@@ -1,1 +1,3 @@
-pip install py-spy
+line_profiler
+py-heat
+py-spy
