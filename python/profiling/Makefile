@@ -28,7 +28,10 @@ cprofile: check ## cProfile
 		@python -m cProfile -s cumulative $(scr)
 
 lprofile: check ## Line Profiler
-		kernprof -l -v $(scr)
+		@kernprof -l -v $(scr)
+
+mprofile: check ## Memory Profiler
+		@python -m memory_profiler $(scr)
 
 py-heat: check ## Py-Heat
 		@pyheat $(scr) --out image_file.png
