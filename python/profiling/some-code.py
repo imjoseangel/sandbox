@@ -18,7 +18,7 @@ def exp(x):
     return +s
 
 
-@profile
+# @profile
 def memory_intensive():
     small_list = [None] * 1000000
     big_list = [None] * 10000000
