@@ -20,7 +20,7 @@ check: ## Input check
 		$(info Make: $@)
 		@[ "${scr}" ] || ( echo "\033[36mscr\033[0m is not set"; exit 1 )
 
-profile: ## Profiling
+profile: check ## Profiling
 		$(info Make: $@)
 		$(info )
 		@python -m cProfile -s cumulative $(scr)
