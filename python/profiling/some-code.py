@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import dis
 from decimal import Decimal, getcontext
 
 
@@ -26,5 +27,6 @@ def memory_intensive():
     return small_list
 
 
+dis.dis(exp)
 exp(Decimal(3000))
 memory_intensive()
