@@ -1,0 +1,55 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - api
+  - db
+
+commonLabels:
+  sandbox: dev
+
+commonAnnotations:
+  logging: verbose
+
+namespace: sandbox
+
+namePreffix: myapp-
+nameSuffix: -dev
+
+images:
+  - name: mongo
+    newName: postgres
+    newTag: '4.2'
+
+patches:
+  - target:
+      kind: Deployment
+      name: api-deployment
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 5
+
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: api-deployment
+      spec:
+        replicas: 5
+
+  - target:
+      kind: Deployment
+      name: api-deployment
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/labels/sandbox
+        value: dev
+
+  - target:
+      kind: Deployment
+      name: api-deployment
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/labels/sandbox
