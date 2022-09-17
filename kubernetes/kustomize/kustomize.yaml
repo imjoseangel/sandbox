@@ -9,6 +9,9 @@ resources:
 commonLabels:
   org: imjoseangel
 
+commonAnnotations:
+  logging: verbose
+
 namespace: sandbox
 
 namePreffix: myapp-
