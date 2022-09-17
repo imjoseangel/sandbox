@@ -4,13 +4,16 @@
 
 Many teams try to implement automated deployment for their applications or their Cloud components but most of them fall in the same hole: **Fail Fast** and consequently, **Confidence**.
 
+There are different reasons that prevent a **Grow Mindset**, just the typical examples:
 
+* Non-sense strict timelines
+* Lack of confidence
+* Complain of Failure
+* Judging performance
+* Lack of innovation
 
-I could enumerate different causes that makes d
+### “Ever tried. Ever failed. No matter. Try Again. Fail again. Fail better.” - Samuel Beckett
 
+Automation requires time to start, creativity, investigation and innovation. Failing fast is part of the learning process.
 
-This is my experience on tryingOne of the most common bottlenecks when communicating Kubernetes pods is DNS resolution. Analyzing network traffic within Kubernetes is not trivial.
-
-This article will help you to understand how to analyze and debug HTTP and DNS network traffic in Kubernetes.
-
-With your comments and help, I would like to improve this small article as much as possible to reach every profile and help any developer, network engineer, or Kubernetes enthusiast.
+Think if the implemented process is *optimal and scalable*. Investigate for alternative solutions and improvements. With the right mindset to *refactor* the process and the code, every team will reach to their full potential.
