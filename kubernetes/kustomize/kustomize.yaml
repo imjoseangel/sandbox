@@ -10,3 +10,6 @@ commonLabels:
   org: imjoseangel
 
 namespace: sandbox
+
+namePreffix: myapp-
+nameSuffix: -dev
