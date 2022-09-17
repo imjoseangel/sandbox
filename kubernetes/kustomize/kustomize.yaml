@@ -21,3 +21,12 @@ images:
   - name: mongo
     newName: postgres
     newTag: '4.2'
+
+patches:
+  - target:
+      kind: Deployment
+      name: api-deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: web-deployment
