@@ -8,3 +8,5 @@ resources:
 
 commonLabels:
   org: imjoseangel
+
+namespace: sandbox
