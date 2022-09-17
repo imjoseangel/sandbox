@@ -16,3 +16,8 @@ namespace: sandbox
 
 namePreffix: myapp-
 nameSuffix: -dev
+
+images:
+  - name: mongo
+    newName: postgres
+    newTag: '4.2'
