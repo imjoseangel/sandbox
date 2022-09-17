@@ -17,3 +17,9 @@ There are different reasons that prevent a **Grow Mindset**, just the typical ex
 Automation requires time to start, creativity, investigation and innovation. Failing fast is part of the learning process.
 
 Think if the implemented process is *optimal and scalable*. Investigate for alternative solutions and improvements. With the right mindset to *refactor* the process and the code, every team will reach to their full potential.
+
+```mermaid
+sequenceDiagram
+    Script->>+Local: Local Run
+    Script->>Git: Centrallized - Local Run
+```
