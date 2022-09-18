@@ -66,3 +66,6 @@ configMapGenerator:
   - name: db-cred
     literals:
       - password=mypassword
+  - name: nginx-config
+    files:
+      - nginx.conf
