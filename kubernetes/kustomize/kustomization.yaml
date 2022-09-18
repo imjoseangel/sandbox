@@ -70,3 +70,7 @@ configMapGenerator:
   - name: nginx-config
     files:
       - nginx.conf
+
+generatorOptions:
+  labels:
+    app-config: my-config
