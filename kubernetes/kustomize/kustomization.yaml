@@ -9,6 +9,9 @@ resources:
   - api
   - db
 
+components:
+  - components
+
 commonLabels:
   sandbox: dev
 
