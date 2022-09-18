@@ -71,6 +71,9 @@ configMapGenerator:
     behavior: replace
     files:
       - nginx.conf
+    options:
+      labels:
+        app-config: my-config
 
 generatorOptions:
   labels:
