@@ -61,3 +61,8 @@ patches:
     patch: |-
       - op: remove
         path: /spec/template/metadata/labels/sandbox
+
+configMapGenerator:
+  - name: db-cred
+    literals:
+      - password=mypassword
