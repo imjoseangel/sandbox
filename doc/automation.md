@@ -38,6 +38,6 @@ With aboves feelings over the table, and other external factors, the best approa
 sequenceDiagram
     autonumber
     Local->>Script: Manual Run
-    Script->>Server: It Works!
+    Script->>Server: It works!
     Server-->>Local: Automated!
 ```

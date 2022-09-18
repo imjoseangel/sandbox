@@ -64,6 +64,7 @@ patches:
 
 configMapGenerator:
   - name: db-cred
+    behavior: merge
     literals:
       - password=mypassword
   - name: nginx-config
