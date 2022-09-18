@@ -6,7 +6,7 @@ Many teams try to implement automated deployment for their applications or their
 
 There are different reasons that prevent a **Grow Mindset**, just the typical examples:
 
-* Non-sense strict timelines
+* Non-sense strict deadlines
 * Lack of confidence
 * Complain of Failure
 * Judging performance
@@ -30,11 +30,13 @@ When a new technology knocks to the door, there are multiple reasons stopping a 
 * Lost one's job
 * False sense of control
 
-Believe me, you don'
-
+With these feelings over the table, and other external factors, the best approach can be:
 
 ```mermaid
 sequenceDiagram
-    Script->>+Local: Local Run
-    Script->>Git: Centrallized - Local Run
+    autonumber
+    Script->>Local: Manual Run
+    Local-->>Script: It Works!
 ```
+
+Don't worry, with the right coaching and time, teams will gain confidence and will improve aboves procedure.
