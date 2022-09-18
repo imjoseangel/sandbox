@@ -68,6 +68,7 @@ configMapGenerator:
     literals:
       - password=mypassword
   - name: nginx-config
+    behavior: replace
     files:
       - nginx.conf
 
