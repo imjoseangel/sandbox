@@ -74,3 +74,5 @@ configMapGenerator:
 generatorOptions:
   labels:
     app-config: my-config
+  annotations:
+    myannotation: othervalue
