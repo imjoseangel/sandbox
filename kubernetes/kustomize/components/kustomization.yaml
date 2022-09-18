@@ -4,3 +4,22 @@ kind: Component
 
 resources:
   - db
+
+secretGenerator:
+  - name: postgres
+    literals:
+      - password=postgres
+
+patches:
+  - target:
+      kind: Deployment
+      name: api-deployment
+    patch: |-
+      - op: add
+        path: "/spec/containers/0/env"
+        value:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres
+                key: password
