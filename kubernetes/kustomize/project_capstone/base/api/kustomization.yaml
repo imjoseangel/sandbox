@@ -1,0 +1,3 @@
+resources:
+  - api-depl.yaml
+  - api-service.yaml

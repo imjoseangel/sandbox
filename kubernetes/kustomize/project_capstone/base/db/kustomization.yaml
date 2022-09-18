@@ -1,0 +1,9 @@
+resources:
+  - db-depl.yaml
+  - db-service.yaml
+
+secretGenerator:
+  - name: db-secret
+    literals:
+      - port=5432
+      - password=mypass

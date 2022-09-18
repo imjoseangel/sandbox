@@ -1,0 +1,22 @@
+bases:
+  - ../../base
+
+patches:
+  - target:
+      kind: Deployment
+      name: db-deployment
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0
+        value:
+          name: db
+          image: mongo
+
+secretGenerator:
+  - name: db-secret
+    behavior: merge
+    literals:
+      - password=devpassword
+
+components:
+  - ../../components/logging

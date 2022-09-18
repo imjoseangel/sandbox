@@ -1,0 +1,7 @@
+resources:
+  - api/
+  - db/
+  - monitoring/
+
+commonLabels:
+  project: lambda

@@ -1,0 +1,10 @@
+bases:
+  - ../../base
+
+configMapGenerator:
+  - name: db-config
+    files:
+      - postgresql.conf
+
+patches:
+  - patch: db-patch.yaml
