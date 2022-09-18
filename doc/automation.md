@@ -30,13 +30,14 @@ When a new technology knocks to the door, there are multiple reasons stopping a 
 * Lost one's job
 * False sense of control
 
-With these feelings over the table, and other external factors, the best approach can be:
+But don't worry, with the right coaching and time, teams will gain confidence and will improve aboves procedure.
+
+With aboves feelings over the table, and other external factors, the best approach could be:
 
 ```mermaid
 sequenceDiagram
     autonumber
-    Script->>Local: Manual Run
-    Local-->>Script: It Works!
+    Local->>Script: Manual Run
+    Script->>Server: It Works!
+    Server-->>Local: Automated!
 ```
-
-Don't worry, with the right coaching and time, teams will gain confidence and will improve aboves procedure.
