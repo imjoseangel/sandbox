@@ -22,7 +22,7 @@ Think if the implemented process is *optimal and scalable*. Investigate for alte
 
 Let's define a possible timeline of how it could be the trip from manual run to a full automated process.
 
-### The first sensation - fear to lost my job
+### The first feeling - fear to lost my job
 
 When a new technology knocks to the door, there are multiple reasons stopping a Team to progress on innovation and new techniques adoption.
 
@@ -41,3 +41,5 @@ sequenceDiagram
     Script->>Server: It works!
     Server-->>Local: Automated!
 ```
+
+It works, and it is automated but there is still some field for improvement.
