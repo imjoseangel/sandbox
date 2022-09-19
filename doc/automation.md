@@ -22,7 +22,7 @@ Think if the implemented process is *optimal and scalable*. Investigate for alte
 
 Let's define a possible timeline of how it could be the trip from manual run to a full automated process.
 
-### The first feeling - fear to lost my job
+### The first stage - Fear of losing job
 
 When a new technology knocks to the door, there are multiple reasons stopping a Team to progress on innovation and new techniques adoption.
 
@@ -43,3 +43,19 @@ sequenceDiagram
 ```
 
 It works, and it is automated but there is still some field for improvement.
+
+### The second stage - Starting the Dunning-Kruger Effect
+
+This is a wonderful stage, where the team start to gain confidence and is pretty damn sure they know a whole lot. On this stage, the automation starts to grow and the team starts to learn new techniques. They use *git* and *pipelines*.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    GIT->>Script: Manual Pipeline
+    Script->>Server: It works!
+    Server-->>GIT: Automated!
+```
+
+It seems similar to the *first stage* but not in the least. The process is now in a central repository and runnable by anyone in the team. There is a commit history.
+
+I have found the first and a half stage, where the having all the logic in the pipeline. This is probably the biggest error a team can perform. It is not scalable at all and it has a lot of dependency on the CI/CD Tool.
