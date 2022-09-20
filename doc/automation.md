@@ -58,4 +58,4 @@ sequenceDiagram
 
 It seems similar to the *first stage* but not in the least. The process is now in a central repository and runnable by anyone in the team. There is a commit history.
 
-I have found the first and a half stage, where the having all the logic in the pipeline. This is probably the biggest error a team can perform. It is not scalable at all and it has a lot of dependency on the CI/CD Tool.
+Having all the logic in the pipeline or using graphical options is not recommended. It is not scalable, has a lot of dependency on the CI/CD tool and don't offer the advantages like the rollbacks, traces and logging given the *as code* options.
