@@ -52,10 +52,23 @@ This is a wonderful stage, where the team start to gain confidence and is pretty
 sequenceDiagram
     autonumber
     GIT->>Script: Manual Pipeline
+    GIT->>GIT: History and Rollback
     Script->>Server: It works!
     Server-->>GIT: Automated!
 ```
 
 It seems similar to the *first stage* but not in the least. The process is now in a central repository and runnable by anyone in the team. There is a commit history.
 
-Having all the logic in the pipeline or using graphical options is not recommended. It is not scalable, has a lot of dependency on the CI/CD tool and don't offer the advantages like the rollbacks, traces and logging given the *as code* options.
+> **Warning!!!**
+>
+> Having all the logic in the pipeline or using graphical options is not recommended.
+>
+>It is not scalable, has a lot of dependency on the CI/CD tool and don't offer the advantages like the rollbacks, traces and logging given the *as code* options.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    Note over CD Tool: Inline Code
+    CD Tool->>Server: Manual Pipeline
+    Server->>CD Tool: It works!
+```
