@@ -57,18 +57,27 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-It seems similar to the *first stage* but not in the least. The process is now in a central repository and runnable by anyone in the team. There is a commit history.
+It seems similar to the *first stage* but not in the least. The process is:
+
+* Centrallized in a Git repository.
+* Runnable by anyone in the team.
+* It has a history log.
+* It can be rolled back and traced.
+
+#### Using a CI/CD Tool directly
 
 > **Warning!!!**
 >
 > Having all the logic in the pipeline or using graphical options is not recommended.
 >
 >It is not scalable, has a lot of dependency on the CI/CD tool and don't offer the advantages like the rollbacks, traces and logging given the *as code* options.
+>
+>It could be something like:
 
 ```mermaid
 sequenceDiagram
     autonumber
-    Note over CD Tool: Inline Code
-    CD Tool->>Server: Manual Pipeline
-    Server->>CD Tool: It works!
+    Note over CI/CD Tool: Inline Code
+    CI/CD Tool->>Server: Manual Pipeline
+    Server->>CI/CD Tool: It works!
 ```
