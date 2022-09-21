@@ -25,11 +25,9 @@ def encrypt(message):
         elif char.isnumeric():
             # Add 1 to ascii value of char
             result += chr(ord(char) + 1)
-            continue
         else:
             # Add char to result
             result += char
-            continue
 
     return result
 
