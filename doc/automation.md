@@ -93,9 +93,9 @@ sequenceDiagram
     autonumber
     GIT->>Script: Manual Pipeline
     GIT->>GIT: History and Rollback
-    GIT->>GIT: Pre-Commit and CI
+    GIT->>GIT: Pre-Commit
     Script->>Script: Static Analysis
-    Script->>Continuous Integration: Static Analysis
+    Script->>Continuous Integration: Pull Request
     Script->>Server: It works!
     Server-->>GIT: Automated!
 ```
