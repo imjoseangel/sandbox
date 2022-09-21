@@ -11,16 +11,13 @@ def encrypt(message):
         if char.isalpha():
 
             # Check char is either Z or z and append A, a respectively
-            if char.lower() == "z":
+            if char == "Z":
                 result += "A"
-                continue
-            elif char.lower() == "z":
+            elif char == "z":
                 result += "a"
-                continue
             else:
                 # Add 1 to ascii value of char
                 result += chr(ord(char) + 1)
-                continue
 
         # Check if character is numeric
         elif char.isnumeric():
