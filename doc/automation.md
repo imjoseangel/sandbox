@@ -99,3 +99,13 @@ sequenceDiagram
     Script->>Server: It works!
     Server-->>GIT: Automated!
 ```
+
+### The fourth stage - Realizing there is a long way to go
+
+With Continuous Integration the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible* or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve their process. Compared with using script, the *Terraform* code can be just another script launched from the local machine.
+
+**Speed** is becoming an important asset and, the referred external tools help to achive it. Most of these tools are prepared to run different jobs in parallel.
+
+**Security** is another important one and with standard tools it is possible to do **Static Security Analysis** before running the deployments.
+
+### Continuous Delivery is knocking the door
