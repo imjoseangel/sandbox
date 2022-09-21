@@ -64,7 +64,7 @@ It seems similar to the *first stage* but not in the least. The process is:
 * It has a history log.
 * It can be rolled back and traced.
 
-#### Using a CI/CD Tool directly
+#### Using a CI/CD Tool with inline code
 
 > **Warning!!!**
 >
@@ -80,4 +80,22 @@ sequenceDiagram
     Note over CI/CD Tool: Inline Code
     CI/CD Tool->>Server: Manual Pipeline
     Server->>CI/CD Tool: It works!
+```
+
+### The third stage - Questioning our current solution
+
+Hosting our code to Git is taking a firm step in the way of automation.
+
+The curiosity starts to open new ways or working with Git like *Git Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python* or *Powershell* and use *shellcheck*, *pylint* or *PSScriptAnalyzer* respectively. The **Pre-Commit**, **Static Analysis** and **Pull Requests** have arrive to stay.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    GIT->>Script: Manual Pipeline
+    GIT->>GIT: History and Rollback
+    GIT->>GIT: Pre-Commit and CI
+    Script->>Script: Static Analysis
+    Script->>Continuous Integration: Static Analysis
+    Script->>Server: It works!
+    Server-->>GIT: Automated!
 ```
