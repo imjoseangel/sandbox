@@ -7,8 +7,6 @@ def encrypt(message):
     # iterate through the input msg
     for _, char in enumerate(message):
 
-        print(char)
-
         # Check if character is alphanumeric
         if char.isalpha():
 

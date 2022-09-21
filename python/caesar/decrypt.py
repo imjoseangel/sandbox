@@ -6,8 +6,6 @@ def decrypt(cipher):
     # Iterate through the cipher
     for _, char in enumerate(cipher):
 
-        print(char)
-
         # Check if character is alphanumeric
         if char.isalpha():
 
