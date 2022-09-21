@@ -94,18 +94,37 @@ sequenceDiagram
     GIT->>Script: Manual Pipeline
     GIT->>GIT: History and Rollback
     GIT->>GIT: Pre-Commit
-    Script->>Script: Static Analysis
+    Script->>Script: Static Code Analysis
     Script->>Continuous Integration: Pull Request
-    Script->>Server: It works!
+    Script->>Server: It works Faster!
     Server-->>GIT: Automated!
 ```
 
 ### The fourth stage - Realizing there is a long way to go
 
-With Continuous Integration the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible* or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve their process. Compared with using script, the *Terraform* code can be just another script launched from the local machine.
+With Continuous Integration the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible* or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve their process. Compared with using Bash, the *Terraform* code is just another script launched from the local machine.
 
 **Speed** is becoming an important asset and, the referred external tools help to achive it. Most of these tools are prepared to run different jobs in parallel.
 
-**Security** is another important one and with standard tools it is possible to do **Static Security Analysis** before running the deployments.
+**Security** is key and with standard tools it is possible to do **Static Security Analysis** before running the deployments.
+
+**Refactoring** is a new word and it becomes part of the process. The team knows that is time to review and learn.
+
+*Git* is now the standard and the Pull Request Process is improving. The team starts to implement other testing and quality gates before the approvals.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    GIT->>as Code Tool: Manual Pipeline
+    GIT->>GIT: History and Rollback
+    GIT->>GIT: Pre-Commit
+    as Code Tool->>as Code Tool: Static Code Analysis
+    as Code Tool->>as Code Tool: Static Security Analysis
+    as Code Tool->>as Code Tool: Refactor
+    as Code Tool->>Continuous Integration: Pull Request
+    Continuous Integration ->> Continuous Integration: Quality
+    as Code Tool->>Server: It works!
+    Server-->>GIT: Automated!
+```
 
 ### Continuous Delivery is knocking the door
