@@ -127,4 +127,50 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-### Continuous Delivery is knocking the door
+### The fifth stage - The Grown-Up Mountain
+
+**Continuous Delivery** and other techniques is now knocking the door. The Team is out of the comfort zone and start to investigate and learning new ways of improving. Probably is too early for Continuous Deployment.
+
+**Tags** and **releases** are part of the process as well as creating **artifacts** and pushing to the respective servers.
+
+**Documentation as code**, **Containers**, **Dynamic Security** and **Integration Testing** are part of the improvement plan.
+
+The diagram is now bigger with lots of components. The process is becoming better and better:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    GIT->>GIT: History and Rollback
+    GIT->>GIT: Pre-Commit
+    as Code Tool->>as Code Tool: Static Code Analysis
+    as Code Tool->>as Code Tool: Static Security Analysis
+    as Code Tool->>as Code Tool: Refactor
+    as Code Tool->>Continuous Integration: Pull Request
+    Continuous Integration ->> Continuous Integration: Quality
+    Continuous Integration ->> Continuous Delivery: DAST and Testing
+    GIT->>Continuous Delivery: Automated Pipeline
+    Continuous Delivery ->> Continuous Delivery: Tags and Releases
+    Continuous Delivery ->> Server: It works!
+    Server-->>GIT: Automated!
+```
+
+### The sixth stage - Plateu of Productivity
+
+In this stage, **GitOps**, **APIs**, **WebHooks**, **Trunk Based** or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment** or **Canary and Blue Green** deployments among others.
+
+The whole process can be summarized like:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    GIT->>Code: Automation
+    Code ->>CI: Pull Request
+    CI ->> CD: Testing
+    CD ->> Container: It works!
+```
+
+## Summary
+
+Hitting the excellence is the result given by the confidence gained by the Team during the whole process but also from the business.
+
+Investing time on new ways of working and techniques is key to continue improving. Getting out of the comfort zone, discuss and apply our learning on our every day job are also symbols of a well-balanced team.
