@@ -2,8 +2,6 @@ class Book:
     def __init__(self, title):
         self.title = title
         self.author = None
-        self.chapter_number = None
-        self.chapter_title = None
 
     def add_author(self, name):
         # add author property
@@ -18,9 +16,10 @@ class Book:
 class BookInfo(Book):
     def __init__(self, title, price, info=False):
         Book.__init__(self, title)
+
         # add properties price and info
-        self.price = price
         self.info = info
+        self.price = price
         self.stars = 0
 
     def rating(self, stars):
@@ -31,7 +30,7 @@ class BookInfo(Book):
             if self.stars < stars and stars > 4:
                 self.price = self.price * 1.2
             # update the stars property
-                self.stars = stars
+            self.stars = stars
         except Exception as e:
             print(e, "Please try again")
 
@@ -39,9 +38,10 @@ class BookInfo(Book):
 # Create a book object titled 'Two Scoops of Django'
 book = Book('Two Scoops of Django')
 # Add the author 'Greenfeld'
-book.add_author = "Greenfeld"
+book.add_author("Greenfeld")
+
 # Add a chapter 3, with title 'Async Views'
-book.add_chapter(3, 'Async Views')
+book.add_chapter(3, "Async Views")
 
 # Create a book_info object titled 'Two Scoops of Django'
 # with a price of 10, and info set to True
