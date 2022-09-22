@@ -2,7 +2,7 @@
 
 ## Introduction - Fail Fast and Teams
 
-Many teams try to implement automated deployment for their applications or their Cloud components but most of them fall in the same hole: **Fail Fast** and consequently, **Confidence**.
+Many teams try to implement automated deployment for their applications or Cloud components. Most of them fall in the same hole: **Fail Fast** and **Confidence**.
 
 Different reasons prevent a **Grow Mindset**:
 
