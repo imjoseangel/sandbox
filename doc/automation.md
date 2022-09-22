@@ -16,7 +16,7 @@ Different reasons prevent a **Grow Mindset**:
 
 Automation requires time to start, creativity, investigation, and innovation. Failing fast is part of the learning process.
 
-Check if the implemented process is *optimal and scalable*. Investigate alternative solutions and improvements. With the right mindset to *refactor* the process and the code, every team will reach its full potential.
+Check if the implemented process is *optimal and scalable*. Investigate alternative solutions and improvements. With the right mindset to *refactor* the process and the code, every Team will reach its full potential.
 
 ## From Human Intervention to Full Automation
 
@@ -30,7 +30,7 @@ When a new technology knocks on the door, multiple reasons could stop a Team to 
 * Lost one's job
 * False sense of control
 
-But don't worry, with the right coaching and time, teams will gain confidence and will improve the above procedure.
+Having the right coaching and time, teams will gain confidence and improve the above procedure.
 
 With these feelings over the table, and other external factors, the best approach could be:
 
@@ -42,11 +42,11 @@ sequenceDiagram
     Server-->>Local: Automated!
 ```
 
-It works, and it is automated but there is still some field for improvement.
+It works, and is automated. But there is still some field for improvement.
 
 ### The second stage - Starting the Dunning-Kruger Effect
 
-This is a wonderful stage, where the team starts to gain confidence and is pretty damn sure they know a whole lot. At this stage, the automation starts to grow and the team starts to learn new techniques. They use *git* and *pipelines*.
+On this stage, the team starts to gain confidence and is pretty damn sure they know a lot. Automation starts to grow, and the Team initiates to learn new techniques. They use *GIT* and *pipelines*.
 
 ```mermaid
 sequenceDiagram
@@ -57,10 +57,10 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-It seems similar to the *first stage* but not in the least. The process is:
+It seems similar to the *first stage*, but not in the least. The process is:
 
 * Centralized in a Git repository.
-* Runnable by anyone in the team.
+* Runnable by anyone in the Team.
 * It has a history log.
 * It can be rolled back and traced.
 
@@ -84,9 +84,9 @@ sequenceDiagram
 
 ### The third stage - Questioning our current solution
 
-Hosting our code to Git is taking a firm step in the way of automation.
+Hosting our code to GIT is taking a firm step in the way of automation.
 
-The curiosity starts to open new ways of working with Git like *Git Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer* respectively. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
+The curiosity starts to open new ways of working with Git like *Git Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
 
 ```mermaid
 sequenceDiagram
