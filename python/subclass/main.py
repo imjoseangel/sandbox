@@ -57,4 +57,4 @@ print(
 )
 # Print all properties of book and book_info objects
 print("Book properties: ", book.__dict__)
-print("BookInfo properties: ", book_info.__dict___)
+print("BookInfo properties: ", book_info.__dict__)
