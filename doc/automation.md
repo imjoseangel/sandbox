@@ -12,7 +12,7 @@ Different reasons prevent a **Grow Mindset**:
 * Judging performance
 * Lack of innovation
 
-### “Ever tried. Ever failed. No matter. Try Again. Fail again. Fail better.” - Samuel Beckett
+### Ever tried. Ever failed. No matter. Try Again. Fail again. Fail better. - Samuel Beckett
 
 Automation requires time to start, creativity, investigation, and innovation. Failing fast is part of the learning process.
 
@@ -20,11 +20,11 @@ Check if the implemented process is *optimal and scalable*. Investigate alternat
 
 ## From Human Intervention to Full Automation
 
-Let's define a possible timeline of how could be the trip from a manual run to a fully automated process.
+Let's define a possible timeline of how could be the process from manual run to a fully automated procedure.
 
 ### The first stage - Fear of losing a job
 
-When a new technology knocks on the door, multiple reasons are stopping a Team to progress on innovation and new techniques adoption.
+When a new technology knocks on the door, multiple reasons could stop a Team to progressing on innovation and adopting new techniques.
 
 * The *damned* comfort zone
 * Lost one's job
