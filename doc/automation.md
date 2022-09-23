@@ -2,7 +2,7 @@
 
 ## Introduction - Fail Fast and Teams
 
-Many teams try to implement automated deployment for their applications or Cloud components. Most of them fall in the same hole: **Fail Fast** and **Confidence**.
+Many Teams try to implement automated deployment for their applications or Cloud components. Most of them fall in the same hole: **Fail Fast** and **Confidence**.
 
 Different reasons prevent a **Grow Mindset**:
 
@@ -30,7 +30,7 @@ When a new technology knocks on the door, multiple reasons could stop a Team fro
 * Lost one's job
 * False sense of control
 
-Having the right coaching and time, teams will gain confidence and improve the above procedure.
+Having the right coaching and time, Teams will gain confidence and improve the above procedure.
 
 With these feelings over the table and other external factors, the best approach could be:
 
@@ -46,7 +46,7 @@ It works and is automated. But there is still some field for improvement.
 
 ### The second stage - Starting the Dunning-Kruger Effect
 
-At this stage, the team starts to gain confidence and is pretty damn sure they know a lot. Automation starts to grow, and the Team initiates to learn new techniques. They use *GIT* and *pipelines*.
+At this stage, the Team starts to gain confidence and is pretty damn sure they know a lot. Automation starts to grow, and the Team initiates to learn new techniques. They use *GIT* and *pipelines*.
 
 ```mermaid
 sequenceDiagram
@@ -86,7 +86,7 @@ sequenceDiagram
 
 Hosting our code to GIT is taking a firm step in the way of automation.
 
-Curiosity opens new ways of working with GIT, like *GIT Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
+Curiosity opens new ways of working with GIT, like *GIT Hooks*. The Team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
 
 ```mermaid
 sequenceDiagram
@@ -102,15 +102,15 @@ sequenceDiagram
 
 ### The fourth stage - Realizing there is a long way to run
 
-With Continuous Integration, the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
+With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean that the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
 
 **Speed** is becoming an important asset, and the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
 
 **Security** is key and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
 
-**Refactoring** is a new word and it becomes part of the process. The team knows that is time to review and learn.
+**Refactoring** is a new word, and becomes part of the process. The Team realizes it is time to review the existing implementation and learn from previous mistakes.
 
-*GIT* is now the standard and the Pull Request Process is improving. The team starts to implement other testing and quality gates before the approvals.
+*GIT* is now the standard, and Pull Request Process is improving. The Team starts to implement other testing and quality gates before the approvals.
 
 ```mermaid
 sequenceDiagram
@@ -173,4 +173,4 @@ sequenceDiagram
 
 Hitting excellence is the result given by the confidence gained by the Team during the whole process but also from the business.
 
-Investing time in new ways of working and techniques is key to continue improving. Getting out of our comfort zone, discussing and applying our learning to our everyday job are symbols of a well-balanced team.
+Investing time in new ways of working and techniques is key to continue improving. Getting out of our comfort zone, discussing and applying our learning to our everyday job are symbols of a well-balanced Team.
