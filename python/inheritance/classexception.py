@@ -1,8 +1,8 @@
 class EmailError(ValueError):
-    def __init__(self, status, message):
+    def __init__(self, status="pending!", message="wrong format!"):
         self.status = status
         self.message = message
-        super().__init__(message)
+        super().__init__(self.message)
 
     def __str__(self):
         return f"{self.status}: {self.message}"
