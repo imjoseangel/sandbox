@@ -70,7 +70,7 @@ It seems similar to the *first stage*, but not in the least. The process is:
 >
 > Having all the logic in the pipeline or using graphical options is not recommended.
 >
->It is not scalable, has a lot of dependency on the CI/CD tool, and doen't offer the advantages like rollbacks, traces, and logging given the *"as code"* options.
+>It is not scalable, has a lot of dependency on the CI/CD tool, and doesn't offer the advantages like rollbacks, traces, and logging given the *"as code"* options.
 >
 >It could be something like:
 
@@ -106,11 +106,11 @@ With Continuous Integration, the process changes dramatically. The Teams start t
 
 **Speed** is becoming an important asset, and the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
 
-**Security** is key on automation, and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
+**Security** is key to automation, and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
 
-**Refactoring** is a new word, and becomes part of the process. The Team realizes it is time to review the existing implementation and learn from previous mistakes.
+**Refactoring** is a new word and becomes part of the process. The Team realizes it is time to review the existing implementation and learn from previous mistakes.
 
-*GIT* is now the standard, and Pull Request Process is improving. The Team starts to implement other testing and quality gates before the approvals.
+*GIT* is now the standard, and the Pull Request Process is improving. The Team starts to implement other testing and quality gates before the approvals.
 
 ```mermaid
 sequenceDiagram
@@ -158,7 +158,7 @@ sequenceDiagram
 
 In this stage, **GITOps**, **APIs**, **WebHooks**, **Trunk Based**, or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment**, or **Canary and Blue-Green** deployments, among others.
 
-The whole process, can be summarized like:
+The whole process can be summarized like this:
 
 ```mermaid
 sequenceDiagram
@@ -173,4 +173,4 @@ sequenceDiagram
 
 Hitting excellence is the result given by the confidence gained by the Team during the whole process, but also from the business.
 
-Investing time in new ways of working and techniques are essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our every-day job are symbols of a well-balanced Team.
+Investing time in new ways of working and techniques is essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our job are symbols of a well-balanced Team.
