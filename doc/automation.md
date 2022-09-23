@@ -1,4 +1,4 @@
-# From Local Scripts to Continuos Deployment - My Experience and Vision
+# From Local Scripts to Continuos Deployment
 
 ## Introduction - Fail Fast and Teams
 
