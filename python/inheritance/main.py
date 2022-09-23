@@ -39,4 +39,3 @@ txt = TEXT(name="slides-content")
 
 print(txt, txt.save("/home/txt/"))
 print(pdf, pdf.save("/home/pdf/"))
-print(txt, txt.save("/home/txt/"))
