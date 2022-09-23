@@ -20,11 +20,11 @@ Check if the implemented process is *optimal and scalable*. Investigate alternat
 
 ## From Human Intervention to Full Automation
 
-Let's define a possible timeline of how could be the process from manual run to a fully automated procedure.
+Let's define a possible timeline of how could be the process from a manual run to a fully automated procedure.
 
 ### The first stage - Fear of losing a job
 
-When a new technology knocks on the door, multiple reasons could stop a Team to progressing on innovation and adopting new techniques.
+When a new technology knocks on the door, multiple reasons could stop a Team from progressing on innovation and adopting new techniques.
 
 * The *damned* comfort zone
 * Lost one's job
@@ -32,7 +32,7 @@ When a new technology knocks on the door, multiple reasons could stop a Team to 
 
 Having the right coaching and time, teams will gain confidence and improve the above procedure.
 
-With these feelings over the table, and other external factors, the best approach could be:
+With these feelings over the table and other external factors, the best approach could be:
 
 ```mermaid
 sequenceDiagram
@@ -42,11 +42,11 @@ sequenceDiagram
     Server-->>Local: Automated!
 ```
 
-It works, and is automated. But there is still some field for improvement.
+It works and is automated. But there is still some field for improvement.
 
 ### The second stage - Starting the Dunning-Kruger Effect
 
-On this stage, the team starts to gain confidence and is pretty damn sure they know a lot. Automation starts to grow, and the Team initiates to learn new techniques. They use *GIT* and *pipelines*.
+At this stage, the team starts to gain confidence and is pretty damn sure they know a lot. Automation starts to grow, and the Team initiates to learn new techniques. They use *GIT* and *pipelines*.
 
 ```mermaid
 sequenceDiagram
@@ -60,7 +60,7 @@ sequenceDiagram
 It seems similar to the *first stage*, but not in the least. The process is:
 
 * Centralized in a Git repository.
-* Runnable by anyone in the Team.
+* Runnable by anyone on the Team.
 * It has a history log.
 * It can be rolled back and traced.
 
