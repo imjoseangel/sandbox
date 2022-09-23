@@ -82,7 +82,7 @@ sequenceDiagram
     Server->>CI/CD Tool: It works!
 ```
 
-### The third stage - Questioning our current solution
+### The third stage - Questioning our existing implementation
 
 Hosting our code to GIT is taking a firm step in the way of automation.
 
