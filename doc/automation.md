@@ -59,7 +59,7 @@ sequenceDiagram
 
 It seems similar to the *first stage*, but not in the least. The process is:
 
-* Centralized in a Git repository.
+* Centralized in a GIT repository.
 * Runnable by anyone on the Team.
 * It has a history log.
 * It can be rolled back and traced.
@@ -86,7 +86,7 @@ sequenceDiagram
 
 Hosting our code to GIT is taking a firm step in the way of automation.
 
-The curiosity starts to open new ways of working with Git like *Git Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
+Curiosity opens new ways of working with GIT, like *GIT Hooks*. The team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
 
 ```mermaid
 sequenceDiagram
@@ -100,17 +100,17 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-### The fourth stage - Realizing there is a long way to go
+### The fourth stage - Realizing there is a long way to run
 
-With Continuous Integration, the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve its process. Compared with using Bash, the *Terraform* code is just another script launched from the local machine.
+With Continuous Integration, the process changes dramatically. The teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean that the team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
 
-**Speed** is becoming an important asset and, the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
+**Speed** is becoming an important asset, and the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
 
 **Security** is key and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
 
 **Refactoring** is a new word and it becomes part of the process. The team knows that is time to review and learn.
 
-*Git* is now the standard and the Pull Request Process is improving. The team starts to implement other testing and quality gates before the approvals.
+*GIT* is now the standard and the Pull Request Process is improving. The team starts to implement other testing and quality gates before the approvals.
 
 ```mermaid
 sequenceDiagram
@@ -156,7 +156,7 @@ sequenceDiagram
 
 ### The sixth stage - Plateau of Productivity
 
-In this stage, **GitOps**, **APIs**, **WebHooks**, **Trunk Based**, or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment**, or **Canary and Blue-Green** deployments among others.
+In this stage, **GITOps**, **APIs**, **WebHooks**, **Trunk Based**, or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment**, or **Canary and Blue-Green** deployments among others.
 
 The whole process can be summarized like:
 
