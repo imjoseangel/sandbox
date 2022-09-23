@@ -100,13 +100,13 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-### The fourth stage - Realizing there is a long way to run
+### The fourth stage - Realizing there is still a long way to go
 
-With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
+With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef*, among others. Using a tool like *Terraform* doesn't mean the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
 
 **Speed** is becoming an important asset, and the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
 
-**Security** is key, and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
+**Security** is key on automation, and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
 
 **Refactoring** is a new word, and becomes part of the process. The Team realizes it is time to review the existing implementation and learn from previous mistakes.
 
@@ -156,9 +156,9 @@ sequenceDiagram
 
 ### The sixth stage - Plateau of Productivity
 
-In this stage, **GITOps**, **APIs**, **WebHooks**, **Trunk Based**, or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment**, or **Canary and Blue-Green** deployments among others.
+In this stage, **GITOps**, **APIs**, **WebHooks**, **Trunk Based**, or **Containers** are part of the game. But also **Observability**, **Chaos Testing**, **Continuous Deployment**, or **Canary and Blue-Green** deployments, among others.
 
-The whole process can be summarized like:
+The whole process, can be summarized like:
 
 ```mermaid
 sequenceDiagram
@@ -171,6 +171,6 @@ sequenceDiagram
 
 ## Summary
 
-Hitting excellence is the result given by the confidence gained by the Team during the whole process but also from the business.
+Hitting excellence is the result given by the confidence gained by the Team during the whole process, but also from the business.
 
-Investing time in new ways of working and techniques is key to continue improving. Getting out of our comfort zone, discussing and applying our learning to our everyday job are symbols of a well-balanced Team.
+Investing time in new ways of working and techniques are essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our everyday job are symbols of a well-balanced Team.
