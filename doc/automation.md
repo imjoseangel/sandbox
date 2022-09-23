@@ -135,7 +135,7 @@ sequenceDiagram
 
 **Documentation as code**, **Containers**, **Dynamic Security**, and **Integration Testing** is part of the improvement plan.
 
-The diagram is now bigger with lots of components. The process is becoming better and better:
+The diagram is now larger with lots of components. The process is becoming better and better:
 
 ```mermaid
 sequenceDiagram
