@@ -84,7 +84,7 @@ sequenceDiagram
 
 ### The third stage - Questioning our existing implementation
 
-Hosting our code to GIT is taking a firm step in the way of automation.
+Hosting the code in GIT is a further important step towards automation.
 
 Curiosity opens new ways of working with GIT, like *GIT Hooks*. The Team discovers how to apply Continuous Integration in their code. The original scripts could be custom *Bash*, *Python*, or *Powershell* and use *ShellCheck*, *PyLint*, or *PSScriptAnalyzer*. The **Pre-Commit**, **Static Analysis**, and **Pull Requests** have arrived to stay.
 
@@ -102,11 +102,11 @@ sequenceDiagram
 
 ### The fourth stage - Realizing there is a long way to run
 
-With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean that the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
+With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef* among others. Using a tool like *Terraform* doesn't mean the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
 
 **Speed** is becoming an important asset, and the referred external tools help to achieve it. Most of these tools are prepared to run different jobs in parallel.
 
-**Security** is key and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
+**Security** is key, and with standard tools, it is possible to do **Static Security Analysis** before running the deployments.
 
 **Refactoring** is a new word, and becomes part of the process. The Team realizes it is time to review the existing implementation and learn from previous mistakes.
 
@@ -129,9 +129,9 @@ sequenceDiagram
 
 ### The fifth stage - The Grown-Up Mountain
 
-**Continuous Delivery** and other techniques are now knocking on the door. The Team is out of its comfort zone and starts to investigate and learn new ways of improving. Probably is too early for Continuous Deployment.
+**Continuous Delivery** and other techniques are now knocking on the door. The Team is out of its comfort zone and starts to investigate and learn new ways of improving. Probably, it is too early for Continuous Deployment.
 
-**Tags** and **releases** are part of the process as well as creating **artifacts** and pushing to the respective servers.
+**Tags** and **releases** are part of the process, just as creating **artifacts** and pushing to the respective servers.
 
 **Documentation as code**, **Containers**, **Dynamic Security**, and **Integration Testing** is part of the improvement plan.
 
