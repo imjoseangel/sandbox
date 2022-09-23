@@ -173,4 +173,4 @@ sequenceDiagram
 
 Hitting excellence is the result given by the confidence gained by the Team during the whole process, but also from the business.
 
-Investing time in new ways of working and techniques are essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our everyday job are symbols of a well-balanced Team.
+Investing time in new ways of working and techniques are essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our every-day job are symbols of a well-balanced Team.
