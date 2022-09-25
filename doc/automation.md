@@ -1,16 +1,22 @@
-# From Local Scripts to Continuos Deployment
+# The Path to Creative Automation
+
+> **Note**:
+>
+> The diagrams shown are in code (mermaid), like the document itself (Markdown). The code is available [here](https://raw.githubusercontent.com/imjoseangel/sandbox/devel/doc/automation.md).
 
 ## Introduction - Fail Fast and Teams
 
 Many Teams try to implement automated deployment for their applications or Cloud components. Most of them fall in the same hole: **Fail Fast** and **Confidence**.
 
-Different reasons prevent a **Grow Mindset**:
+Different reasons prevent a **Growth Mindset**:
 
 * Non-sense strict deadlines
 * Lack of confidence
 * Complain of Failure
 * Judging performance
 * Lack of innovation
+
+We can improve the manual creation of repetitive content by using Human creativity and Input.
 
 ### Ever tried. Ever failed. No matter. Try Again. Fail again. Fail better. - Samuel Beckett
 
@@ -199,4 +205,4 @@ Don't stop here. Think about:
 
 Hitting excellence is the result given by the confidence gained by the Team during the whole process, but also from the business.
 
-Investing time in new ways of working and techniques is essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our job are symbols of a well-balanced Team.
+**Automation doesn’t mean taking away the creative process.** Investing time in new ways of working and techniques is essential to continue improving. Getting out of our comfort zone, discussing and applying our learning to our job are symbols of a well-balanced Team.
