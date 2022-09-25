@@ -164,7 +164,7 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-Everything should be modular and repeatable now. As examples:
+Everything should be [modular](https://en.wikipedia.org/wiki/Orthogonality_(programming)) and repeatable now. As examples:
 
 * Jinja2 Templates
 * Code generation Templates
@@ -186,6 +186,14 @@ sequenceDiagram
     CI ->> CD: Testing
     CD ->> Container: It works!
 ```
+
+Don't stop here. Think about:
+
+* Deliver Automation as a Service
+* Deliver APIs for Self-Service
+* Add central logging
+* Add orchestration monitoring
+* Packetize solutions with Containers
 
 ## Summary
 
