@@ -100,6 +100,14 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
+Check if the automation in-place fits with the following rules:
+
+* Can Create new components
+* Can Modify existing components
+* Can Remove existing components
+
+In this stage, thoughts about recovery speed and rolling back in case of disaster emerge.
+
 ### The fourth stage - Realizing there is still a long way to go
 
 With Continuous Integration, the process changes dramatically. The Teams start to look for new automation techniques and think about changing their scripts for standard tools like *Terraform*, *Pulumi*, *Ansible*, or *Chef*, among others. Using a tool like *Terraform* doesn't mean the Team will improve its process. Compared with Bash, the *Terraform* code is just another script launched from the local machine.
