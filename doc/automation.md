@@ -100,7 +100,7 @@ sequenceDiagram
     Server-->>GIT: Automated!
 ```
 
-Check if the automation in-place fits with the following rules:
+Check if the automation in place fits with the following rules:
 
 * Can Create new components
 * Can Modify existing components
@@ -143,6 +143,8 @@ sequenceDiagram
 
 **Documentation as code**, **Containers**, **Dynamic Security**, and **Integration Testing** is part of the improvement plan.
 
+**Makefiles** facilitate self-documentation and serve as a startup point for all the implementations.
+
 The diagram is now larger with lots of components. The process is becoming better and better:
 
 ```mermaid
@@ -161,6 +163,14 @@ sequenceDiagram
     Continuous Delivery ->> Server: It works!
     Server-->>GIT: Automated!
 ```
+
+Everything should be modular and repeatable now. As examples:
+
+* Jinja2 Templates
+* Code generation Templates
+* Golang Templates
+* CookieCutter
+* Modules, Roles, Providers, or Packages in Terraform, Ansible, and Pulumi
 
 ### The sixth stage - Plateau of Productivity
 
