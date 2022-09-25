@@ -1,4 +1,4 @@
-# The Path to Creative Automation
+# The Path to a Creative Deployment Automation
 
 > **Note**:
 >
