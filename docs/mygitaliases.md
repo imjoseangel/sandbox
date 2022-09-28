@@ -17,7 +17,7 @@ These are my aliases included in my `~/.gitconfig` file for your reference:
 [alias]
     a = add .
     aliases = config --get-regexp alias
-    alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf "\\043")--\\>\\ / | column -t -s $(printf "\\043") | sort -k 1
+    alias = ! git config --get-regexp ^alias\. | sed -e s/^alias.// -e s/\ /\ $(printf "\043")--\>\ / | column -t -s $(printf "\043") | sort -k 1
     ap = add . -p
     addups = remote add upstream
     bd = branch -d
