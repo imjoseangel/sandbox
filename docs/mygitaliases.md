@@ -19,6 +19,7 @@ This is my `~/.gitconfig` file with explanations:
     name = imjoseangel
     email = josea.munoz@gmail.com
     signingkey = 8181714B6EEC76A7
+    signingkey = 0123456A7BCD89E0
 
 [alias]
     a = add .
