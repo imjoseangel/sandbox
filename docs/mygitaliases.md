@@ -17,8 +17,7 @@ This is my `~/.gitconfig` file with explanations:
     editor = code --wait
 [user]
     name = imjoseangel
-    email = josea.munoz@gmail.com
-    signingkey = 8181714B6EEC76A7
+    email = mainemail@example.com
     signingkey = 0123456A7BCD89E0
 
 [alias]
@@ -35,7 +34,7 @@ This is my `~/.gitconfig` file with explanations:
     ca = commit -a
     cam = commit -a -m
     ci = commit -m
-    cid = commit --author='imjoseangel <josemunoz@duck.com>' -m
+    cid = commit --author='imjoseangel <secondemail@example.com>' -m
     cm = commit
     co = checkout
     colast = checkout -
