@@ -2,6 +2,8 @@
 
 ## Introduction
 
+I've been requested multiple times about sharing my `.gitconfig` to copy my aliases.
+
 I use git aliases for two reasons:
 
 1. To improve productivity.
@@ -9,21 +11,13 @@ I use git aliases for two reasons:
 
 ## My Gitconfig
 
-This is my `~/.gitconfig` file with explanations:
+These are my aliases included in my `~/.gitconfig` file for your reference:
 
-```gitconfig
-# This is Git's per-user configuration file.
-[core]
-    editor = code --wait
-[user]
-    name = imjoseangel
-    email = mainemail@example.com
-    signingkey = 0123456A7BCD89E0
-
+```ini
 [alias]
     a = add .
     aliases = config --get-regexp alias
-    alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf \"\\043\")--\\>\\ / | column -t -s $(printf \"\\043\") | sort -k 1
+    alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf "\\043")--\\>\\ / | column -t -s $(printf "\\043") | sort -k 1
     ap = add . -p
     addups = remote add upstream
     bd = branch -d
@@ -84,29 +78,4 @@ This is my `~/.gitconfig` file with explanations:
     unstash = stash pop
     vc = clean -dfx
     wow = log --all --graph --decorate --oneline --simplify-by-decoration
-[help]
-    autocorrect = -1
-[filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
-    required = true
-[commit]
-    gpgsign = true
-[diff]
-    tool = vscode
-[difftool "vscode"]
-    cmd = code --wait --diff $LOCAL $REMOTE
-[merge]
-    tool = vscode
-[mergetool "vscode"]
-    cmd = code --wait $MERGED
-[pull]
-    rebase = true
-[rebase]
-    autoStash = true
-[color]
-    ui = auto
-[fetch]
-	prune = true
 ```
