@@ -102,4 +102,4 @@ git tuto
 git tuto2
 ```
 
-Try them and add your comments and suggestions with different approaches.
+Comments and suggestions with different approaches are always welcomed.
