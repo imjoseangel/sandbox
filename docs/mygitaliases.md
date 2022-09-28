@@ -33,7 +33,7 @@ These are my aliases included in my `~/.gitconfig` file for your reference:
     co = checkout
     colast = checkout -
     comments = commit -m 📒Comments
-    count = rev-list --count
+    count = rev-list --count devel
     db = branch -D
     forgetAbout = rm --cached
     formatting = commit -m 💅Formatting
