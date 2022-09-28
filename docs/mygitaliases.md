@@ -4,5 +4,5 @@
 
 I use git aliases for two reasons:
 
-1. To be more productive.
-2. To remember interesting flags and learn from them.
+1. To improve productivity.
+2. To remember interesting `git` commands and learn from them.
