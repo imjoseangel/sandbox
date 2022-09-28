@@ -75,7 +75,31 @@ These are my aliases included in my `~/.gitconfig` file for your reference:
     st = status
     stashes = stash list
     tests = commit --allow empty -m ✅Tests
+    tuto = help tutorial
+    tuto2 = help tutorial-2
     unstash = stash pop
     vc = clean -dfx
     wow = log --all --graph --decorate --oneline --simplify-by-decoration
 ```
+
+Running `git alias` after adding to the `.gitconfig` shows the list of all the aliases as a reference list.
+
+To get more info, just run `git help <command or alias>`. For instance:
+
+```sh
+git help st
+'st' is aliased to 'status'
+```
+
+```sh
+git help status
+```
+
+There are two aliases I find interesting for beginners:
+
+```sh
+git tuto
+git tuto2
+```
+
+Try them and add your comments and suggestions with different approaches.
