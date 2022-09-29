@@ -28,7 +28,7 @@ These are my aliases included in my `~/.gitconfig` file for your reference:
     ca = commit -a
     cam = commit -a -m
     ci = commit -m
-    cid = commit --author='imjoseangel <secondemail@example.com>' -m
+    cia = commit --author='imjoseangel <anotheremail@example.com>' -m
     cm = commit
     co = checkout
     colast = checkout -
