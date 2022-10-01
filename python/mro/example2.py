@@ -13,3 +13,7 @@ class C(B, A):
 
 c = C()
 c.method()
+
+# The MRO for this case is :
+# C -> B -> A
+# The method only existed in A, where it was searched for last.
