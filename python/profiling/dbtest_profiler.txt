@@ -1,0 +1,16 @@
+Error during request to server: : Invalid access token.
+Filename: dbtest.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+     5     85.2 MiB     85.2 MiB           1   @profile
+     6                                         def sqlconnect():
+     7     85.2 MiB      0.0 MiB           1       try:
+     8    463.2 MiB    378.0 MiB           2           with sql.connect(server_hostname="adb-3763075652873156.16.azuredatabricks.net",
+     9     85.2 MiB      0.0 MiB           1                            http_path="/sql/1.0/endpoints/ee8260e92561e43b",
+    10     85.2 MiB      0.0 MiB           1                            access_token="DATABRICKS_TOKEN") as connection:
+    11
+    12                                                     ...
+    13
+    14    463.2 MiB      0.0 MiB           1       except sql.exc.RequestError as e:
+    15    463.2 MiB      0.0 MiB           1           print(e)
