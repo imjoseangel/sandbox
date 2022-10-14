@@ -7,7 +7,7 @@ def sqlconnect():
     try:
         with sql.connect(server_hostname="xx.azuredatabricks.net",
                          http_path="/sql/1.0/endpoints/xx",
-                         access_token="DATABRICKS_TOKEN") as connection:
+                         access_token="DATABRICKS_TOKEN"):
 
             ...
 
