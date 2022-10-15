@@ -3,6 +3,10 @@
 
 import os
 from git import Repo
+from rich.console import Console
+
+
+console = Console()
 
 
 def get_git_root() -> Repo:
@@ -21,4 +25,4 @@ def diff_commit(gitrepo):
     return diff
 
 
-print(diff_commit(get_git_root()))
+console.log(diff_commit(get_git_root()))
