@@ -10,10 +10,12 @@ def find_commit_by_tag(tag):
     return repo.commit(tag)
 
 
-def find_commit_differences():
+def get_git_root() -> str:
+
     repo = git.Repo(os.path.dirname(os.path.realpath(__file__)),
                     search_parent_directories=True)
-    print(repo)
+    git_root = repo.git.rev_parse("--show-toplevel")
+    return git_root
 
 
-find_commit_differences()
+print(get_git_root())
