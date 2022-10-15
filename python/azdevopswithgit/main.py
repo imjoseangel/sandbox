@@ -2,24 +2,23 @@
 # -*- coding: utf-8 -*-
 
 import os
-import git
+from git import Repo
 
 
-def get_git_root() -> git.Repo:
+def get_git_root() -> Repo:
 
-    repo = git.Repo(os.path.dirname(os.path.realpath(__file__)),
-                    search_parent_directories=True)
-    git_root = repo.git.rev_parse("--show-toplevel")
-    return repo
+    gitrepo = Repo(os.path.dirname(os.path.realpath(__file__)),
+                   search_parent_directories=True)
+    gitroot = gitrepo.git.rev_parse("--show-toplevel")
+    return gitrepo
 
 
-def diff_commit(repo):
-    headcommit = repo.head.commit
-    diff = headcommit.diff("HEAD^")
+def diff_commit(gitrepo):
+    headcommit = gitrepo.head.commit
+    diff = headcommit.diff("HEAD~1", name_only=True)
     return diff
 
 
 repo = get_git_root()
 
-for x in diff_commit(repo):
-    print(x)
+print(diff_commit(repo))
