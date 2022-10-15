@@ -2,12 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import re
 from git import Repo, InvalidGitRepositoryError
-from rich.console import Console
-
-
-console = Console()
+from rich import print
 
 
 def get_git_root() -> Repo:
@@ -26,10 +22,14 @@ def get_git_name() -> str:
 
 def diff_commit(gitrepo):
     diff = gitrepo.git.diff("HEAD^..HEAD", name_only=True, diff_filter="AM")
-    return diff
+    return diff.split()
 
 
 try:
     print(diff_commit(get_git_root()))
 except AttributeError as attributeerror:
-    console.log(attributeerror)
+    print(attributeerror)
+
+for item in diff_commit(get_git_root()):
+    if "main" in item:
+        print(item)
