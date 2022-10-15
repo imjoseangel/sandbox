@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-from git import Repo, InvalidGitRepositoryError
-from rich import print
+from git import Repo, InvalidGitRepositoryError  # type: ignore
+from rich import print as richprint
 
 
-def get_git_root() -> Repo:
+def get_git_root() -> Repo:  # type: ignore
 
     try:
         gitrepo = Repo(os.getcwd(),
@@ -26,10 +26,10 @@ def diff_commit(gitrepo):
 
 
 try:
-    print(diff_commit(get_git_root()))
+    richprint(diff_commit(get_git_root()))
 except AttributeError as attributeerror:
-    print(attributeerror)
+    richprint(attributeerror)
 
 for item in diff_commit(get_git_root()):
     if "main" in item:
-        print(item)
+        richprint(item)
