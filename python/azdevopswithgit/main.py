@@ -17,7 +17,7 @@ def get_git_name() -> str:
 
 
 def diff_commit(gitrepo):
-    diff = gitrepo.git.diff("HEAD^", name_only=True)
+    diff = gitrepo.git.diff("HEAD^", name_only=True, diff_filter="AM")
     return diff
 
 
