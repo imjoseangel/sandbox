@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 from git import Repo, InvalidGitRepositoryError
 from rich.console import Console
 
@@ -29,6 +30,6 @@ def diff_commit(gitrepo):
 
 
 try:
-    console.log(diff_commit(get_git_root()))
+    print(diff_commit(get_git_root()))
 except AttributeError as attributeerror:
     console.log(attributeerror)
