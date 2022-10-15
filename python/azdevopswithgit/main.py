@@ -11,7 +11,8 @@ def find_commit_by_tag(tag):
 
 
 def find_commit_differences():
-    repo = git.Repo(os.path)
+    repo = git.Repo(os.path.dirname(os.path.realpath(__file__)),
+                    search_parent_directories=True)
     print(repo)
 
 
