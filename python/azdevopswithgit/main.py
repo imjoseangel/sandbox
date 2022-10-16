@@ -26,22 +26,25 @@ def diff_commit(gitrepo):
     return diff.split()
 
 
-def prepare_target_directory():
+def rmdir(path):
     try:
-        shutil.rmtree(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+        shutil.rmtree(path)
     except KeyError as keyerror:
         richprint(f'{keyerror} variable does not exist')
     except FileNotFoundError as filenotfound:
         richprint(f'{filenotfound} directory does not exist')
 
 
-prepare_target_directory()
+rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+full_file_path = diff_commit(get_git_root())
 
-try:
-    richprint(diff_commit(get_git_root()))
-except AttributeError as attributeerror:
-    richprint(attributeerror)
+richprint(f'Full file path: {full_file_path}')
 
-for item in diff_commit(get_git_root()):
-    if "main" in item:
-        richprint(item)
+# try:
+#     richprint(diff_commit(get_git_root()))
+# except AttributeError as attributeerror:
+#     richprint(attributeerror)
+
+# for item in diff_commit(get_git_root()):
+#     if "main" in item:
+#         richprint(item)
