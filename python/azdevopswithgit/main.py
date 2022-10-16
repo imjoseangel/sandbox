@@ -87,11 +87,9 @@ def find_project() -> str:
         return "'"
 
 
-def prepare_target():
+def prepare_target(project_name):
 
     rmdir(artifacts_dir)
-
-    project_name = find_project()
 
     for project in projects:
         if "IPC" not in project:
@@ -114,8 +112,8 @@ def extract_files(path) -> list:
 
 
 if __name__ == '__main__':
-    prepare_target()
     GITPROJECT = find_project()
+    prepare_target(GITPROJECT)
 
     # IPC Files
     FILES = extract_files('/ipc/')
