@@ -73,12 +73,17 @@ def find_files() -> list:
 def find_project() -> str:
 
     file_path = find_files()
-    project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
 
-    logging.info(f'File Path: {file_path}')
-    logging.info(f'Project Name: {project_name}')
+    try:
+        project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
 
-    return project_name
+        logging.info(f'File Path: {file_path}')
+        logging.info(f'Project Name: {project_name}')
+
+        return project_name
+
+    except IndexError as indexerror:
+        logging.error(f'{indexerror} No file found')
 
 
 def prepare_target():
