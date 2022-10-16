@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 from git import Repo, InvalidGitRepositoryError  # type: ignore
 from rich import print as richprint
 
@@ -26,7 +27,12 @@ def diff_commit(gitrepo):
 
 
 def prepare_target_directory():
-    os.rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+    try:
+        shutil.rmtree(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+    except KeyError as keyerror:
+        richprint(f'{keyerror} variable does not exist')
+    except FileNotFoundError as filenotfound:
+        richprint(f'{filenotfound} directory does not exist')
 
 
 prepare_target_directory()
