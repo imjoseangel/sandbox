@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pathlib
 import shutil
 from git import Repo, InvalidGitRepositoryError  # type: ignore
 from rich import print as richprint
@@ -35,10 +36,23 @@ def rmdir(path):
         richprint(f'{filenotfound} directory does not exist')
 
 
-rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
-full_file_path = diff_commit(get_git_root())
+def mkdir(path):
+    try:
+        pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+    except FileExistsError as fileexist:
+        richprint(f'{fileexist} directory already exists')
+    except FileNotFoundError as filenotfound:
+        richprint(f'{filenotfound} directory does not exist')
 
-richprint(f'Full file path: {full_file_path}')
+
+rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+file_path = diff_commit(get_git_root())
+project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+
+richprint(f'File Path: {file_path}')
+richprint(f'Project Name: {project_name}')
+
+mkdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"] + "/IPC/" + project_name)
 
 # try:
 #     richprint(diff_commit(get_git_root()))
