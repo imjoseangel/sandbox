@@ -35,12 +35,8 @@ def get_git_name() -> str:
 
 
 def diff_commit(gitrepo):
-    try:
-        diff = gitrepo.git.diff(
-            "HEAD^..HEAD", name_only=True, diff_filter="AM")
-        return diff.split()
-    except AttributeError as attributeerror:
-        logger.error(attributeerror)
+    diff = gitrepo.git.diff("HEAD^..HEAD", name_only=True, diff_filter="AM")
+    return diff.split()
 
 
 def rmdir(path):
@@ -74,20 +70,20 @@ def find_files() -> list:
     return file_path
 
 
-def find_project() -> str:
+def find_project() -> str:  # type: ignore
 
     file_path = find_files()
 
     try:
         project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+
+        logging.info(f'File Path: {file_path}')
+        logging.info(f'Project Name: {project_name}')
+
         return project_name
 
     except IndexError as indexerror:
         logging.error(f'{indexerror} No file found')
-        return "'"
-    except TypeError as project_typeerror:
-        logging.error(f'{project_typeerror} No file found')
-        return "'"
 
 
 def prepare_target():
@@ -109,13 +105,11 @@ def extract_files(path) -> list:
     uploaded_files = []
     file_path = find_files()
 
-    try:
-        for file in file_path:
-            if path in file:
-                uploaded_files.append(file)
-        return uploaded_files
-    except TypeError as extract_typeerror:
-        logging.error(f'{extract_typeerror} No file found')
+    for file in file_path:
+        if path in file:
+            uploaded_files.append(file)
+
+    return uploaded_files
 
 
 if __name__ == '__main__':
@@ -127,23 +121,10 @@ if __name__ == '__main__':
     parameters_file = "parameter_files.txt"
 
     rmfile(parameters_file)
-
-    try:
-        for item in files:
-            if ".csv" in item.lower():
-                shutil.copyfile(f'{os.getcwd()}/ipc/{os.path.basename(item)}',
-                                f'{artifacts_dir}/IPC/{gitproject}/{os.path.basename(item)}')
-                with open(parameters_file, 'a', encoding='utf-8') as parameters:
-                    parameters.write(f'{(item)}\n')
-                    parameters.close()
-    except TypeError as typeerror:
-        logging.error(f'{typeerror} No file found')
-
-# try:
-#     richprint(diff_commit(get_git_root()))
-# except AttributeError as attributeerror:
-#     richprint(attributeerror)
-
-# for item in diff_commit(get_git_root()):
-#     if "main" in item:
-#         richprint(item)
+    for item in files:
+        if ".csv" in item.lower():
+            shutil.copyfile(f'{os.getcwd()}/ipc/{os.path.basename(item)}',
+                            f'{artifacts_dir}/IPC/{gitproject}/{os.path.basename(item)}')
+            with open(parameters_file, 'a', encoding='utf-8') as parameters:
+                parameters.write(f'{(item)}\n')
+                parameters.close()
