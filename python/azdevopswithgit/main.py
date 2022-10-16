@@ -64,32 +64,65 @@ def rmfile(path):
         logging.error(f'{filenotfound} file does not exist')
 
 
-def prepare_target():
-
-    rmdir(artifacts_dir)
-
+def find_files() -> list:
     file_path = diff_commit(get_git_root())
+
+    return file_path
+
+
+def find_project() -> str:
+
+    file_path = find_files()
     project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
 
     logging.info(f'File Path: {file_path}')
     logging.info(f'Project Name: {project_name}')
 
-    for item in projects:
-        if "IPC" not in item:
-            mkdir(f'{artifacts_dir}/{item}')
+    return project_name
+
+
+def prepare_target():
+
+    rmdir(artifacts_dir)
+
+    project_name = find_project()
+
+    for project in projects:
+        if "IPC" not in project:
+            mkdir(f'{artifacts_dir}/{project}')
         else:
             mkdir(
-                f'{artifacts_dir}/{item}/{project_name}')
+                f'{artifacts_dir}/{project}/{project_name}')
 
 
-def extract_files(filename):
-    rmfile(filename)
+def extract_files(path):
+
+    uploaded_files = []
+    file_path = find_files()
+
+    for file in file_path:
+        if path in file:
+            uploaded_files.append(file)
+
+    return uploaded_files
 
 
 if __name__ == '__main__':
     prepare_target()
-    extract_files('parameters_file.txt')
+    gitproject = find_project()
 
+    # IPC Files
+    files = extract_files('/ipc/')
+    parameters_file = "parameter_files.txt"
+
+    rmfile(parameters_file)
+    for item in files:
+        if ".csv" in item.lower():
+            shutil.copyfile(f'{os.getcwd()}/ipc/{os.path.basename(item)}',
+                            f'{artifacts_dir}/IPC/{gitproject}/{os.path.basename(item)}')
+            with open(parameters_file, 'a', encoding='utf-8') as parameters:
+                parameters.write(f'{(item)}\n')
+                parameters.close()
 
 # try:
 #     richprint(diff_commit(get_git_root()))
