@@ -7,6 +7,9 @@ import shutil
 from git import Repo, InvalidGitRepositoryError  # type: ignore
 from rich import print as richprint
 
+projects = ["IPC", "DB2", "MSTR"]
+artifacts_dir = os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"]
+
 
 def get_git_root() -> Repo:  # type: ignore
 
@@ -45,14 +48,40 @@ def mkdir(path):
         richprint(f'{filenotfound} directory does not exist')
 
 
-rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
-file_path = diff_commit(get_git_root())
-project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+def rmfile(path):
+    try:
+        os.remove(path)
+    except FileNotFoundError as filenotfound:
+        richprint(f'{filenotfound} file does not exist')
 
-richprint(f'File Path: {file_path}')
-richprint(f'Project Name: {project_name}')
 
-mkdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"] + "/IPC/" + project_name)
+def prepare_target():
+
+    rmdir(artifacts_dir)
+
+    file_path = diff_commit(get_git_root())
+    project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+
+    richprint(f'File Path: {file_path}')
+    richprint(f'Project Name: {project_name}')
+
+    for item in projects:
+        if "IPC" not in item:
+            mkdir(f'{artifacts_dir}/{item}')
+        else:
+            mkdir(
+                f'{artifacts_dir}/{item}/{project_name}')
+
+
+def extract_parameter_files():
+    rmfile('parameter_files.txt')
+
+
+if __name__ == '__main__':
+    prepare_target()
+    extract_parameter_files()
+    print(get_git_name())
+
 
 # try:
 #     richprint(diff_commit(get_git_root()))
