@@ -1,11 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import pathlib
 import shutil
 from git import Repo, InvalidGitRepositoryError  # type: ignore
-from rich import print as richprint
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s: %(message)s",
+    level=logging.INFO,
+    datefmt="%d-%b-%y %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 projects = ["IPC", "DB2", "MSTR"]
 artifacts_dir = os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"]
@@ -34,25 +43,25 @@ def rmdir(path):
     try:
         shutil.rmtree(path)
     except KeyError as keyerror:
-        richprint(f'{keyerror} variable does not exist')
+        logging.error(f'{keyerror} variable does not exist')
     except FileNotFoundError as filenotfound:
-        richprint(f'{filenotfound} directory does not exist')
+        logging.error(f'{filenotfound} directory does not exist')
 
 
 def mkdir(path):
     try:
         pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     except FileExistsError as fileexist:
-        richprint(f'{fileexist} directory already exists')
+        logging.error(f'{fileexist} directory already exists')
     except FileNotFoundError as filenotfound:
-        richprint(f'{filenotfound} directory does not exist')
+        logging.error(f'{filenotfound} directory does not exist')
 
 
 def rmfile(path):
     try:
         os.remove(path)
     except FileNotFoundError as filenotfound:
-        richprint(f'{filenotfound} file does not exist')
+        logging.error(f'{filenotfound} file does not exist')
 
 
 def prepare_target():
@@ -62,8 +71,8 @@ def prepare_target():
     file_path = diff_commit(get_git_root())
     project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
 
-    richprint(f'File Path: {file_path}')
-    richprint(f'Project Name: {project_name}')
+    logging.info(f'File Path: {file_path}')
+    logging.info(f'Project Name: {project_name}')
 
     for item in projects:
         if "IPC" not in item:
@@ -73,14 +82,13 @@ def prepare_target():
                 f'{artifacts_dir}/{item}/{project_name}')
 
 
-def extract_parameter_files():
-    rmfile('parameter_files.txt')
+def extract_files(filename):
+    rmfile(filename)
 
 
 if __name__ == '__main__':
     prepare_target()
-    extract_parameter_files()
-    print(get_git_name())
+    extract_files('parameters_file.txt')
 
 
 # try:
