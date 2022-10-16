@@ -25,6 +25,12 @@ def diff_commit(gitrepo):
     return diff.split()
 
 
+def prepare_target_directory():
+    os.rmdir(os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"])
+
+
+prepare_target_directory()
+
 try:
     richprint(diff_commit(get_git_root()))
 except AttributeError as attributeerror:
