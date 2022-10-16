@@ -1,2 +1,0 @@
-python/azdevopswithgit/ipc/prueba.csv
-python/azdevopswithgit/ipc/test.csv
