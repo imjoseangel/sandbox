@@ -70,7 +70,7 @@ def find_files() -> list:
     return file_path
 
 
-def find_project() -> str:  # type: ignore
+def find_project() -> str:
 
     file_path = find_files()
 
@@ -84,6 +84,7 @@ def find_project() -> str:  # type: ignore
 
     except IndexError as indexerror:
         logging.error(f'{indexerror} No file found')
+        return "'"
 
 
 def prepare_target():
@@ -114,17 +115,17 @@ def extract_files(path) -> list:
 
 if __name__ == '__main__':
     prepare_target()
-    gitproject = find_project()
+    GITPROJECT = find_project()
 
     # IPC Files
-    files = extract_files('/ipc/')
-    parameters_file = "parameter_files.txt"
+    FILES = extract_files('/ipc/')
+    PARAMETERS = "parameter_files.txt"
 
-    rmfile(parameters_file)
-    for item in files:
+    rmfile(PARAMETERS)
+    for item in FILES:
         if ".csv" in item.lower():
             shutil.copyfile(f'{os.getcwd()}/ipc/{os.path.basename(item)}',
-                            f'{artifacts_dir}/IPC/{gitproject}/{os.path.basename(item)}')
-            with open(parameters_file, 'a', encoding='utf-8') as parameters:
+                            f'{artifacts_dir}/IPC/{GITPROJECT}/{os.path.basename(item)}')
+            with open(PARAMETERS, 'a', encoding='utf-8') as parameters:
                 parameters.write(f'{(item)}\n')
                 parameters.close()
