@@ -4,6 +4,7 @@
 import logging
 import os
 import pathlib
+import re
 import shutil
 from git import Repo, InvalidGitRepositoryError  # type: ignore
 
@@ -75,16 +76,20 @@ def find_project() -> str:
     file_path = find_files()
 
     try:
-        project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+        project_name = str.upper(os.path.dirname(file_path[0]).split('/')[1])
 
         logging.info(f'File Path: {file_path}')
         logging.info(f'Project Name: {project_name}')
 
         return project_name
 
-    except IndexError as indexerror:
-        logging.error(f'{indexerror} No file found')
-        return "'"
+    except IndexError:
+        project_name = str.upper(os.path.dirname(file_path[0]).split('/')[0])
+
+        logging.info(f'File Path: {file_path}')
+        logging.info(f'Project Name: {project_name}')
+
+        return project_name
 
 
 def prepare_target(project_name):
@@ -119,11 +124,20 @@ if __name__ == '__main__':
     FILES = extract_files('/ipc/')
     PARAMETERS = "parameter_files.txt"
 
-    rmfile(PARAMETERS)
-    for item in FILES:
-        if ".csv" in item.lower():
-            shutil.copyfile(f'{os.getcwd()}/ipc/{os.path.basename(item)}',
-                            f'{artifacts_dir}/IPC/{GITPROJECT}/{os.path.basename(item)}')
+    for csvitem in FILES:
+        if ".csv" in csvitem.lower():
+            shutil.copyfile(f'{os.getcwd()}/{csvitem}',
+                            f'{artifacts_dir}/IPC/{GITPROJECT}/{os.path.basename(csvitem)}')
             with open(PARAMETERS, 'a', encoding='utf-8') as parameters:
-                parameters.write(f'{(item)}\n')
+                parameters.write(f'{(csvitem)}\n')
                 parameters.close()
+
+    try:
+        shutil.copyfile(f'{os.getcwd()}/{PARAMETERS}',
+                        f'{artifacts_dir}/IPC/{GITPROJECT}/{PARAMETERS}')
+    except FileNotFoundError:
+        pass
+
+    for manifestitem in FILES:
+        if re.match(r'manifest$', manifestitem):
+            print(manifestitem)
