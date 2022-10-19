@@ -24,9 +24,22 @@ private_key = open('/Users/imjoseangel/.ssh/id_rsa',
                    'r', encoding='UTF-8').read()
 key = serialization.load_ssh_private_key(private_key.encode(), password=b'')
 
-token_rsa = jwt.encode(
+new_token = jwt.encode(
     payload=payload_data,
-    key=my_secret
+    key=key,
+    algorithm='RS256'
 )
 
-print(token_rsa)
+print(new_token)
+
+print(jwt.decode(token, key='my_super_secret', algorithms=['HS256', ]))
+print(jwt.get_unverified_header(token))
+
+# saving the header claims into a variable
+header_data = jwt.get_unverified_header(token)
+# using that variable in the decode method
+print(jwt.decode(
+    token,
+    key='my_super_secret',
+    algorithms=[header_data['alg'], ]
+))
