@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-projects = ["IPC", "DB2", "MSTR"]
+projects = ["A", "B", "C"]
 artifacts_dir = os.environ["BUILD_ARTIFACTSTAGINGDIRECTORY"]
 
 
@@ -121,20 +121,20 @@ if __name__ == '__main__':
     prepare_target(GITPROJECT)
 
     # IPC Files
-    FILES = extract_files('/ipc/')
-    PARAMETERS = "parameter_files.txt"
+    FILES = extract_files('/a/')
+    PARAMETERS = "parameters.txt"
 
     for csvitem in FILES:
         if ".csv" in csvitem.lower():
             shutil.copyfile(f'{os.getcwd()}/{csvitem}',
-                            f'{artifacts_dir}/IPC/{GITPROJECT}/{os.path.basename(csvitem)}')
+                            f'{artifacts_dir}/A/{GITPROJECT}/{os.path.basename(csvitem)}')
             with open(PARAMETERS, 'a', encoding='utf-8') as parameters:
                 parameters.write(f'{(csvitem)}\n')
                 parameters.close()
 
     try:
         shutil.copyfile(f'{os.getcwd()}/{PARAMETERS}',
-                        f'{artifacts_dir}/IPC/{GITPROJECT}/{PARAMETERS}')
+                        f'{artifacts_dir}/A/{GITPROJECT}/{PARAMETERS}')
     except FileNotFoundError:
         pass
 
