@@ -29,9 +29,9 @@ spec:
             cpu: 1000m
             memory: 1Gi
       tolerations:
-      - effect: NoSchedule
-        key: HighMemOnly
-        operator: Equal
-        value: true
+        - effect: NoSchedule
+          key: HighMemOnly
+          operator: Equal
+          value: "true"
       nodeSelector:
         kubernetes.io/os: windows
