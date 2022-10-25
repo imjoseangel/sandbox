@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
-	"time"
-
 	"github.com/asaskevich/govalidator"
-	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
-	"github.com/imjoseangel/sandbox/go/rest-api/pkg/erru"
+	"github.com/fir1/rest-api/internal/todo/model"
+	"github.com/fir1/rest-api/pkg/erru"
+	"time"
 )
 
 type CreateParams struct {
