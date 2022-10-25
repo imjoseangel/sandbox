@@ -3,8 +3,8 @@ package repository
 import (
     "context"
     "fmt"
-    "github.com/fir1/rest-api/internal/todo/model"
-    "github.com/fir1/rest-api/pkg/db"
+    "github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
+    "github.com/imjoseangel/sandbox/go/rest-api/pkg/db"
     "github.com/jmoiron/sqlx"
 )
 
