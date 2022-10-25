@@ -2,13 +2,14 @@ package handlers
 
 import (
 	"errors"
-	"github.com/fir1/rest-api/internal/todo/model"
-	toDoService "github.com/fir1/rest-api/internal/todo/service"
-	"github.com/fir1/rest-api/pkg/erru"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
+	toDoService "github.com/imjoseangel/sandbox/go/rest-api/internal/todo/service"
+	"github.com/imjoseangel/sandbox/go/rest-api/pkg/erru"
 )
 
 func (s service) Update() http.HandlerFunc {

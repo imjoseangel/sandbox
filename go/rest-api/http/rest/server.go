@@ -3,17 +3,18 @@ package rest
 import (
 	"context"
 	"fmt"
-	"github.com/fir1/rest-api/configs"
-	"github.com/fir1/rest-api/http/rest/handlers"
-	"github.com/fir1/rest-api/pkg/db"
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/gorilla/mux"
+	"github.com/imjoseangel/sandbox/go/rest-api/configs"
+	"github.com/imjoseangel/sandbox/go/rest-api/http/rest/handlers"
+	"github.com/imjoseangel/sandbox/go/rest-api/pkg/db"
+	"github.com/rs/cors"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {

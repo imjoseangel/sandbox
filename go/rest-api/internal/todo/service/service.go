@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/fir1/rest-api/internal/todo/repository"
+	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/repository"
 )
 
 type Service struct {

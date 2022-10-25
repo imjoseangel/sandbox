@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/fir1/rest-api/http/rest"
 	"log"
+
+	"github.com/imjoseangel/sandbox/go/rest-api/http/rest"
 )
 
 func main() {

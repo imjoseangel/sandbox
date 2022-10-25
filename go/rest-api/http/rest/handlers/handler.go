@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	toDoRepo "github.com/fir1/rest-api/internal/todo/repository"
-	toDoService "github.com/fir1/rest-api/internal/todo/service"
 	"github.com/gorilla/mux"
+	toDoRepo "github.com/imjoseangel/sandbox/go/rest-api/internal/todo/repository"
+	toDoService "github.com/imjoseangel/sandbox/go/rest-api/internal/todo/service"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 )

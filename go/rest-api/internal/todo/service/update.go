@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+
 	"github.com/asaskevich/govalidator"
-	"github.com/fir1/rest-api/internal/todo/model"
-	"github.com/fir1/rest-api/pkg/erru"
+	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
+	"github.com/imjoseangel/sandbox/go/rest-api/pkg/erru"
 )
 
 type UpdateParams struct {

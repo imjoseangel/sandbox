@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"github.com/fir1/rest-api/internal/todo/model"
-	toDoService "github.com/fir1/rest-api/internal/todo/service"
 	"net/http"
+
+	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
+	toDoService "github.com/imjoseangel/sandbox/go/rest-api/internal/todo/service"
 )
 
 func (s service) Create() http.HandlerFunc {

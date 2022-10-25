@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/fir1/rest-api/internal/todo/model"
-	"github.com/fir1/rest-api/pkg/db"
-	"github.com/fir1/rest-api/pkg/erru"
+
+	"github.com/imjoseangel/sandbox/go/rest-api/internal/todo/model"
+	"github.com/imjoseangel/sandbox/go/rest-api/pkg/db"
+	"github.com/imjoseangel/sandbox/go/rest-api/pkg/erru"
 )
 
 func (s Service) Get(ctx context.Context, id int) (model.ToDo, error) {
