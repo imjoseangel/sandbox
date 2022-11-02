@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pprint import pp
+
+
+def build_list(size, fill, value, at_position):
+    return [value if i == at_position else fill for i in range(size)]
+
+
 countries = [
     {"country": "Austria", "population": 8_840_521},
     {"country": "Canada", "population": 37_057_765},
@@ -24,3 +31,12 @@ for country in countries:
         case {"population": population} if population > 100_000_000:
             print(country["country"])
             break
+
+pp(
+    build_list(
+        size=10,
+        fill={"country": "Nowhere", "population": 10},
+        value={"country": "Atlantis", "population": 100},
+        at_position=5,
+    )
+)
