@@ -31,3 +31,11 @@ def standardize_name(street_name):
         parts[-1] = "Ave"
         fixed_street_name = " ".join(parts)
         return standardize_name(fixed_street_name)
+
+    # "St." and "Street" are possible synonyms of "St":
+    if parts[-1].lower() in ("st.", "street"):
+        parts[-1] = "St"
+        fixed_street_name = " ".join(parts)
+        return standardize_name(fixed_street_name)
+
+    raise ValueError(f"Unknown street {street_name}")
