@@ -39,3 +39,8 @@ def standardize_name(street_name):
         return standardize_name(fixed_street_name)
 
     raise ValueError(f"Unknown street {street_name}")
+
+
+for address in ['Garden St', 'garden st', 'Garden street', 'Brattle St']:
+    address = time(standardize_name(address))
+    print(address)
