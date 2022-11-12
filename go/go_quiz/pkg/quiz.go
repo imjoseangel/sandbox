@@ -13,7 +13,7 @@ import (
 func Quiz() (res int, err error) {
 	res = 0
 
-	f, err := os.Open("../data.csv")
+	f, err := os.Open("data.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
