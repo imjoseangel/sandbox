@@ -26,29 +26,32 @@ def encode_domain_name(domain):
     parts = domain.split('.')
     parts = list(map(lambda s: chr(len(s)) + s, parts))
 
-    return ''.join(parts).encode()
+    return ''.join(parts).encode().hex()
 
 
 def make_dns_query(domain):
     query_id = random.randint(0, 65535)
     header = make_question_header(query_id)
+    question = encode_domain_name(domain)
+
+    return header + question
 
 
 print(make_question_header(0xc998))
-print(encode_domain_name('example.com'))
+print(encode_domain_name('www.example.com'))
+print(make_dns_query('www.example.com'))
 
+sock = socket.socket()
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# sock = socket.socket()
-# sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+x = sock.bind(('0.0.0.0', 12345))
+y = sock.connect(('8.8.8.8', 53))
 
-# x = sock.bind(('0.0.0.0', 12345))
-# y = sock.connect(('8.8.8.8', 53))
+bytestream = bytes.fromhex(HEX)
+rprint(f'Sent: {bytestream}')
 
-# bytestream = bytes.fromhex(HEX)
-# rprint(f'Sent: {bytestream}')
+sock.send(bytestream)
 
-# sock.send(bytestream)
-
-# # get the reply
-# reply, _ = sock.recvfrom(1024)
-# rprint(f'Recv: {reply}')
+# get the reply
+reply, _ = sock.recvfrom(1024)
+rprint(f'Recv: {reply}')
