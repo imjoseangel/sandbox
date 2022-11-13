@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import random
 import socket
 from rich import print as rprint
 
@@ -28,8 +29,9 @@ def encode_domain_name(domain):
     return ''.join(parts).encode()
 
 
-def make_dns_query(domain, type):
-    pass
+def make_dns_query(domain):
+    query_id = random.randint(0, 65535)
+    header = make_question_header(query_id)
 
 
 print(make_question_header(0xc998))
