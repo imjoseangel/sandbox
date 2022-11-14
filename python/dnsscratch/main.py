@@ -33,9 +33,10 @@ def encode_domain_name(domain):
     return ''.join(parts).encode().hex()
 
 
-def make_dns_query(domain):
+def make_dns_query(domain, dytpe):
     query_id = random.randint(0, 65535)
-    header = make_question_header(hex(query_id))
+    header = make_question_header(
+        hex(query_id)) + ''.join([hex(dytpe), '\x01'])
     question = encode_domain_name(domain)
 
     return header + question
@@ -43,7 +44,7 @@ def make_dns_query(domain):
 
 print(make_question_header('\xc9\x98'))
 print(encode_domain_name('www.example.com'))
-print(make_dns_query('www.example.com'))
+print(make_dns_query('www.example.com', 1))
 
 sock = socket.socket()
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
