@@ -17,8 +17,9 @@ def make_question_header(query_id):
     :return header:
     """
     # id, flags, num questions, num answers, num auth, num additional
-    header = [query_id, 0x0120, 0x0001, 0x0000, 0x0000, 0x0001]
-    return ''.join([f'{field:04x}' for field in header])
+    header = [query_id, '\x01\x20', '\x00\x01',
+              '\x00\x00', '\x00\x00', '\x00\x01']
+    return ''.join([field for field in header]).encode().hex()
 
 
 def encode_domain_name(domain):
@@ -34,13 +35,13 @@ def encode_domain_name(domain):
 
 def make_dns_query(domain):
     query_id = random.randint(0, 65535)
-    header = make_question_header(query_id)
+    header = make_question_header(hex(query_id))
     question = encode_domain_name(domain)
 
     return header + question
 
 
-print(make_question_header(0xc998))
+print(make_question_header('\xc9\x98'))
 print(encode_domain_name('www.example.com'))
 print(make_dns_query('www.example.com'))
 
