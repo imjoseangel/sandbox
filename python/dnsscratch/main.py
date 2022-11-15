@@ -8,7 +8,7 @@ import random
 import socket
 from rich import print as rprint
 
-HEX = "c9980120000100000000000103777777076578616d706c6503636f6d00000100010000291000000000000000"
+HEX = "b96201000001000000000000076578616d706c6503636f6d0000010001"
 
 
 def make_question_header(query_id):
@@ -17,9 +17,11 @@ def make_question_header(query_id):
     :return header:
     """
     # id, flags, num questions, num answers, num auth, num additional
-    header = [query_id, '\x01\x20', '\x00\x01',
-              '\x00\x00', '\x00\x00', '\x00\x01']
-    return ''.join([field for field in header]).encode().hex()
+    header = [query_id, '\x01\x00', '\x00\x01',
+              '\x00\x00', '\x00\x00', '\x00\x00']
+
+    print(header)
+    return ''.join([field for field in header]).encode()
 
 
 def encode_domain_name(domain):
@@ -30,21 +32,20 @@ def encode_domain_name(domain):
     parts = domain.split('.')
     parts = list(map(lambda s: chr(len(s)) + s, parts))
 
-    return ''.join(parts).encode().hex()
+    return ''.join(parts).encode()
 
 
-def make_dns_query(domain, dytpe):
+def make_dns_query(domain):
     query_id = random.randint(0, 65535)
-    header = make_question_header(
-        hex(query_id)) + ''.join([hex(dytpe), '\x01'])
+    header = make_question_header(hex(query_id))
     question = encode_domain_name(domain)
 
     return header + question
 
 
-print(make_question_header('\xc9\x98'))
+print(make_question_header('\xb9\x62'))
 print(encode_domain_name('www.example.com'))
-print(make_dns_query('www.example.com', 1))
+print(make_dns_query('www.example.com'))
 
 sock = socket.socket()
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
