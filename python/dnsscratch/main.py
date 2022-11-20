@@ -17,10 +17,9 @@ def make_question_header(query_id):
     :return header:
     """
     # id, flags, num questions, num answers, num auth, num additional
-    first = bytes.fromhex(query_id)
     header = ['\x01\x00', '\x00\x01',
               '\x00\x00', '\x00\x00', '\x00\x00']
-    return first + ''.join(header).encode()
+    return query_id + ''.join(header).encode()
 
 
 def encode_domain_name(domain):
@@ -35,8 +34,14 @@ def encode_domain_name(domain):
 
 
 def make_dns_query(domain, dnstype):
-    query_id = random.randint(0, 65535)
-    header = make_question_header(f'{query_id:x}')
+
+    # TODO: Workaround. Review why random.randint is not working sometimes with bytes.fromhex
+    try:
+        query_id = bytes.fromhex(f'{random.randint(0, 65535):x}')
+    except ValueError:
+        query_id = bytes.fromhex(f'{random.randint(0, 65535):x}')
+
+    header = make_question_header(query_id)
     question = encode_domain_name(domain)
     tail = ['\x00', chr(dnstype), '\x01\x00\x01']
 
