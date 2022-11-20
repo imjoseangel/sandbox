@@ -20,9 +20,7 @@ def make_question_header(query_id):
     first = bytes.fromhex(query_id)
     header = ['\x01\x00', '\x00\x01',
               '\x00\x00', '\x00\x00', '\x00\x00']
-
-    print(header)
-    return first + ''.join([field for field in header]).encode()
+    return first + ''.join(header).encode()
 
 
 def encode_domain_name(domain):
@@ -43,10 +41,6 @@ def make_dns_query(domain):
 
     return header + question + b'\x00\x00\x01\x00\x01'
 
-
-print(make_question_header('b962'))
-print(encode_domain_name('example.com'))
-print(make_dns_query('example.com'))
 
 sock = socket.socket()
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

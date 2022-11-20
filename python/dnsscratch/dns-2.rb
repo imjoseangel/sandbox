@@ -20,7 +20,6 @@ def make_dns_query(domain, type)
   query_id = rand(65535)
   header = make_question_header(query_id)
   question =  encode_domain_name(domain) + [type, 1].pack('nn')
-  print question
   header + question
 end
 
