@@ -34,12 +34,13 @@ def encode_domain_name(domain):
     return ''.join(parts).encode()
 
 
-def make_dns_query(domain):
+def make_dns_query(domain, dnstype):
     query_id = random.randint(0, 65535)
     header = make_question_header(f'{query_id:x}')
     question = encode_domain_name(domain)
+    tail = ['\x00', chr(dnstype), '\x01\x00\x01']
 
-    return header + question + b'\x00\x00\x01\x00\x01'
+    return header + question + ''.join(tail).encode()
 
 
 sock = socket.socket()
@@ -48,7 +49,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 x = sock.bind(('0.0.0.0', 12345))
 y = sock.connect(('8.8.8.8', 53))
 
-bytestream = make_dns_query('example.com')
+bytestream = make_dns_query('example.com', 1)
 rprint(f'Sent: {bytestream}')
 
 sock.send(bytestream)
