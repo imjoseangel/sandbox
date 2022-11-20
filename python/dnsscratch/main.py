@@ -38,7 +38,7 @@ def encode_domain_name(domain):
 
 def make_dns_query(domain):
     query_id = random.randint(0, 65535)
-    header = make_question_header('b962')
+    header = make_question_header(f'{query_id:x}')
     question = encode_domain_name(domain)
 
     return header + question + b'\x00\x00\x01\x00\x01'
