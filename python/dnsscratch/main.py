@@ -17,11 +17,12 @@ def make_question_header(query_id):
     :return header:
     """
     # id, flags, num questions, num answers, num auth, num additional
-    header = [query_id, '\x01\x00', '\x00\x01',
+    first = bytes.fromhex(query_id)
+    header = ['\x01\x00', '\x00\x01',
               '\x00\x00', '\x00\x00', '\x00\x00']
 
     print(header)
-    return ''.join([field for field in header]).encode()
+    return first + ''.join([field for field in header]).encode()
 
 
 def encode_domain_name(domain):
@@ -37,15 +38,15 @@ def encode_domain_name(domain):
 
 def make_dns_query(domain):
     query_id = random.randint(0, 65535)
-    header = make_question_header(chr(query_id))
+    header = make_question_header('b962')
     question = encode_domain_name(domain)
 
-    return header + question
+    return header + question + b'\x00\x00\x01\x00\x01'
 
 
-print(make_question_header('\xb9\x62'))
-print(encode_domain_name('www.example.com'))
-print(make_dns_query('www.example.com'))
+print(make_question_header('b962'))
+print(encode_domain_name('example.com'))
+print(make_dns_query('example.com'))
 
 sock = socket.socket()
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -53,7 +54,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 x = sock.bind(('0.0.0.0', 12345))
 y = sock.connect(('8.8.8.8', 53))
 
-bytestream = bytes.fromhex(HEX)
+bytestream = make_dns_query('example.com')
 rprint(f'Sent: {bytestream}')
 
 sock.send(bytestream)
