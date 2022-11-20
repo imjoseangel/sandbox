@@ -34,13 +34,7 @@ def encode_domain_name(domain):
 
 
 def make_dns_query(domain, dnstype):
-
-    # TODO: This is a Workaround. Review why random.randint is not working sometimes with bytes.fromhex
-    try:
-        query_id = bytes.fromhex(f'{random.randint(0, 65535):x}')
-    except ValueError:
-        query_id = bytes.fromhex(f'{random.randint(0, 65535):x}')
-
+    query_id = bytes.fromhex(f'{random.randint(0, 65535):04x}')
     header = make_question_header(query_id)
     question = encode_domain_name(domain)
     tail = ['\x00', chr(dnstype), '\x01\x00\x01']
