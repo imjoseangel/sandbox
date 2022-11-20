@@ -35,7 +35,7 @@ def encode_domain_name(domain):
 
 def make_dns_query(domain, dnstype):
 
-    # TODO: Workaround. Review why random.randint is not working sometimes with bytes.fromhex
+    # TODO: This is a Workaround. Review why random.randint is not working sometimes with bytes.fromhex
     try:
         query_id = bytes.fromhex(f'{random.randint(0, 65535):x}')
     except ValueError:
