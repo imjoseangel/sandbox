@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # Big Julia: https://jvns.ca/blog/2022/11/06/making-a-dns-query-in-ruby-from-scratch/
-# Another ref: https://stackoverflow.com/questions/34793061/socket-resolve-dns-with-specific-dns-server
 
 import random
 import socket
