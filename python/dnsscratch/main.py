@@ -41,6 +41,25 @@ def parse_dns_string(reader, data):
     return res
 
 
+class StreamReader:
+    def __init__(self, data):
+        self.data = data
+        self.pos = 0
+
+    def read(self, len_):
+        pos = self.pos
+        if pos >= len(self.data):
+            raise Exception('EOF')
+
+        res = self.data[pos: pos + len_]
+        self.pos += len_
+        return res
+
+    def reuse(self, pos):
+        pos = int.from_bytes(pos.encode(), 'big')
+        return parse_dns_string(None, self.data[pos:])
+
+
 def make_question_header(query_id):
     """
     :param query_id:
