@@ -11,55 +11,6 @@ from rich import print as rprint
 HEX = "b96201000001000000000000076578616d706c6503636f6d0000010001"
 
 
-def parse_dns_string(reader, data):
-    res = ''
-    to_resue = None
-    bytes_left = 0
-
-    for ch in data:
-        if not ch:
-            break
-
-        if to_resue is not None:
-            resue_pos = chr(to_resue) + chr(ch)
-            res += reader.reuse(resue_pos)
-            break
-
-        if bytes_left:
-            res += chr(ch)
-            bytes_left -= 1
-            continue
-
-        if (ch >> 6) == 0b11 and reader is not None:
-            to_resue = ch - 0b11000000
-        else:
-            bytes_left = ch
-
-        if res:
-            res += '.'
-
-    return res
-
-
-class StreamReader:
-    def __init__(self, data):
-        self.data = data
-        self.pos = 0
-
-    def read(self, len_):
-        pos = self.pos
-        if pos >= len(self.data):
-            raise Exception('EOF')
-
-        res = self.data[pos: pos + len_]
-        self.pos += len_
-        return res
-
-    def reuse(self, pos):
-        pos = int.from_bytes(pos.encode(), 'big')
-        return parse_dns_string(None, self.data[pos:])
-
-
 def make_question_header(query_id):
     """
     :param query_id:
