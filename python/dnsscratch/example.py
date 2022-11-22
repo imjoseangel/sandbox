@@ -42,7 +42,7 @@ class StreamReader:
         if pos >= len(self.data):
             raise
 
-        res = self.data[pos: pos+len_]
+        res = self.data[pos: pos + len_]
         self.pos += len_
         return res
 
@@ -82,7 +82,7 @@ def parse_dns_response(res, dq_len, req):
     reader = StreamReader(res)
 
     def get_query(s):
-        return s[12:12+dq_len]
+        return s[12:12 + dq_len]
 
     data = reader.read(len(req))
     assert (get_query(data) == get_query(req))
@@ -92,7 +92,7 @@ def parse_dns_response(res, dq_len, req):
 
     result = {}
     res_num = to_int(data[6:8])
-    for i in range(res_num):
+    for _ in range(res_num):
         reader.read(2)
         type_num = to_int(reader.read(2))
 
