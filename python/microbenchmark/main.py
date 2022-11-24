@@ -38,7 +38,7 @@ def get_top(data, n=10):
 
 
 def main():
-    data = json.load(open('../pypicache/pypicache.json'))
+    data = json.load(open('pypicache.json'))
     domains = count_domains(data)
     top_domains = get_top(domains, 10)
     licenses = count_licenses(data)
