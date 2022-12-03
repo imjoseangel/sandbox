@@ -5,7 +5,8 @@ import pika
 
 QUEUE_NAME = "mailbox"
 
-with pika.BlockingConnection() as connection:
+credentials = pika.PlainCredentials('user', 'user')
+with pika.BlockingConnection(pika.ConnectionParameters(host='localhost', credentials=credentials)) as connection:
     channel = connection.channel()
     channel.queue_declare(queue=QUEUE_NAME)
     while True:
