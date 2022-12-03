@@ -13,9 +13,8 @@ with pika.BlockingConnection(pika.ConnectionParameters(
         channel = connection.channel()
         channel.queue_declare(queue=QUEUE_NAME, arguments={
             'x-message-ttl': 10800000,
-            'x-dead-letter-exchange': 'dlx',
-            'durable': 'true'
-        })
+            'x-dead-letter-exchange': 'dlx'
+        }, durable=True)
         while True:
             message = input("Message: ")
             channel.basic_publish(
