@@ -11,7 +11,11 @@ with pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost', credentials=credentials)) as connection:
     try:
         channel = connection.channel()
-        channel.queue_declare(queue=QUEUE_NAME)
+        channel.queue_declare(queue=QUEUE_NAME, arguments={
+            'x-message-ttl': 10800000,
+            'x-dead-letter-exchange': 'dlx',
+            'durable': 'true'
+        })
         while True:
             message = input("Message: ")
             channel.basic_publish(
@@ -19,5 +23,5 @@ with pika.BlockingConnection(pika.ConnectionParameters(
                 routing_key=QUEUE_NAME,
                 body=message.encode("utf-8")
             )
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         print("Exiting...")
