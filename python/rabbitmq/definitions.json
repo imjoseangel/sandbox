@@ -1,0 +1,104 @@
+{
+    "rabbit_version": "3.10.2",
+    "rabbitmq_version": "3.10.2",
+    "product_name": "RabbitMQ",
+    "product_version": "3.10.2",
+    "users": [
+        {
+            "name": "user",
+            "password_hash": "CzWr2F2z9Y9/ODuescr9Ux4jQWBi2JLPHfSraajqo18X0rol",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": [
+                "administrator"
+            ],
+            "limits": {}
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "user",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "topic_permissions": [
+        {
+            "user": "user",
+            "vhost": "/",
+            "exchange": "",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "parameters": [
+        {
+            "value": {
+                "ack-mode": "on-confirm",
+                "dest-add-forward-headers": false,
+                "dest-protocol": "amqp091",
+                "dest-queue": "qu.transfer.tst",
+                "dest-uri": "amqp://user:password@rabbitmq.rabbitmq.svc.cluster.local",
+                "src-delete-after": "never",
+                "src-protocol": "amqp091",
+                "src-queue": "qu.transfer.tst",
+                "src-uri": "amqp://user:password@remote_server"
+            },
+            "vhost": "/",
+            "component": "shovel",
+            "name": "qu.transfer.tst"
+        },
+        {
+            "value": {
+                "ack-mode": "on-publish",
+                "trust-user-id": true,
+                "uri": "amqp://user:password@remote_server"
+            },
+            "vhost": "/",
+            "component": "federation-upstream",
+            "name": "blue"
+        }
+    ],
+    "global_parameters": [
+        {
+            "name": "cluster_name",
+            "value": "rabbitmq"
+        },
+        {
+            "name": "internal_cluster_id",
+            "value": "rabbitmq-cluster-id-eIi0M-GMEgNx-e8CwQn6dA"
+        }
+    ],
+    "policies": [
+        {
+            "vhost": "/",
+            "name": "blue-green",
+            "pattern": ".*",
+            "apply-to": "all",
+            "definition": {
+                "federation-upstream-set": "all"
+            },
+            "priority": 1
+        }
+    ],
+    "queues": [
+        {
+            "name": "qu.transfer.tst",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-dead-letter-exchange": "dlx",
+                "x-message-ttl": 10800000
+            }
+        }
+    ],
+    "exchanges": [],
+    "bindings": []
+}
