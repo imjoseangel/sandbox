@@ -22,5 +22,5 @@ with pika.BlockingConnection(pika.ConnectionParameters(
                 routing_key=QUEUE_NAME,
                 body=message.encode("utf-8")
             )
-    except (KeyboardInterrupt, EOFError):
+    except (KeyboardInterrupt, EOFError, pika.exceptions.StreamLostError):
         print("Exiting...")
