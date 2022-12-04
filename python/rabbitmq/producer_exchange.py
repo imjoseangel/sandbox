@@ -3,23 +3,22 @@
 
 import pika
 
-QUEUE_NAME = "qu.transfer.tst"
+EXCHANGE_NAME = "ex.transfer.tst"
 
-credentials = pika.PlainCredentials('user', 'password')
+credentials = pika.PlainCredentials("user", "password")
 
 with pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost', credentials=credentials)) as connection:
+        host="localhost", credentials=credentials)) as connection:
     try:
         channel = connection.channel()
-        channel.queue_declare(queue=QUEUE_NAME, arguments={
-            'x-message-ttl': 10800000,
-            'x-dead-letter-exchange': 'dlx'
-        }, durable=True)
+        channel.exchange_declare(exchange=EXCHANGE_NAME,
+                                 exchange_type="fanout", durable=True)
+
         while True:
             message = input("Message: ")
             channel.basic_publish(
-                exchange="",
-                routing_key=QUEUE_NAME,
+                exchange=EXCHANGE_NAME,
+                routing_key="",
                 body=message.encode("utf-8")
             )
     except (KeyboardInterrupt, EOFError, pika.exceptions.StreamLostError):

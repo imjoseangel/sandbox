@@ -21,7 +21,7 @@ except IndexError:
 salt = os.urandom(4)
 
 # 2.Concatenate that with the UTF-8 representation of the plaintext password
-tmp0 = salt + password.encode('utf-8')
+tmp0 = salt + password.encode("utf-8")
 
 # 3. Take the SHA256 hash and get the bytes back
 tmp1 = hashlib.sha256(tmp0).digest()
