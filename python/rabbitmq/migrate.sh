@@ -1,5 +1,16 @@
 #!/bin/bash
 
+terraformdirs=(acr applicationgateway appservice appserviceplan databricks \
+    keyvault kubernetes postgres privateendpoint serviceprincipal storage subnet)
+
+if [[ -n $1 ]]; then
+    for app in "${terraformdirs[@]}"; do
+        cd "terraform-azurerm-$app" && git add . && git commit -am "$1" && git push origin && cd ..
+    done
+else
+    echo "Missing Comment"
+fi
+
 
 jq 'del ( .parameters, .policies, .global_parameters, .vhosts, .product_version, .product_name, .rabbitmq_version, .rabbit_version)' definitions.json
 
@@ -11,6 +22,6 @@ rabbitmqctl set_parameter shovel drain-blue '{"src-protocol": "amqp091", "src-ur
 kubectl exec -n rabbitmq rabbitmq-release-0 -- rabbitmqctl export_definitions - | jq 'del ( .parameters, .policies, .global_parameters, .vhosts, .product_version, .product_name, .rabbitmq_version, .rabbit_version)'
 kubectl exec -n rabbitmq rabbitmq-server-0 -- rabbitmqctl import_definitions
 
-kubectl exec -n rabbitmq rabbitmq-release-0 -- rabbitmqctl export_definitions - | jq 'del ( .parameters, .policies, .global_parameters, .vhosts, .product_version, .product_name, .rabbitmq_version, .rabbit_version) .queues[].name'
+kubectl exec -n rabbitmq rabbitmq-release-0 -- rabbitmqctl export_definitions - | jq -r 'del ( .parameters, .policies, .global_parameters, .vhosts, .product_version, .product_name, .rabbitmq_version, .rabbit_version) .queues[].name'
 
 curl -u {username}:{password} -X GET http://{hostname}:15672/api/definitions | jq 'del ( .parameters, .policies, .global_parameters, .vhosts, .product_version, .product_name, .rabbitmq_version, .rabbit_version)' | curl -u {username}:{password} -X POST http://{hostname}:15672/api/definitions
