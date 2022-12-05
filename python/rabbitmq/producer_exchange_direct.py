@@ -6,10 +6,10 @@ import pika
 EXCHANGE_NAME = "ex.transfer.tst"
 QUEUE_NAME = "qu.transfer.tst"
 
-credentials = pika.PlainCredentials("user", "SP94Tea7TnRmHTea")
+credentials = pika.PlainCredentials("user", "password")
 
 with pika.BlockingConnection(pika.ConnectionParameters(
-        host="20.93.216.134", credentials=credentials)) as connection:
+        host="localhost", credentials=credentials)) as connection:
     try:
         channel = connection.channel()
         channel.exchange_declare(exchange=EXCHANGE_NAME,
