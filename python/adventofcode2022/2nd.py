@@ -2506,21 +2506,21 @@ A Z
 score = 0
 for x in rps.splitlines():
     if x.split()[0] == "A" and x.split()[1] == "X":
-        score += 6
+        score += 4
     elif x.split()[0] == "A" and x.split()[1] == "Y":
         score += 8
     elif x.split()[0] == "A" and x.split()[1] == "Z":
-        score += 1
+        score += 3
     elif x.split()[0] == "B" and x.split()[1] == "X":
         score += 1
     elif x.split()[0] == "B" and x.split()[1] == "Y":
-        score += 6
+        score += 5
     elif x.split()[0] == "B" and x.split()[1] == "Z":
-        score += 8
+        score += 9
     elif x.split()[0] == "C" and x.split()[1] == "X":
-        score += 8
+        score += 7
     elif x.split()[0] == "C" and x.split()[1] == "Y":
-        score += 1
+        score += 2
     elif x.split()[0] == "C" and x.split()[1] == "Z":
         score += 6
 
