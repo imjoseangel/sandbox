@@ -52,3 +52,7 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Reddit settings:
+REDDIT_SECRET = env('REDDIT_SECRET')
+REDDIT_CLIENT_ID = env('REDDIT_CLIENT')
+REDDIT_USERAGENT = env('REDDIT_USERAGENT')
