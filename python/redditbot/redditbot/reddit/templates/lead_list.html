@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Posted At</th>
+            <th scope="col">Content</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for lead in object_list %}
+        <tr>
+            <th scope="row">{{ lead.post_id }}</th>
+            <td><a href="https://reddit.com{{ lead.url }}"> {{ lead.title }}</a></td>
+            <td>{{ lead.posted_at }}</td>
+            <td>{{ lead.content }}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+{% endblock %}
