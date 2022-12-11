@@ -1,4 +1,4 @@
-# Inside reddit_bot/reddit_bot/reddit/management/commands/lead_finder.py file
+# Inside redditbot/redditbot/reddit/management/commands/lead_finder.py file
 import datetime as DT
 import re
 
@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
-from reddit_bot.reddit.models import Lead
+from redditbot.reddit.models import Lead
 
 KEYWORD = "facebook"
 SUBREDDIT = 'marketing'
