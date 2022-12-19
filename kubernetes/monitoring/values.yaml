@@ -1,0 +1,140 @@
+# Values for kube-prometheus-stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+##
+grafana:
+  admin:
+    existingSecret: azuread-client
+    userKey: GF_SECURITY_ADMIN_USER
+    passwordKey: GF_SECURITY_ADMIN_PASSWORD
+
+  envFromSecret: azuread-client
+
+  extraSecretMounts:
+    - name: ingress-tls
+      mountPath: /mnt/secrets/ingress-tls
+      readOnly: true
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: ingress-tls
+    - name: grafana-secrets
+      mountPath: /mnt/secrets/grafana-secrets
+      readOnly: true
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: grafana-secrets
+
+  initChownData:
+    enabled: true
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://monitoring-kube-prometheus-prometheus.monitoring:9090/
+          access: proxy
+          isDefault: false
+          jsonData:
+            timeInterval: 30s
+        - name: Prometheus PRD
+          type: prometheus
+          uid: prometheus-prd
+          url: https://prometheus-prd.imjoseangel.eu/
+          access: proxy
+          isDefault: false
+          editable: true
+          jsonData:
+            timeInterval: 30s
+        - name: Azure Monitor
+          type: grafana-azure-monitor-datasource
+          uid: azuremonitor
+          isDefault: true
+          editable: true
+          jsonData:
+            cloudName: azuremonitor
+            subscriptionId: <subscription>
+
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    server:
+      domain: grafana.imjoseangel.eu
+      root_url: https://grafana.imjoseangel.eu
+    auth.azuread:
+      name: Azure AD
+      enabled: true
+      allow_sign_up: true
+      scopes: openid email profile
+      auth_url: https://login.microsoftonline.com/<tenantid>/oauth2/v2.0/authorize
+      token_url: https://login.microsoftonline.com/<tenantid>/oauth2/v2.0/token
+      role_attribute_strict: false
+    dashboards:
+      default_home_dashboard_path: /tmp/dashboards/k8s-resources-cluster.json
+    azure:
+      managed_identity_enabled: true
+      managed_identity_client_id: <clientid>
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: default
+    accessModes:
+      - ReadWriteOnce
+    size: 128Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
+
+  testFramework:
+    enabled: false
+
+## Manages Prometheus and Alertmanager components
+##
+prometheusOperator:
+  ## Admission webhook support for PrometheusRules resources added in Prometheus Operator 0.30 can be enabled to prevent incorrectly formatted
+  ## rules from making their way into prometheus and potentially preventing the container from starting
+  admissionWebhooks:
+    patch:
+      enabled: true
+
+## Deploy a Prometheus instance
+##
+prometheus:
+  ## Settings affecting prometheusSpec
+  ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#prometheusspec
+  ##
+  prometheusSpec:
+    ruleSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    storageSpec:
+    ## Using PersistentVolumeClaim
+    ##
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 128Gi

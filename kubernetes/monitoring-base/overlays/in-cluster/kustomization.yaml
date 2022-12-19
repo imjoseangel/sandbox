@@ -1,0 +1,30 @@
+---
+namespace: monitoring
+resources:
+  - ../../base
+
+components:
+  - ../../components/grafana-ingress
+
+patches:
+  - target:
+      kind: Ingress
+      name: grafana-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: grafana.imjoseangel.eu
+      - op: replace
+        path: /spec/tls/0/hosts
+        value: ['grafana.imjoseangel.eu']
+  - target:
+      kind: SecretProviderClass
+      name: ingress-tls
+    patch: &managedidentity |-
+      - op: replace
+        path: /spec/parameters/userAssignedIdentityID
+        value: <clientid>
+  - target:
+      kind: SecretProviderClass
+      name: grafana-secrets
+    patch: *managedidentity

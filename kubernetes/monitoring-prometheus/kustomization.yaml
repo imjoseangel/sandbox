@@ -1,0 +1,8 @@
+---
+helmCharts:
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 42.3.0
+    releaseName: monitoring
+    namespace: monitoring
+    valuesFile: values.yaml
