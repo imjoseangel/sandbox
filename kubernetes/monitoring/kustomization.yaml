@@ -6,3 +6,6 @@ helmCharts:
     releaseName: monitoring
     namespace: monitoring
     valuesFile: values.yaml
+
+resources:
+  - resources
