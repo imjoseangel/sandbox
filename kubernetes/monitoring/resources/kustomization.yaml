@@ -1,0 +1,6 @@
+---
+namespace: monitoring
+
+resources:
+  - dashboards/rabbitmq-overview.yaml
+  - dashboards/rabbitmq-queue.yaml
