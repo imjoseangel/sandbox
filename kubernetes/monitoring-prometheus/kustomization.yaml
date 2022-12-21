@@ -6,3 +6,11 @@ helmCharts:
     releaseName: monitoring
     namespace: monitoring
     valuesFile: values.yaml
+
+patches:
+  - |-
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: alertmanager-monitoring-kube-prometheus-alertmanager
+    $patch: delete
