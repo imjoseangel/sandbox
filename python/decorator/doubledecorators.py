@@ -12,6 +12,15 @@ def uppercase_decorator(function):
     return wrapper
 
 
+def split_string(function):
+    def wrapper():
+        func = function()
+        splitted_string = func.split()
+        return splitted_string
+
+    return wrapper
+
+
 def say_hi():
     return "hello there"
 
@@ -20,6 +29,7 @@ decorate = uppercase_decorator(say_hi)
 rprint(decorate())
 
 
+@split_string
 @uppercase_decorator
 def say_lo():
     return "what's up"
