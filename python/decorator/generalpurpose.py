@@ -18,3 +18,11 @@ def function_with_no_argument():
 
 
 function_with_no_argument()
+
+
+@a_decorator_passing_arbitrary_arguments
+def function_with_arguments(a, b, c):
+    rprint(a, b, c)
+
+
+function_with_arguments(1, 2, 3)
