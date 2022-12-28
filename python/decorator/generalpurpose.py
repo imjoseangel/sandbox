@@ -26,3 +26,11 @@ def function_with_arguments(a, b, c):
 
 
 function_with_arguments(1, 2, 3)
+
+
+@a_decorator_passing_arbitrary_arguments
+def function_with_keyword_arguments():
+    print("This has shown keyword arguments")
+
+
+function_with_keyword_arguments(first_name="Derrick", last_name="Mwiti")
