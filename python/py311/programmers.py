@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 import json
 import pathlib
-from rich import print as rprint
 
 programmers = json.loads(pathlib.Path(
     "programmers.json").read_text(encoding="utf-8"))
