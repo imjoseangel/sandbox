@@ -19,8 +19,9 @@ async def download_pep(session, pep):
 
 
 async def download_peps(session, peps):
-    tasks = [asyncio.create_task(download_pep(session, pep)) for pep in peps]
-    await asyncio.gather(*tasks)
+    async with asyncio.TaskGroup() as tg:
+        for pep in peps:
+            tg.create_task(download_pep(session, pep))
 
 
 async def main(peps):
