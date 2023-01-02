@@ -17,3 +17,6 @@ print(
                 (_____)_
                (________)Oo°"""
 )
+
+# Run with:
+# python -X importtime -S snakesay.py Imports are faster!
