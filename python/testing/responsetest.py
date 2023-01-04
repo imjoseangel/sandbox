@@ -10,7 +10,7 @@ def test_simple():
     responses.add(responses.GET, 'http://twitter.com/api/1/foobar',
                   json={'error': 'not found'}, status=404)
 
-    resp = requests.get('http://twitter.com/api/1/foobar')
+    resp = requests.get('http://twitter.com/api/1/foobar', timeout=30)
 
     assert resp.json() == {"error": "not found"}
 
