@@ -6,7 +6,7 @@ In this post, we will explain possible causes and give some useful tips to delet
 
 ## Reasons for a pod on `Terminating` state
 
-Leaving out bugs or node issues, the two most common reasons 
+Leaving out bugs or node issues, the two most common reasons are the `terminationGracePeriodSeconds` and `Finalizers`
 
 ### The PreStop hook and terminationGracePeriodSeconds
 
