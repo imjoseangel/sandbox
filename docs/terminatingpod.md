@@ -1,10 +1,12 @@
 # Kubernetes Pods Stuck in Terminating: A Resolution Guide
 
-A Pod or even a namespace deletion can take some time to deleted or even become a nightmare with a hanging `Terminating` process.
+A Pod deletion can take some time to get deleted or even hang on `Terminating`.
 
-In this post, we will explain possible causes, tips to delete a namespace or pod and how to proceed when there is a Pod on `Terminating` state.
+In this post, we will explain possible causes and give some useful tips to delete PODS when hanging on `Terminating` state.
 
-## Reasons for a terminating state
+## Reasons for a pod on `Terminating` state
+
+Leaving out bugs or node issues, the two most common reasons 
 
 ### The PreStop hook and terminationGracePeriodSeconds
 
@@ -37,7 +39,7 @@ From [Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/wor
 
 > Finalizers are namespaced keys that tell Kubernetes to wait until specific conditions are met before it fully deletes resources marked for deletion.
 
-If a pod is stuck on Terminating state review the `metadata/finalizers` of the pod. Normally they are used to prevent accidental deletion of resources.
+If a pod is stuck on Terminating state check the `metadata/finalizers` of the pod. Normally they are used to prevent accidental deletion of resources.
 
 For instance, this example has a `kubernetes` key as `finalizer` normally used on namespaces.
 
