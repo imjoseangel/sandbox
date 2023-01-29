@@ -20,7 +20,7 @@ sequenceDiagram
 
 When Kubelet knows that a *Pod* should evict, it marks the *Pod* state as `Terminating` and stops sending traffic to it. Then, it executes the `preStop` lifecycle hook (when available). It sends the `SIGTERM` to the Main process (pid 1) within each container and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
 
-If the application hasn't completed the shutdown properly, the Kubelet gives a grace period, until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
+If the application has not completed the shutdown properly, the Kubelet gives a grace period, until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
 
 ## Why a *Pod* can hang on `Terminating` state
 
@@ -35,9 +35,9 @@ From [Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/wor
 
 > Finalizers are namespaced keys that tell Kubernetes to wait until specific conditions are met before it fully deletes resources marked for deletion.
 
-**Finalizers** are used to prevent the accidental deletion of resources. If a *Pod* is stuck in the Terminating state check the `metadata/finalizers` of the pod.
+**Finalizers** are used to prevent the accidental deletion of resources. When a *Pod* hangs in the Terminating state, check its `metadata/finalizers`.
 
-For instance, this example has a **Kubernetes** key as a *finalizer* normally used on namespaces.
+For instance, this example has a **Kubernetes** key as a *finalizer* used for namespaces.
 
 ```yaml
 kind: Pod
