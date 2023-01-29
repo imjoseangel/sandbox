@@ -4,8 +4,11 @@ Do you know why a Pod takes too much time to get deleted or even hangs on `Termi
 
 This post describes the Pod Lifecycle conditions, reasons of why they could hang on `Terminating` state, and some useful tips to get rid of them.
 
-## Pod Conditions
+## Pod Termination
 
+There are multiple reasons why the Kubernetes Scheduler can evict a healthy container. For example, the execution of Pods with higher priority, the drain of a node during a version update, an auto-scaling process, a [resource bin-packing](https://kubernetes.io/docs/concepts/scheduling-eviction/resource-bin-packing/) or a simple `kubectl delete` command.
+
+Kubernetes provides for graceful termination when Pods are no longer needed
 
 
 ## Reasons for a pod on `Terminating` state
