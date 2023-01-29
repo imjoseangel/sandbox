@@ -1,12 +1,16 @@
 # Kubernetes Pods Stuck in Terminating: A Resolution Guide
 
-A Pod deletion can take some time to get deleted or even hang on `Terminating`.
+Do you know why a Pod takes too much time to get deleted or even hangs on `Terminating` state?
 
-In this post, we will explain possible causes and give some useful tips to delete PODS when hanging on `Terminating` state.
+This post describes the Pod Lifecycle conditions, reasons of why they could hang on `Terminating` state, and some useful tips to get rid of them.
+
+## Pod Conditions
+
+
 
 ## Reasons for a pod on `Terminating` state
 
-Leaving out bugs or node issues, the two most common reasons are the `terminationGracePeriodSeconds` and `Finalizers`
+The two most common reasons are the `terminationGracePeriodSeconds` and `Finalizers`
 
 ### The PreStop hook and terminationGracePeriodSeconds
 
