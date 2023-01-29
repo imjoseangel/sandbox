@@ -26,7 +26,7 @@ If the application has not completed the shutdown properly, the Kubelet gives a 
 
 The most common reasons for a *Pod* hanging during the eviction process are:
 
-* A `Finalizer` dependency
+* A *Finalizer* dependency
 * An incorrect `terminationGracePeriodSeconds` value
 
 ### Finalizers
@@ -35,7 +35,7 @@ From [Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/wor
 
 > Finalizers are namespaced keys that tell Kubernetes to wait until specific conditions are met before it fully deletes resources marked for deletion.
 
-**Finalizers** are used to prevent the accidental deletion of resources. When a *Pod* hangs in the Terminating state, check its `metadata/finalizers`.
+*Finalizers* are used to prevent the accidental deletion of resources. When a *Pod* hangs in the Terminating state, check its `metadata/finalizers`.
 
 For instance, this example has a **Kubernetes** key as a *finalizer* used for namespaces.
 
@@ -60,7 +60,7 @@ Kubernetes will report back that it has been deleted:
 kubectl get pod/mypod -o yaml
 ```
 
-What’s happened is that the object was updated, not deleted. The *Pod* has been modified to include the deletion timestamp keeping it in the `Terminating` state.
+What happened is that the object was updated, not deleted. The *Pod* gets modified to include the deletion timestamp keeping it in the `Terminating` state.
 
 ```yaml
   creationTimestamp: "2023-01-28T15:01:32Z"
@@ -99,15 +99,15 @@ spec:
             - sleep 3600
 ```
 
-Will keep our *Pod* in the `Terminating` state for 1 hour.
+Will keep the *Pod* in the `Terminating` state for 1 hour.
 
 It is essential to handle the `SIGTERM` correctly and ensure that the application terminates gracefully when the kubelet sends the `SIGTERM` to the container.
 
 ## Remove Finalizers
 
-Determine if the cause of the `Terminating` state for a Pod, *Namespace*, or *PVC* for instance is a finalizer. Think that *PVC* for instance can be protected from deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
+Determine if the cause of the `Terminating` state for a Pod, *Namespace*, or *PVC* is a *finalizer*. A [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/) example to protect PVCs from deletion is the `kubernetes.io/pvc-protection`.
 
-If we want to delete the pod, we can simply patch it on the command line to remove the `finalizers`:
+If we want to delete the *Pod*, we can simply patch it on the command line to remove the *finalizers*:
 
 ```sh
 kubectl patch pod/mypod --type=json -p '[{"op": "remove", "path": "/metadata/finalizers" }]'
