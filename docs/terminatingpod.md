@@ -26,34 +26,8 @@ If the application hasn't completed the shutdown properly, the Kubelet gives a g
 
 The most common reasons for a pod hanging during the eviction process are:
 
-* An incorrect `terminationGracePeriodSeconds` value
 * A `Finalizer` dependency
-* A node `NotReady` issue.
-
-### The PreStop hook and terminationGracePeriodSeconds
-
-From the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#hook-handler-execution):
-
-> If a `PreStop` hook hangs during execution, the Pod's phase will be `Terminating` and remain there until the Pod is killed after its `terminationGracePeriodSeconds` expires.
-
-For instance. This configuration:
-
-```yaml
-spec:
-  terminationGracePeriodSeconds: 3600
-  containers:
-    - lifecycle:
-        preStop:
-        exec:
-          command:
-            - /bin/sh
-            - -c
-            - sleep 3600
-```
-
-Will keep our pod on `Terminating` state for 1 hour.
-
-It is essential to handle the `SIGTERM` correctly and ensure that the application terminates gracefully when the kubelet sends the `SIGTERM` to the container.
+* An incorrect `terminationGracePeriodSeconds` value
 
 ### Finalizers
 
@@ -103,3 +77,42 @@ status:
         reason: Completed
         startedAt: "2023-01-28T15:01:33Z"
 ```
+
+### The PreStop hook and terminationGracePeriodSeconds
+
+From the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#hook-handler-execution):
+
+> If a `PreStop` hook hangs during execution, the Pod's phase will be `Terminating` and remain there until the Pod is killed after its `terminationGracePeriodSeconds` expires.
+
+For instance. This configuration:
+
+```yaml
+spec:
+  terminationGracePeriodSeconds: 3600
+  containers:
+    - lifecycle:
+        preStop:
+        exec:
+          command:
+            - /bin/sh
+            - -c
+            - sleep 3600
+```
+
+Will keep our pod on `Terminating` state for 1 hour.
+
+It is essential to handle the `SIGTERM` correctly and ensure that the application terminates gracefully when the kubelet sends the `SIGTERM` to the container.
+
+## Remove Finalizers
+
+Determine if the cause of the `Terminating` state for a Pod, namespace or PVC for instance is a finalizer. Think that PVC for instance can be protected for deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
+
+If we want to delete the pod, we can simply patch it on the command line to remove the `finalizers`:
+
+```sh
+kubectl patch pod/nginx --type=json -p '[{"op": "remove", "path": "/metadata/finalizers" }]'
+```
+
+Once the finalizer list is empty, the object can actually be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
+
+## Force Delete the POD
