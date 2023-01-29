@@ -129,13 +129,13 @@ As explained in the [Documentation](https://kubernetes.io/docs/tasks/run-applica
 kubectl delete pod/mypod --grace-period=0 --force
 ```
 
-## Review Node Status
+### Finalizer blocking Kubernetes upgrade
 
-One or many of your Cluster nodes resources or availability can be also the cause of [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
+One or many of your Cluster nodes resources or availability can cause [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
 
 >The kubelet monitors resources like memory, disk space, and filesystem inodes on your cluster's nodes. When one or more of these resources reach specific consumption levels, the kubelet can proactively fail one or more pods on the node to reclaim resources and prevent starvation.
 
-Check that your nodes are ready:
+During a cluster upgrade check your node drain:
 
 ```sh
 kubectl get nodes
@@ -143,19 +143,38 @@ kubectl get nodes
 
 ```sh
 NAME       STATUS                     ROLES           AGE   VERSION
-cluster    NotReady                   control-plane   19h   v1.26.1
+cluster    Ready,SchedulingDisabled   control-plane   12m   v1.26.1
 ```
 
-Review your node and pod resources with:
+Review the status of your pods with:
 
 ```sh
-kubectl top node
+kubectl get pods -A
 ```
 
 ```sh
-NAME                                CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
-cluster-default                     148m         7%     3410Mi          63%
-cluster-linuxpool                   215m         5%     6558Mi          52%
+NAMESPACE     NAME                                      READY   STATUS        RESTARTS   AGE
+default       mypod                                     0/1     Terminating   0          5m42s
+kube-system   etcd-minikube                             1/1     Running       0          14m
+kube-system   kube-apiserver-minikube                   1/1     Running       0          14m
+kube-system   kube-controller-manager-minikube          1/1     Running       0          14m
+kube-system   kube-proxy-5dwnf                          1/1     Running       0          14m
+kube-system   kube-scheduler-minikube                   1/1     Running       0          14m
 ```
 
-If *Finalizers* are configured or the kubelet is not ready, it could end in a `Termination` state
+Check Pod finalizer as usual:
+
+```sh
+kubectl get pod/mypod -o yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2023-01-29T14:12:38Z"
+  deletionGracePeriodSeconds: 0
+  deletionTimestamp: "2023-01-29T14:13:28Z"
+  finalizers:
+  - kubernetes
+```
