@@ -8,12 +8,18 @@ This post describes the Pod Lifecycle conditions, reasons of why they could hang
 
 There are multiple reasons why the Kubernetes Scheduler can evict a healthy container. For example, the execution of Pods with higher priority, the drain of a node during a version update, an auto-scaling process, a [resource bin-packing](https://kubernetes.io/docs/concepts/scheduling-eviction/resource-bin-packing/) or a simple `kubectl delete` command.
 
-Kubernetes provides for graceful termination when Pods are no longer needed
+Kubernetes provides for graceful termination when Pods are no longer needed with [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) which are executed by the kubelet on the specific containers when it receives the event.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    Stop Container Event->>SIGTERM: PreStop Hook
+    SIGTERM->>SIGKILL: Termination Grace Period
+```
 
-## Reasons for a pod on `Terminating` state
+## Why a Pod can hang on `Terminating` state
 
-The two most common reasons are the `terminationGracePeriodSeconds` and `Finalizers`
+The two most common reasons are a long `terminationGracePeriodSeconds` value and a `Finalizer` dependency.
 
 ### The PreStop hook and terminationGracePeriodSeconds
 
