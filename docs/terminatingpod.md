@@ -107,7 +107,7 @@ It is essential to handle the `SIGTERM` correctly and ensure that the applicatio
 
 Determine if the cause of the `Terminating` state for a Pod, *Namespace*, or *PVC* is a *finalizer*. A [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/) example to protect PVCs from deletion is the `kubernetes.io/pvc-protection`.
 
-If we want to delete the *Pod*, we can simply patch it on the command line to remove the *finalizers*:
+To delete the *Pod*, patch it on the command line to remove the *finalizers*:
 
 ```sh
 kubectl patch pod/mypod --type=json -p '[{"op": "remove", "path": "/metadata/finalizers" }]'
@@ -135,7 +135,7 @@ One or many of your Cluster node resources or availability can cause [Pod evicti
 
 >The kubelet monitors resources like memory, disk space, and filesystem inodes on your cluster's nodes. When one or more of these resources reach specific consumption levels, the kubelet can proactively fail one or more *Pods* on the node to reclaim resources and prevent starvation.
 
-During a cluster upgrade check your node drain:
+During a cluster version update, check your node drain:
 
 ```sh
 kubectl get nodes
@@ -187,6 +187,6 @@ kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 
 ## Conclusion
 
-If you find any Kubernetes component stuck on `Termination` review if any component *finalizer* is protecting its deletion, whether for a *Pod*, *PVC*, or *Namespace*.
+If you find any Kubernetes component stuck in `Terminating`, review if any component *finalizer* is protecting its deletion. Whether for a *Pod*, *PVC*, or *Namespace*.
 
-A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfere with its *Namespace* deletion.
+A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall), where the scaledobjects can interfere with its *Namespace* deletion.
