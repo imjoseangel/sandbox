@@ -6,7 +6,7 @@ This post describes the *Pod* Lifecycle conditions, reasons why they could hang 
 
 ## *Pod* Termination
 
-There are multiple reasons why the Kubernetes Scheduler can evict a healthy container. For example, the execution of *Pods* with higher priority, the drain of a node during a version update, an auto-scaling process, a [resource bin-packing](https://kubernetes.io/docs/concepts/scheduling-eviction/resource-bin-packing/) or a simple `kubectl delete` command.
+There are multiple reasons why the Kubernetes Scheduler can evict a healthy container. For example, the execution of *Pods* with higher priority, the drain of a node during a version update, an auto-scaling process, a [resource bin-packing](https://kubernetes.io/docs/concepts/scheduling-eviction/resource-bin-packing/), or a simple `kubectl delete` command.
 
 Kubernetes provides graceful termination for not needed *Pods* with [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks). They are executed by the kubelet on the specific containers when it receives the event.
 
@@ -18,7 +18,7 @@ sequenceDiagram
     Note over Stop Container Event,SIGKILL: Termination Process
 ```
 
-When kubelet knows that a *Pod* should evict, it marks the *Pod* state as `Terminating` and stops sending traffic to it. Then, it executes the `preStop` lifecycle hook (when available). It sends the `SIGTERM` to the Main process (pid 1) within each container and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
+When Kubelet knows that a *Pod* should evict, it marks the *Pod* state as `Terminating` and stops sending traffic to it. Then, it executes the `preStop` lifecycle hook (when available). It sends the `SIGTERM` to the Main process (pid 1) within each container and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
 
 If the application hasn't completed the shutdown properly, the Kubelet gives a grace period, until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
 
@@ -105,7 +105,7 @@ It is essential to handle the `SIGTERM` correctly and ensure that the applicatio
 
 ## Remove Finalizers
 
-Determine if the cause of the `Terminating` state for a Pod, *Namespace* or *PVC* for instance is a finalizer. Think that *PVC* for instance can be protected from deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
+Determine if the cause of the `Terminating` state for a Pod, *Namespace*, or *PVC* for instance is a finalizer. Think that *PVC* for instance can be protected from deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
 
 If we want to delete the pod, we can simply patch it on the command line to remove the `finalizers`:
 
@@ -187,6 +187,6 @@ kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 
 ## Conclusion
 
-If you find any Kubernetes component stuck on `Termination` review if any component *finalizer* is protecting its deletion, whether for a *Pod*, *PVC* or *Namespace*.
+If you find any Kubernetes component stuck on `Termination` review if any component *finalizer* is protecting its deletion, whether for a *Pod*, *PVC*, or *Namespace*.
 
-A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfere in its *Namespace* deletion.
+A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfere with its *Namespace* deletion.
