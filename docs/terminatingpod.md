@@ -13,9 +13,13 @@ Kubernetes provides for graceful termination when Pods are no longer needed with
 ```mermaid
 sequenceDiagram
     autonumber
-    Stop Container Event->>SIGTERM: PreStop Hook
+    Stop Container Event-->>SIGTERM: PreStop Hook
     SIGTERM->>SIGKILL: Termination Grace Period
 ```
+
+When kubelet knows that a pod should be terminated, before sending the `SIGTERM` to the container, it executes the `preStop` lifecycle hook if exists and waits for the termination of the container. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core), which is 30 seconds by default.
+
+Kubelet gives a grace period until removing the pod IP and then kills the container by sending a `SIGKILL`.
 
 ## Why a Pod can hang on `Terminating` state
 
