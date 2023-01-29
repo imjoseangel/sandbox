@@ -20,7 +20,7 @@ sequenceDiagram
 
 When Kubelet knows that a *Pod* should evict, it marks the *Pod* state as `Terminating` and stops sending traffic to it. Then, it executes the `preStop` lifecycle hook (when available). It sends the `SIGTERM` to the Main process (pid 1) within each container and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
 
-If the application has not completed the shutdown properly, the Kubelet gives a grace period, until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
+If the application has not completed the shutdown properly, the Kubelet gives a grace period until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
 
 ## Why a *Pod* can hang on `Terminating` state
 
@@ -54,7 +54,7 @@ Upon attempting to delete the pod:
 kubectl delete pod/mypod &
 ```
 
-Kubernetes will report back that it has been deleted:
+Kubernetes will report back that its deletion:
 
 ```sh
 kubectl get pod/mypod -o yaml
@@ -123,7 +123,7 @@ Once the *finalizer* list is empty, the object can be reclaimed by Kubernetes an
 
 ## Force Delete the POD
 
-As explained in the [Kubernetes Documentation](https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#force-deletion), force deletions **do not** wait for confirmation from the kubelet that the *Pod* has been Terminated. Use it with care and as a workaround solution:
+The [Kubernetes Documentation](https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#force-deletion) asserts that force deletions **do not** wait for confirmation from the kubelet that the *Pod* has been Terminated. Use it with care and as a workaround solution:
 
 ```sh
 kubectl delete pod/mypod --grace-period=0 --force
