@@ -2,13 +2,13 @@
 
 Do you know why a *Pod* takes too much time to get deleted or even hangs on the `Terminating` state?
 
-This post describes the *Pod* Lifecycle conditions, reasons why they could hang in the `Terminating` state, and some useful tips to get rid of them.
+This post describes the *Pod* Lifecycle conditions, reasons why they could hang in the `Terminating` state, and some tips to get rid of them.
 
 ## *Pod* Termination
 
 There are multiple reasons why the Kubernetes Scheduler can evict a healthy container. For example, the execution of *Pods* with higher priority, the drain of a node during a version update, an auto-scaling process, a [resource bin-packing](https://kubernetes.io/docs/concepts/scheduling-eviction/resource-bin-packing/) or a simple `kubectl delete` command.
 
-Kubernetes provides for graceful termination when *Pods* are no longer needed with [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks). They are executed by the kubelet on the specific containers when it receives the event.
+Kubernetes provides graceful termination for not needed *Pods* with [Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks). They are executed by the kubelet on the specific containers when it receives the event.
 
 ```mermaid
 sequenceDiagram
@@ -18,7 +18,7 @@ sequenceDiagram
     Note over Stop Container Event,SIGKILL: Termination Process
 ```
 
-When kubelet knows that a *Pod* should be terminated, it marks the *Pod* state as `Terminating` and stops sending traffic to the Pod. Then, it executes the `preStop` lifecycle hook (if exists). It sends the `SIGTERM` to the main process (pid 1) within each container in the *Pod* and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
+When kubelet knows that a *Pod* should evict, it marks the *Pod* state as `Terminating` and stops sending traffic to it. Then, it executes the `preStop` lifecycle hook (when available). It sends the `SIGTERM` to the Main process (pid 1) within each container and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
 
 If the application hasn't completed the shutdown properly, the Kubelet gives a grace period, until removing the *Pod* IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the *Pod* from the API server.
 
