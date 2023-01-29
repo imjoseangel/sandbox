@@ -110,9 +110,52 @@ Determine if the cause of the `Terminating` state for a Pod, namespace or PVC fo
 If we want to delete the pod, we can simply patch it on the command line to remove the `finalizers`:
 
 ```sh
-kubectl patch pod/nginx --type=json -p '[{"op": "remove", "path": "/metadata/finalizers" }]'
+kubectl patch pod/mypod --type=json -p '[{"op": "remove", "path": "/metadata/finalizers" }]'
+```
+
+or
+
+```sh
+kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 ```
 
 Once the finalizer list is empty, the object can actually be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
 
 ## Force Delete the POD
+
+As explained in the [Documentation](https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#force-deletion), force deletions **do not** wait for confirmation from the kubelet that the pod has been Terminated. Use it with care and as a workaround solution:
+
+```sh
+kubectl delete pod/mypod --grace-period=0 --force
+```
+
+## Review Node Status
+
+One or many of your Cluster nodes resources or availability can be also the cause of [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
+
+>The kubelet monitors resources like memory, disk space, and filesystem inodes on your cluster's nodes. When one or more of these resources reach specific consumption levels, the kubelet can proactively fail one or more pods on the node to reclaim resources and prevent starvation.
+
+Check that your nodes are ready:
+
+```sh
+kubectl get nodes
+```
+
+```sh
+NAME       STATUS                     ROLES           AGE   VERSION
+cluster    NotReady                   control-plane   19h   v1.26.1
+```
+
+Review your node and pod resources with:
+
+```sh
+kubectl top node
+```
+
+```sh
+NAME                                CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+cluster-default                     148m         7%     3410Mi          63%
+cluster-linuxpool                   215m         5%     6558Mi          52%
+```
+
+If *Finalizers* are configured or the kubelet is not ready, it could end in a `Termination` state
