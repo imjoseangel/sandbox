@@ -129,7 +129,7 @@ The [Kubernetes Documentation](https://kubernetes.io/docs/tasks/run-application/
 kubectl delete pod/mypod --grace-period=0 --force
 ```
 
-## Extra Tip: Finalizers blocking Kubernetes upgrade
+## Extra: Finalizers blocking Kubernetes upgrade
 
 One or many of your Cluster node resources or availability can cause [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
 
