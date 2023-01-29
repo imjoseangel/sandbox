@@ -119,7 +119,7 @@ or
 kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 ```
 
-Once the finalizer list is empty, the object can actually be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
+Once the *finalizer* list is empty, the object can actually be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
 
 ## Force Delete the POD
 
@@ -162,7 +162,7 @@ kube-system   kube-proxy-5dwnf                          1/1     Running       0 
 kube-system   kube-scheduler-minikube                   1/1     Running       0          14m
 ```
 
-Check *Pod* finalizer as usual:
+Check *Pod* *finalizer* as usual:
 
 ```sh
 kubectl get pod/mypod -o yaml
@@ -187,6 +187,6 @@ kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 
 ## Conclusion
 
-If you find any Kubernetes component stuck on `Termination` review if any component finalizer is protecting its deletion, whether for a *Pod*, *PVC* or *Namespace*.
+If you find any Kubernetes component stuck on `Termination` review if any component *finalizer* is protecting its deletion, whether for a *Pod*, *PVC* or *Namespace*.
 
 A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfiere in its *Namespace* deletion.
