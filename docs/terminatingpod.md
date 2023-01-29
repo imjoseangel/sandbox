@@ -18,13 +18,17 @@ sequenceDiagram
     Note over Stop Container Event,SIGKILL: Termination Process
 ```
 
-When kubelet knows that a pod should be terminated, it executes the `preStop` lifecycle hook (if exists). It sends the `SIGTERM` to the main process (pid 1) within each container in the pod and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
+When kubelet knows that a pod should be terminated, it marks the Pod state as `Terminating` and stops sending traffic to the Pod. Then, it executes the `preStop` lifecycle hook (if exists). It sends the `SIGTERM` to the main process (pid 1) within each container in the pod and waits for their termination. If the applications inside the containers are properly prepared, they will start a graceful shutdown. The duration should not be more than the specified in the [spec.terminationGracePeriodSeconds](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core) which is 30 seconds by default.
 
-If the application hasn't completed the shutdown properly, the Kubelet gives a grace period, until removing the pod IP and killing the container by sending a `SIGKILL`. At this point, the Pod is removed.
+If the application hasn't completed the shutdown properly, the Kubelet gives a grace period, until removing the pod IP and killing the container by sending a `SIGKILL`. At this point, Kubernetes removes the Pod from the API server.
 
 ## Why a Pod can hang on `Terminating` state
 
-The two most common reasons for a pod hanging during the eviction process are an incorrect `terminationGracePeriodSeconds` value and a `Finalizer` dependency.
+The most common reasons for a pod hanging during the eviction process are:
+
+* An incorrect `terminationGracePeriodSeconds` value
+* A `Finalizer` dependency
+* A node `NotReady` issue.
 
 ### The PreStop hook and terminationGracePeriodSeconds
 
@@ -57,22 +61,45 @@ From [Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/wor
 
 > Finalizers are namespaced keys that tell Kubernetes to wait until specific conditions are met before it fully deletes resources marked for deletion.
 
-If a pod is stuck on Terminating state check the `metadata/finalizers` of the pod. Normally they are used to prevent accidental deletion of resources.
+**Finalizers** are used to prevent accidental deletion of resources. If a pod is stuck on Terminating state check the `metadata/finalizers` of the pod.
 
 For instance, this example has a `kubernetes` key as `finalizer` normally used on namespaces.
 
 ```yaml
----
-apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
   finalizers:
     - kubernetes
 spec:
   containers:
-    - image: nginx
-      name: nginx
 ```
 
-Deleting the pod will not delete it, just update and will keep on `Terminating` state.
+Upon attempting to delete the pod:
+
+```sh
+kubectl delete pod/mypod &
+```
+
+Kubernetes will report back that it has been deleted:
+
+```sh
+kubectl get pod/mypod -o yaml
+```
+
+What’s happened is that the object was updated, not deleted. The Pod has been modified to include the deletion timestamp keeping it on `Terminating` state.
+
+```yaml
+  creationTimestamp: "2023-01-28T15:01:32Z"
+  deletionGracePeriodSeconds: 0
+  deletionTimestamp: "2023-01-28T15:01:44Z"
+  finalizers:
+  - kubernetes
+status:
+    state:
+      terminated:
+        containerID: containerd://b6298f7ee5613b717000bb5a54cf96e70f7f0cb8dd8e1c3c5f9d115b0fbfc7c9
+        exitCode: 0
+        finishedAt: "2023-01-28T15:01:44Z"
+        reason: Completed
+        startedAt: "2023-01-28T15:01:33Z"
+```
