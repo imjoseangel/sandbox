@@ -1,8 +1,8 @@
 # Kubernetes *Pods* Stuck in Terminating: A Resolution Guide
 
-Do you know why a *Pod* takes too much time to get deleted or even hangs on `Terminating` state?
+Do you know why a *Pod* takes too much time to get deleted or even hangs on the `Terminating` state?
 
-This post describes the *Pod* Lifecycle conditions, reasons of why they could hang on `Terminating` state, and some useful tips to get rid of them.
+This post describes the *Pod* Lifecycle conditions, reasons why they could hang in the `Terminating` state, and some useful tips to get rid of them.
 
 ## *Pod* Termination
 
@@ -35,9 +35,9 @@ From [Kubernetes documentation](https://kubernetes.io/docs/concepts/overview/wor
 
 > Finalizers are namespaced keys that tell Kubernetes to wait until specific conditions are met before it fully deletes resources marked for deletion.
 
-**Finalizers** are used to prevent accidental deletion of resources. If a *Pod* is stuck on Terminating state check the `metadata/finalizers` of the pod.
+**Finalizers** are used to prevent the accidental deletion of resources. If a *Pod* is stuck in the Terminating state check the `metadata/finalizers` of the pod.
 
-For instance, this example has a `kubernetes` key as `finalizer` normally used on namespaces.
+For instance, this example has a **Kubernetes** key as a *finalizer* normally used on namespaces.
 
 ```yaml
 kind: Pod
@@ -60,7 +60,7 @@ Kubernetes will report back that it has been deleted:
 kubectl get pod/mypod -o yaml
 ```
 
-What’s happened is that the object was updated, not deleted. The *Pod* has been modified to include the deletion timestamp keeping it on `Terminating` state.
+What’s happened is that the object was updated, not deleted. The *Pod* has been modified to include the deletion timestamp keeping it in the `Terminating` state.
 
 ```yaml
   creationTimestamp: "2023-01-28T15:01:32Z"
@@ -99,13 +99,13 @@ spec:
             - sleep 3600
 ```
 
-Will keep our *Pod* on `Terminating` state for 1 hour.
+Will keep our *Pod* in the `Terminating` state for 1 hour.
 
 It is essential to handle the `SIGTERM` correctly and ensure that the application terminates gracefully when the kubelet sends the `SIGTERM` to the container.
 
 ## Remove Finalizers
 
-Determine if the cause of the `Terminating` state for a Pod, *Namespace* or *PVC* for instance is a finalizer. Think that *PVC* for instance can be protected for deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
+Determine if the cause of the `Terminating` state for a Pod, *Namespace* or *PVC* for instance is a finalizer. Think that *PVC* for instance can be protected from deletion with the `kubernetes.io/pvc-protection` [Finalizer](https://kubernetes.io/blog/2021/12/15/kubernetes-1-23-prevent-persistentvolume-leaks-when-deleting-out-of-order/).
 
 If we want to delete the pod, we can simply patch it on the command line to remove the `finalizers`:
 
@@ -119,7 +119,7 @@ or
 kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 ```
 
-Once the *finalizer* list is empty, the object can actually be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
+Once the *finalizer* list is empty, the object can be reclaimed by Kubernetes and put into a queue to be deleted from the registry.
 
 ## Force Delete the POD
 
@@ -131,7 +131,7 @@ kubectl delete pod/mypod --grace-period=0 --force
 
 ## Extra Tip: Finalizers blocking Kubernetes upgrade
 
-One or many of your Cluster nodes resources or availability can cause [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
+One or many of your Cluster node resources or availability can cause [Pod eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
 
 >The kubelet monitors resources like memory, disk space, and filesystem inodes on your cluster's nodes. When one or more of these resources reach specific consumption levels, the kubelet can proactively fail one or more *Pods* on the node to reclaim resources and prevent starvation.
 
@@ -189,4 +189,4 @@ kubectl patch pod/mypod -p '{"metadata":{"finalizers":null}}'
 
 If you find any Kubernetes component stuck on `Termination` review if any component *finalizer* is protecting its deletion, whether for a *Pod*, *PVC* or *Namespace*.
 
-A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfiere in its *Namespace* deletion.
+A good example to remember is the instructions to uninstall the `KEDA` operator for a Kubernetes cluster [here](https://keda.sh/docs/2.9/deploy/#uninstall) where the scaledobjects can interfere in its *Namespace* deletion.
