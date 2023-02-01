@@ -12,7 +12,6 @@ sd_tracts = tracts("SD", cb=True,
 hospital_url = "https://opendata.arcgis.com/api/v3/datasets/6ac5e325468c4cb9b905f1728d6fbf0f_0/\
 downloads/data?format=geojson&spatialRefId=4326"
 
-
 hospitals = gp.read_file(hospital_url).to_crs(6571)
 
 trauma = hospitals.loc[hospitals['TRAUMA'].str.contains(
