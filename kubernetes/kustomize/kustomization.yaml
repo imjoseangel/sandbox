@@ -76,6 +76,7 @@ configMapGenerator:
         app-config: my-config
 
 generatorOptions:
+  disableNameSuffixHash: true
   labels:
     app-config: my-config
   annotations:
