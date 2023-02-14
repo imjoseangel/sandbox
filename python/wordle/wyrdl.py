@@ -28,3 +28,6 @@ for guess_num in range(1, 7):
     print("Correct letters:", ", ".join(sorted(correct_letters)))
     print("Misplaced letters:", ", ".join(sorted(misplaced_letters)))
     print("Wrong letters:", ", ".join(sorted(wrong_letters)))
+
+else:
+    print(f"The word was {word}")
