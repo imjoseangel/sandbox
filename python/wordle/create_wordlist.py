@@ -16,4 +16,4 @@ words = sorted(
     },
     key=lambda word: (len(word), word),
 )
-out_path.write_text("\n".join(words))
+out_path.write_text("\n".join(words), encoding="utf-8")
