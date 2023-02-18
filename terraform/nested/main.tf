@@ -6,27 +6,21 @@ locals {
     "privatelink.redis.cache.windows.net"
   ]
 
-  envs = [
-    "dev",
-    "stg",
-    "prd"
-  ]
-
   vnets = [
     {
-      name                = "vnet-spoke-we-dev"
-      subscription_id     = "5e91a5fa-3787-4f0f-84ff-d7e9590c724a"
-      resource_group_name = "rg-crossresources-dev"
+      name                = "vnet-dev"
+      subscription_id     = "xxx"
+      resource_group_name = "rg-dev"
     },
     {
-      name                = "vnet-spoke-we-stg"
-      subscription_id     = "4b570203-711c-4703-bc57-4a326e6a1dab"
-      resource_group_name = "rg-crossresources-stg"
+      name                = "vnet-stg"
+      subscription_id     = "xxx"
+      resource_group_name = "rg-stg"
     },
     {
-      name                = "vnet-spoke-we-prd"
-      subscription_id     = "1e3ccec4-6390-4365-8688-aa89a0b08834"
-      resource_group_name = "rg-crossresources-prd"
+      name                = "vnet-prd"
+      subscription_id     = "xxx"
+      resource_group_name = "rg-prd"
     }
   ]
 
@@ -41,6 +35,27 @@ locals {
   ])
 }
 
-output "resources" {
-  value = local.resources
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "main" {
+  name     = "myzonersg"
+  location = "westeurope"
+}
+
+resource "azurerm_private_dns_zone" "main" {
+  count               = length(local.dns_zones)
+  name                = local.dns_zones[count.index]
+  resource_group_name = azurerm_resource_group.main.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "main" {
+  for_each = {
+    for resource in local.resources : "${resource.zone}.${resource.link_name}" => resource
+  }
+  name                  = each.value.link_name
+  resource_group_name   = azurerm_resource_group.main.name
+  private_dns_zone_name = each.value.zone
+  virtual_network_id    = each.value.vnet_id
 }
