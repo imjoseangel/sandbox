@@ -14,19 +14,19 @@ locals {
 
   vnets = [
     {
-      name                = "vnet-dev"
-      subscription_id     = "xxx"
-      resource_group_name = "rg-dev"
+      name                = "vnet-spoke-we-dev"
+      subscription_id     = "5e91a5fa-3787-4f0f-84ff-d7e9590c724a"
+      resource_group_name = "rg-crossresources-dev"
     },
     {
-      name                = "vnet-stg"
-      subscription_id     = "xxx"
-      resource_group_name = "rg-stg"
+      name                = "vnet-spoke-we-stg"
+      subscription_id     = "4b570203-711c-4703-bc57-4a326e6a1dab"
+      resource_group_name = "rg-crossresources-stg"
     },
     {
-      name                = "vnet-prd"
-      subscription_id     = "xxx"
-      resource_group_name = "rg-prd"
+      name                = "vnet-spoke-we-prd"
+      subscription_id     = "1e3ccec4-6390-4365-8688-aa89a0b08834"
+      resource_group_name = "rg-crossresources-prd"
     }
   ]
 
