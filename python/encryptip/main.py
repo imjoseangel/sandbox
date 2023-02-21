@@ -46,19 +46,31 @@ def encrypt_to_ip(a, iterations):
     return ips
 
 
-def decrypt_to_ip():
-    with open("ips.lst", "r", encoding="UTF-8") as f:
+def decrypt_to_ip(file, iterations):
+    with open(file, "r", encoding="UTF-8") as f:
         ips = ".".join(f.read().splitlines())
         print(ips)
         b = Value2asciiChar(ips)
 
+    for i in range(iterations):
+        print(i)
+        if i % 2 == 0:
+            b = b64decode(b.encode()).decode()
+            print(b)
+        else:
+            b = reverse(b)
+    return b
+
 
 plaintext = 'ctfhw9{blablabla}'
 
+
 encrypted = encrypt_to_ip(plaintext, 7)
 
-decrypt_to_ip()
+flag = decrypt_to_ip("ips.lst", 25)
 
 
 for ip in encrypted:
     print(ip)
+
+print(flag)
