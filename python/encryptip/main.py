@@ -6,7 +6,13 @@ from base64 import b64encode, b64decode
 
 def asciiChar2Value(a):
     b = '.'.join(str(ord(c)) for c in a)
+    print(b)
     return b
+
+
+def Value2asciiChar(a):
+    b = '.'.join(str(chr(c)) for c in a)
+    print(b)
 
 
 def reverse(a):
@@ -19,7 +25,7 @@ def encrypt_to_ip(a, iterations):
         # print (i)
         if i % 2 == 0:
             a = b64encode(a.encode()).decode()
-            # print (a)
+            # print(a)
         else:
             a = reverse(a)
         print(a)
@@ -39,6 +45,12 @@ def encrypt_to_ip(a, iterations):
         ips.append('.'.join(j for j in l))
 
     return ips
+
+
+def decrypt_to_ip(a, iterations):
+    for i in range(iterations):
+        if i % 2 == 0:
+            a = b64decode(a.encode()).decode()
 
 
 plaintext = 'ctfhw9{blablabla}'
