@@ -3,12 +3,14 @@
 
 import pathlib
 import random
+from string import ascii_letters
 
 WORDLIST = pathlib.Path("wordlist.txt")
 
 words = [
     word.upper()
-    for word in WORDLIST.read_text(encoding="utf-8").strip().split("\n")
+    for word in WORDLIST.read_text(encoding="utf-8").split("\n")
+    if len(word) == 5 and all(letter in ascii_letters for letter in word)
 ]
 word = random.choice(words)
 
