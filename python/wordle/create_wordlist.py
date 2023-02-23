@@ -4,6 +4,7 @@
 import pathlib
 import sys
 from string import ascii_letters
+import re
 
 try:
     in_path = pathlib.Path(sys.argv[1])
@@ -23,6 +24,7 @@ try:
             word.lower()
             for word in in_path.read_text(encoding="utf-8").split()
             if all(letter in ascii_letters for letter in word)
+            # if re.fullmatch(r"\w+", word)
         },
         key=lambda word: (len(word), word),
     )
