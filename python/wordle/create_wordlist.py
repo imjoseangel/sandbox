@@ -7,9 +7,14 @@ from string import ascii_letters
 
 try:
     in_path = pathlib.Path(sys.argv[1])
+except IndexError as e:
+    print("Missing source file")
+    sys.exit(1)
+
+try:
     out_path = pathlib.Path(sys.argv[2])
 except IndexError as e:
-    print(e)
+    print("Missing destination file")
     sys.exit(1)
 
 try:
@@ -21,6 +26,7 @@ try:
         },
         key=lambda word: (len(word), word),
     )
+    print(words)
     out_path.write_text("\n".join(words), encoding="utf-8")
 
 except FileNotFoundError as e:
