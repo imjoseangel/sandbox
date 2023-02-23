@@ -4,7 +4,7 @@
 import pathlib
 import sys
 from string import ascii_letters
-import re
+# import re
 
 try:
     in_path = pathlib.Path(sys.argv[1])
