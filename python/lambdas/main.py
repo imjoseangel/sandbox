@@ -13,3 +13,9 @@ print(full_name('guido', 'van rossum'))
 
 
 (lambda x, y: print(x + y))(2, 3)
+
+
+high_ord_func = (lambda x, func: x + func(x))
+
+print(high_ord_func(2, lambda x: x * x))
+print(high_ord_func(2, lambda x: x + 3))
