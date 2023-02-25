@@ -10,3 +10,6 @@ print(add_one(2))
 
 full_name = (lambda first, last: f'Full name: {first.title()} {last.title()}')
 print(full_name('guido', 'van rossum'))
+
+
+(lambda x, y: print(x + y))(2, 3)
