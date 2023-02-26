@@ -61,3 +61,26 @@ print((lambda *args: sum(args))(1, 2, 3))
 print((lambda **kwargs: sum(kwargs.values()))(one=1, two=2, three=3))
 
 print((lambda x, *, y=0, z=0: x + y + z)(1, y=2, z=3))
+
+
+# Defining a decorator
+def trace(f):
+    def wrap(*args, **kwargs):
+        print(f"[TRACE] func: {f.__name__}, args: {args}, kwargs: {kwargs}")
+        return f(*args, **kwargs)
+
+    return wrap
+
+# Applying decorator to a function
+
+
+@trace
+def add_two(x):
+    return x + 2
+
+
+# Calling the decorated function
+print(add_two(3))
+
+# Applying decorator to a lambda
+print(trace(lambda x: x ** 2)(3))
