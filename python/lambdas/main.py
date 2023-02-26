@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import dis
+
 # This is equal 3
 (lambda x: print(x + 1))(2)
 
@@ -21,3 +23,20 @@ high_ord_func = (lambda x, func: x + func(x))
 
 print(high_ord_func(2, lambda x: x * x))
 print(high_ord_func(2, lambda x: x + 3))
+
+# Inspect Lambdas
+
+add = (lambda x, y: x + y)
+print(type(add))
+
+dis.dis(add)
+print(add)
+
+
+def add(x, y): return x + y
+
+
+print(type(add))
+
+dis.dis(add)
+print(add)
