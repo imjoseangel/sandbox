@@ -5,6 +5,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     libicu-dev \
     libpng-dev \
+    libedit-dev \
+    libreadline-dev \
+    libxml2-dev \
+    libxslt-dev \
     sendmail \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
