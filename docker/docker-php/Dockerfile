@@ -8,6 +8,8 @@ RUN apt-get update \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install exif && docker-php-ext-install gd
+RUN docker-php-ext-install exif gd gettext igbinary intl memcache memcached \
+    msgpac mysqli pcntl pdo_mysql readline shmop sockets sysvmsg sysvsem sysvshm \
+    wddx xsl OPcache
 
 COPY hello.php /var/www/html/index.php
