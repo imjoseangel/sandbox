@@ -40,3 +40,10 @@ print(type(add))
 
 dis.dis(add)
 print(add)
+
+# Multiline
+
+print((lambda x:
+      (x % 2 and 'odd' or 'even'))(3))
+
+lambda x: x % 2 and 'odd' or 'even'
