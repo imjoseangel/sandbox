@@ -84,3 +84,6 @@ print(add_two(3))
 
 # Applying decorator to a lambda
 print(trace(lambda x: x ** 2)(3))
+
+
+print(list(map(trace(lambda x: x * 2), range(3))))
