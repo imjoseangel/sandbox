@@ -99,3 +99,15 @@ def outer_func(x):
 for i in range(3):
     closure = outer_func(i)
     print(f"closure({i+5}) = {closure(i+5)}")
+
+
+# Evaluation
+
+numbers = 'one', 'two', 'three'
+funcs = []
+
+for n in numbers:
+    funcs.append(lambda n=n: print(n))
+
+for f in funcs:
+    f()
