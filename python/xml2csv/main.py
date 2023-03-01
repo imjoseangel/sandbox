@@ -22,9 +22,8 @@ def main():
         xmlstr = ET.tostring(xml_data, encoding='utf-8', method='xml')
 
         data_dict = dict(xmltodict.parse(xmlstr))
-        data_dict = data_dict['root']
 
-        to_csv.append(data_dict)
+        to_csv.append(data_dict['root'])
 
     keys = to_csv[0].keys()
 
