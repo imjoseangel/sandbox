@@ -15,11 +15,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install php-pecl
-RUN pecl install igbinary memcached msgpack readline
+RUN pecl install igbinary memcached msgpack
 
 RUN docker-php-ext-install calendar exif gd gettext intl mysqli pcntl \
-    pdo_mysql readline shmop sockets sysvmsg sysvsem sysvshm wddx xsl
+    pdo_mysql readline shmop sockets sysvmsg sysvsem sysvshm wddx xsl \
+    opcache
 
-RUN docker-php-ext-enable igbinary memcached msgpack readline
+RUN docker-php-ext-enable igbinary memcached msgpack
 
 COPY hello.php /var/www/html/index.php
