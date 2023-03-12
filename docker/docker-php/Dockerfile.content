@@ -1,0 +1,6 @@
+FROM composer:latest
+LABEL maintainer="imjoseangel"
+
+WORKDIR /app
+
+COPY . .

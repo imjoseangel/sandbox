@@ -1,4 +1,4 @@
-FROM php:7.2.24-apache
+FROM php:7.4-fpm
 LABEL maintainer="imjoseangel"
 
 RUN apt-get update \
@@ -17,10 +17,23 @@ RUN apt-get update \
 # Install php-pecl
 RUN pecl install igbinary memcached msgpack
 
+# Install php-ext
 RUN docker-php-ext-install calendar exif gd gettext intl mysqli pcntl \
-    pdo_mysql readline shmop sockets sysvmsg sysvsem sysvshm wddx xsl \
+    pdo_mysql shmop sockets sysvmsg sysvsem sysvshm xsl \
     opcache
 
+# Enable php-ext
 RUN docker-php-ext-enable igbinary memcached msgpack
 
-COPY hello.php /var/www/html/index.php
+# Add PHP Composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Add nginx user
+# RUN groupadd -g 1000 nginx && \
+#     useradd -r -u 1000 -g nginx -d /var/www nginx
+
+# WORKDIR /app
+
+# COPY . .
+
+# RUN composer update && composer install --no-dev && composer dump-autoload
