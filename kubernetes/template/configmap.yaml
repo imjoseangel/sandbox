@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: labelstudio
+  name: labelstudio
+data:
+  LABEL_STUDIO_USERNAME: none@example.com
+  DJANGO_DB: default
+  POSTGRE_HOST: database
+  POSTGRE_NAME: labelstudio
+  POSTGRE_USER: labelstudio@database
+  POSTGRE_PORT: "5432"
+  PGSSLMODE: require

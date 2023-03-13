@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: labelstudio
+  namespace: labelstudio
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  defaultBackend:
+    service:
+      name: labelstudio
+      port:
+        number: 8080
+  rules:
+    - host: dept-labelstudio-prod.dept.imjoseangel.eu.org
+      http:
+        paths:
+          - backend:
+              service:
+                name: labelstudio
+                port:
+                  number: 8080
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - dept-labelstudio-prod.dept.imjoseangel.eu.org
+      secretName: ingress-tls-csi

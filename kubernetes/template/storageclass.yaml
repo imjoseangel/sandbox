@@ -1,0 +1,19 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+    kubernetes.io/cluster-service: "true"
+  name: azurefile-labelstudio
+mountOptions:
+  - mfsymlinks
+  - actimeo=30
+parameters:
+  skuName: Premium_LRS
+  resourceGroup: resource-group
+  storageAccount: storageaccount
+provisioner: file.csi.azure.com
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
