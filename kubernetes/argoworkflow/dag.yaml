@@ -45,6 +45,7 @@ spec:
     inputs:
       parameters:
       - name: message
+    serviceAccountName: argo-executor
     container:
       image: alpine:3.7
       command: [echo, "{{inputs.parameters.message}}"]
