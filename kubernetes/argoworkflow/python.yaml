@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: python-random-number-generator
+  namespace: argo
+spec:
+  entrypoint: generator
+  arguments:
+    parameters:
+      - name: min
+        value: 0
+      - name: max
+        value: 10
+  templates:
+  - name: generator
+    inputs:
+      parameters:
+        - name: min
+        - name: max
+    script:
+      image: python:3.10
+      command: [python]
+      source: |
+        from random import randrange
+        range_min = {{inputs.parameters.min}}
+        range_max = {{inputs.parameters.max}}
+        random_number = randrange(range_min, range_max)
+        print("Random number: {}".format(random_number))
