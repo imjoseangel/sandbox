@@ -8,7 +8,7 @@ spec:
   arguments:
     parameters:
     - name: message
-      value: Message string default value
+      value: Hello World
   templates:
   - name: whalesay
     inputs:
