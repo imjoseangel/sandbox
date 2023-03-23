@@ -7,6 +7,7 @@ spec:
   entrypoint: sidecar-nginx-example
   templates:
   - name: sidecar-nginx-example
+    serviceAccountName: argo-executor
     container:
       image: appropriate/curl
       command: [sh, -c]
