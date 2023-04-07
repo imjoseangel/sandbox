@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+from urllib.parse import urljoin
 import requests
 from akamai.edgegrid import EdgeGridAuth
-from urllib.parse import urljoin
-import json
 
 # this is the "host" value from your credentials file
-baseurl = 'https://bu'
+baseurl = 'https://host'
 s = requests.Session()
 s.auth = EdgeGridAuth(
-    client_token='ct',
-    client_secret='cs',
-    access_token='at'
+    client_token='token',
+    client_secret='secret',
+    access_token='token'
 )
 
 result = s.get(urljoin(
