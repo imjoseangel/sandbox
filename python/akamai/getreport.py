@@ -4,6 +4,7 @@
 import requests
 from akamai.edgegrid import EdgeGridAuth
 from urllib.parse import urljoin
+import json
 
 # this is the "host" value from your credentials file
 baseurl = 'https://bu'
@@ -15,6 +16,6 @@ s.auth = EdgeGridAuth(
 )
 
 result = s.get(urljoin(
-    baseurl, '/reporting-api/v1/reports/traffic-by-response/versions/1/report-data?start=2023-03-01T00%3A00%3A00Z&end=2023-04-01T00%3A00%3A00Z'))
+    baseurl, '/reporting-api/v1/reports/traffic-by-response/versions/1/report-data?start=2023-04-01T00%3A00%3A00Z&end=2023-04-06T00%3A00%3A00Z'))
 print(result.status_code)
-print(result.json())
+print(json.dumps(result.json(), sort_keys=True, indent=4))
