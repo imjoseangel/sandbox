@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-website
+spec:
+  selector:
+    matchLabels:
+      app: static-website
+  template:
+    metadata:
+      labels:
+        app: static-website
+    spec:
+      containers:
+      - name: static-website
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            subPath: example-static-website
+            name: staticsite
+        resources:
+          requests:
+            cpu: 125m
+            memory: 250Mi
+          limits:
+            cpu: 250m
+            memory: 500Mi
+      volumes:
+        # - name: static-website-volume
+        #   gitRepo:
+        #     repository: https://github.com/abdennour/example-static-website.git
+        - name: staticsite
+          csi:
+            driver: blob.csi.azure.com
+            volumeAttributes:
+              containerName: staticsite-test
+              secretName: storage-account
+              mountOptions: "-o allow_other --file-cache-timeout-in-seconds=0 --use-attr-cache=false --cancel-list-on-mount-seconds=10 -o entry_timeout=0 -o negative_timeout=0 --log-level=LOG_WARNING --cache-size-mb=1000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-website
+spec:
+  selector:
+    app: static-website
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+data:
+  azurestorageaccountkey: ~
+  azurestorageaccountname: ~
+kind: Secret
+metadata:
+  name: storage-account
+  namespace: staticsite
+type: Opaque
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  name: static-website
+  namespace: staticsite
+spec:
+  defaultBackend:
+    service:
+      name: static-website
+      port:
+        number: 80
+  ingressClassName: nginx
+  rules:
+  - host: staticsite-test.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: static-website
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - staticsite-test.example.com
+    secretName: ingress-tls-csi
+---
+apiVersion: v1
+data:
+  tls.crt: ~
+  tls.key: ~
+kind: Secret
+metadata:
+  name: ingress-tls-csi
+  namespace: staticsite
+type: kubernetes.io/tls
