@@ -25,11 +25,11 @@ class ExamplePublisher(object):
     messages that have been sent and if they've been confirmed by RabbitMQ.
 
     """
-    EXCHANGE = 'amq.transfer'
+    EXCHANGE = 'ex.transfer.tst'
     EXCHANGE_TYPE = ExchangeType.topic
     PUBLISH_INTERVAL = 1
     QUEUE = 'qu.transfer.tst'
-    ROUTING_KEY = 'transfer.text'
+    ROUTING_KEY = 'tranfer.text.tst'
 
     def __init__(self, amqp_url):
         """Setup the example publisher object, passing in the URL we will use
