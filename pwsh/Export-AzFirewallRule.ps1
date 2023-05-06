@@ -3,38 +3,61 @@
     This is a script to export Azure Firewall rules
 
 .DESCRIPTION
-     This is a script to export Azure Firewall rules.
+    This is a script to export Azure Firewall rules.
 
-    Key Input Tips:
-    r: Toggles the resize mode of the clock so you can adjust the size.
-    o: Toggles whether the countdown remains on top of windows or not.
-    +: Increases the opacity of the clock so it is less transparent.
-    -: Decreases the opacity of the clock so it appears more transparent.
-
-    Right-Click to close.
-    Use left mouse button to drag clock.
-
-.PARAMETER ExpiresInDays
-    Specified time in days for the secret to expire.
+.PARAMETER FirewallName
+    Specified the Azure firewall name.
 
 .NOTES
-    Name: Get-AzADAppExpiringCredentials.ps1
+    Name: Export-AzFirewallRule.ps1
     Author: imjoseangel
-    Created: 05/05/2023
-    Version: 1.0 //imjoseangel -- 05/05/2023
+    Created: 06/05/2023
+    Version: 1.0 //imjoseangel -- 06/05/2023
         Initial Build
 
 .EXAMPLE
-    .\Get-AzADAppExpiringCredentials.ps1
+    .\Export-AzFirewallRule.ps1
 
 Description
 -----------
-Review Azure Secrets for Applications
+Export Firewall Rules.
 
 .EXAMPLE
-    .\Get-AzADAppExpiringCredentials.ps1 ExpiresInDays 30
+    .\Export-AzFirewallRule.ps1 FirewallName "myazfw"
 
 Description
 -----------
-Review secrets expiring in 30 days.
+Export Firewall Rules.
 #>
+[cmdletbinding()]
+Param (
+    [parameter()]
+    [datetime]$FirewallName = 'myazfw',
+    [parameter()]
+    [string]$ResourceGroup = 'myrsg',
+    [parameter()]
+    [string]$BackupFileName = 'myazfw-export.csv'
+)
+
+# Authenticate to Azure
+Connect-AzAccount
+
+# Get Firewall
+$Firewall = Get-AzFirewall -Name $FirewallName -ResourceGroupName $ResourceGroup
+
+# Backup Firewall Configuration
+
+$RuleCollections = Get-AzFirewallNetworkRuleCollection -Firewall $Firewall
+$NetworkRules = Get-AzFirewallNetworkRule -Firewall $Firewall
+$AppRules = Get-AzFirewallApplicationRule -Firewall $Firewall
+
+$FirewallConfig = @{
+    Firewall         = $Firewall
+    RuleCollections  = $RuleCollections
+    NetworkRules     = $NetworkRules
+    ApplicationRules = $AppRules
+}
+
+$BackupFilePath = Join-Path -Path . -ChildPath $BackupFileName $FirewallConfig | Export-Clixml -Path $BackupFilePath
+
+Write-Host "Azure Firewall configuration backup saved to: $BackupFilePath"
