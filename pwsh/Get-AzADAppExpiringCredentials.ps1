@@ -5,15 +5,6 @@
 .DESCRIPTION
     This is a script to find expiring credentials for Applications in Azure.
 
-    Key Input Tips:
-    r: Toggles the resize mode of the clock so you can adjust the size.
-    o: Toggles whether the countdown remains on top of windows or not.
-    +: Increases the opacity of the clock so it is less transparent.
-    -: Decreases the opacity of the clock so it appears more transparent.
-
-    Right-Click to close.
-    Use left mouse button to drag clock.
-
 .PARAMETER ExpiresInDays
     Specified time in days for the secret to expire.
 
