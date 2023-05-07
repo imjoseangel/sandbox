@@ -31,23 +31,27 @@ Export Firewall Rules.
 #>
 [cmdletbinding()]
 Param (
-    [parameter()]
-    [datetime]$FirewallName = 'myazfw',
-    [parameter()]
-    [string]$ResourceGroup = 'myrsg',
+    [Parameter(Mandatory = $true, Position = 0)]
+    [string]$SubscriptionID,
+    [Parameter(Mandatory = $true, Position = 1)]
+    [string]$FirewallName,
+    [Parameter(Mandatory = $true, Position = 2)]
+    [string]$ResourceGroup,
     [parameter()]
     [string]$BackupFileName = 'myazfw-export.csv'
 )
 
 # Authenticate to Azure
-Connect-AzAccount
+Connect-AzAccount -Subscription $SubscriptionID
+
+#
 
 # Get Firewall
 $Firewall = Get-AzFirewall -Name $FirewallName -ResourceGroupName $ResourceGroup
 
 # Backup Firewall Configuration
 
-$RuleCollections = Get-AzFirewallNetworkRuleCollection -Firewall $Firewall
+$RuleCollections = Get-AzFirewall NetworkRuleCollection -Firewall $Firewall
 $NetworkRules = Get-AzFirewallNetworkRule -Firewall $Firewall
 $AppRules = Get-AzFirewallApplicationRule -Firewall $Firewall
 
