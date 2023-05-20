@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pwsh
+  name: pwsh
+spec:
+  selector:
+    matchLabels:
+      app: pwsh
+  template:
+    metadata:
+      labels:
+        app: pwsh
+    spec:
+      containers:
+        - image: mcr.microsoft.com/azure-powershell:latest
+          imagePullPolicy: Always
+          name: pwsh
+          command: ["pwsh", "/app/firewall-policy-backup/startpwsh.ps1"]
+          volumeMounts:
+            - name: app
+              mountPath: /app
+          resources: {}
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          imagePullPolicy: Always
+          command: ["/bin/sh"]
+          env:
+            - name: GIT_SSH_COMMAND
+              value: "ssh -o StrictHostKeyChecking=no -i /mnt/id_rsa"
+          args: ["-c", "install -m 400 /mnt/secrets/azuredevops-ssh /mnt/id_rsa && git clone git@ssh.dev.azure.com:v3/rmisw/ops-automation/powershell-main /app"]
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: /mnt/secrets
+              readOnly: true
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: azuredevops-ssh
+        - name: app
+          emptyDir: {}
