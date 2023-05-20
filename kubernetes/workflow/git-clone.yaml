@@ -1,0 +1,37 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: rm-job-pwsh
+spec:
+  entrypoint: rm-job-pwsh
+  templates:
+    - name: rm-job-pwsh
+      serviceAccountName: argo-executor
+      container:
+        image: mcr.microsoft.com/azure-powershell:latest
+        command: ["pwsh", "/app/firewall-policy-backup/startpwsh.ps1"]
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: /mnt/secrets
+            readOnly: true
+          - name: app
+            mountPath: /app
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          command: ["/bin/sh"]
+          env:
+            - name: GIT_SSH_COMMAND
+              value: "ssh -o StrictHostKeyChecking=no -i /mnt/id_rsa"
+          args: ["-c", "install -m 400 /mnt/secrets/azuredevops-ssh /mnt/id_rsa && git clone git@ssh.dev.azure.com:v3/rmisw/ops-automation/powershell-main /app"]
+          mirrorVolumeMounts: true
+  volumes:
+    - name: secrets-store-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: azuredevops-ssh
+    - name: app
+      emptyDir: {}
