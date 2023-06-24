@@ -1,15 +1,19 @@
 import hmac
 import hashlib
+import sys
 
-counter = 1
-seed = "123456"
+for counter in range(0, 1000000):
+    for seed in range(0, 1000000):
+        message = f"{seed}{counter}"
 
-message = f"{seed}{counter}"
+        signature = hmac.new(
+            bytes(str(seed), 'utf-8'),
+            msg=bytes(message, 'utf-8'),
+            digestmod=hashlib.sha256
+        ).hexdigest()
 
-signature = hmac.new(
-    bytes(seed, 'utf-8'),
-    msg=bytes(message, 'utf-8'),
-    digestmod=hashlib.sha256
-).hexdigest().upper()
+        print(signature[0:6])
 
-print(signature)
+        if signature[0:6] == "42126c":
+            print(seed)
+            sys.exit(0)
