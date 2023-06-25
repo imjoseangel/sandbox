@@ -1,28 +1,19 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+import random
 
-import hashlib
-import sys
+# Fixed seed for repetitive results
+const_seed = 200
 
+# Bounds of numbers
+some_string = 'aString'
+n_min = len(some_string)
+n_max = 2000000
 
-def main():
+# Final number of values
+n_numbers = 5
 
-    for counter in range(0, 1000000):
-        for seed in range(0, 1000000):
-            my_str = f"{seed:06d}{counter}"
-            my_hash = hashlib.sha256(my_str.encode('UTF-8')).hexdigest()
+# Seed and retrieve the values
+random.seed(const_seed)
 
-            # print(my_str)
+numbers = [random.randint(n_min, n_max) for i in range(0, n_numbers)]
 
-            # print(my_hash[0:6])
-
-            if my_hash[0:6] == "42126c":
-                # print(my_hash[0:6])
-                file1 = open("42126c.txt", "a")
-                file1.write(f"{seed:06d}\n")
-                print(f"{seed:06d}")
-                # sys.exit(0)
-
-
-if __name__ == '__main__':
-    main()
+print(numbers)
