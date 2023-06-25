@@ -2,29 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
-import sys
+
 
 
 def main():
 
-    for counter in range(0, 100):
-        for seed in range(0, 100000000):
-            my_str = f"{seed:06d}{counter}"
-            my_hash = hashlib.sha256(my_str.encode('UTF-8')).hexdigest()
+    for counter in range(0, 100000000):
+        seed = 1687244585
+        my_str = f"{seed}{counter}"
+        my_hash = hashlib.sha256(my_str.encode('UTF-8')).hexdigest()
 
-            # print(my_str)
+        # print(my_str)
 
-            # print(my_hash[0:6])
+        # print(my_hash[0:6])
 
-            if my_hash[0:6] == "42126c":
-                # print(my_hash[0:6])
-                counter += 1
-                # sys.exit(0)
-                new_str = f"{seed:06d}{counter}"
-                new_hash = hashlib.sha256(new_str.encode('UTF-8')).hexdigest()
-                if new_hash[0:6] == "d358f6":
-                    print(new_hash[0:6])
-                    print(f"{seed:06d}")
+        if my_hash[0:6] == "42126c":
+            print(counter)
 
 
 if __name__ == '__main__':
