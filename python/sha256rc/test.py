@@ -18,12 +18,13 @@ def main():
 
             if my_hash[0:6] == "42126c":
                 # print(my_hash[0:6])
-                print(f"{seed:06d}")
                 counter += 1
                 # sys.exit(0)
                 new_str = f"{seed:06d}{counter}"
                 new_hash = hashlib.sha256(new_str.encode('UTF-8')).hexdigest()
-                print(new_hash[0:6])
+                if new_hash[0:6] == "d358f6":
+                    print(new_hash[0:6])
+                    print(f"{seed:06d}")
 
 
 if __name__ == '__main__':
