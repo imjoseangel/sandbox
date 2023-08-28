@@ -23,4 +23,3 @@ for u in P:
 
 plt.plot(X, Y, ls='', marker=',')
 plt.show()
-plt.savefig("Bifurcation_.png", dpi=250)
