@@ -26,3 +26,5 @@ spec:
     plural: apps
     singular: app
     kind: App
+    shortNames:
+      - mc
