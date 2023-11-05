@@ -1,6 +1,6 @@
 ---
 apiVersion: mycompany.com/v1
-kind: App
+kind: CronTab
 metadata:
   name: my-app
 spec:
