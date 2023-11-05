@@ -1,0 +1,8 @@
+---
+apiVersion: mycompany.com/v1
+kind: App
+metadata:
+  name: my-app
+spec:
+  image: nginx:1.16
+  replicas: 3
