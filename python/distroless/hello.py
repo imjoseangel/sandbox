@@ -1,5 +1,8 @@
 #!/bin/python
 
+# From https://github.com/GoogleContainerTools/distroless?tab=readme-ov-file
+# and https://opensource.googleblog.com/2022/01/Introducing%20Ephemeral%20Containers.html
+
 import argparse
 import os
 import http.server
