@@ -34,7 +34,7 @@ agentpools = (
     f"https://dev.azure.com/{organization}/"
     f"_apis/distributedtask/pools?poolName={poolname}")
 
-agentpoolres = requests.request("GET", agentpools, headers=headers)
+agentpoolres = requests.request("GET", agentpools, headers=headers, timeout=10)
 
 if agentpoolres.ok:
     try:
@@ -47,7 +47,7 @@ if agentpoolres.ok:
             f"https://dev.azure.com/{organization}/"
             f"_apis/distributedtask/pools/{poolid}/agents")
 
-        poolres = requests.request("GET", agents, headers=headers)
+        poolres = requests.request("GET", agents, headers=headers, timeout=10)
 
         if poolres.ok:
             try:
@@ -63,7 +63,7 @@ if agentpoolres.ok:
                                 f"_apis/distributedtask/pools/{poolid}/agents/"
                                 f"{item['id']}?api-version=4.1")
                             response = requests.request(
-                                "DELETE", url, headers=headers)
+                                "DELETE", url, headers=headers, timeout=10)
                             if response.ok:
                                 logging.info(f"{item['id']} is deleted")
                             else:
