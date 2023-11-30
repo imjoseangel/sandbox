@@ -12,22 +12,23 @@ async def main():
     RESOURCE_GROUP = "rg-networking-centralhub-prd"
     PUBLIC_IP_NAME = "VpnGwIp"
     network_client = NetworkManagementClient(credential, SUBSCRIPTION_ID)
+    public_ip_address = ""
 
-    async_poller = await network_client.public_ip_addresses.begin_create_or_update(
-        RESOURCE_GROUP, PUBLIC_IP_NAME, {
-            "location": "northeurope",
-            "public_ip_allocation_method": "Static",
-        })
+    while public_ip_address != "52.169.122.148":
+        async_poller = await network_client.public_ip_addresses.begin_create_or_update(
+            RESOURCE_GROUP, PUBLIC_IP_NAME, {
+                "location": "northeurope",
+                "public_ip_allocation_method": "Dynamic",
+            })
+        await async_poller.result()
 
-    public_ip_address = await async_poller.result()
-
-    try:
-        if public_ip_address.ip_address is None:
-            print("shit")
-        else:
-            print(public_ip_address.ip_address)
-    except AttributeError as e:
-        print(e)
+        async_poller = await network_client.public_ip_addresses.begin_create_or_update(
+            RESOURCE_GROUP, PUBLIC_IP_NAME, {
+                "location": "northeurope",
+                "public_ip_allocation_method": "Static",
+            })
+        public_ip_address = await async_poller.result()
+        print(public_ip_address.ip_address)
 
     await network_client.close()
     await credential.close()
