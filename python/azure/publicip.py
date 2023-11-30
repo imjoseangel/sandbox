@@ -35,8 +35,11 @@ async def main():
 
 
 if __name__ == "__main__":
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(
-        main()
-    )
-    event_loop.close()
+    try:
+        event_loop = asyncio.get_event_loop()
+        event_loop.run_until_complete(
+            main()
+        )
+        event_loop.close()
+    except KeyboardInterrupt:
+        pass
