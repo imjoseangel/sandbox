@@ -24,11 +24,12 @@ async def main():
             })
         public_ip_address = await async_poller.result()
 
-        if method == "Static":
-            print(public_ip_address.ip_address)
-            method = "Dynamic"
-        else:
-            method = "Static"
+        match method:
+            case "Static":
+                print(public_ip_address.ip_address)
+                method = "Dynamic"
+            case "Dynamic":
+                method = "Static"
 
     await network_client.close()
     await credential.close()
