@@ -15,19 +15,19 @@ async def main():
     public_ip_address = ""
 
     while public_ip_address != "52.169.122.148":
-        async_poller = await network_client.public_ip_addresses.begin_create_or_update(
+        dynamic_poller = await network_client.public_ip_addresses.begin_create_or_update(
             RESOURCE_GROUP, PUBLIC_IP_NAME, {
                 "location": "northeurope",
                 "public_ip_allocation_method": "Dynamic",
             })
-        await async_poller.result()
+        await dynamic_poller.result()
 
-        async_poller = await network_client.public_ip_addresses.begin_create_or_update(
+        static_poller = await network_client.public_ip_addresses.begin_create_or_update(
             RESOURCE_GROUP, PUBLIC_IP_NAME, {
                 "location": "northeurope",
                 "public_ip_allocation_method": "Static",
             })
-        public_ip_address = await async_poller.result()
+        public_ip_address = await static_poller.result()
         print(public_ip_address.ip_address)
 
     await network_client.close()
