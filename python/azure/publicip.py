@@ -13,22 +13,22 @@ async def main():
     PUBLIC_IP_NAME = "VpnGwIp"
     network_client = NetworkManagementClient(credential, SUBSCRIPTION_ID)
     public_ip_address = ""
+    method = "Dynamic"
 
     while public_ip_address != "52.169.122.148":
-        dynamic_poller = await network_client.public_ip_addresses.begin_create_or_update(
-            RESOURCE_GROUP, PUBLIC_IP_NAME, {
-                "location": "northeurope",
-                "public_ip_allocation_method": "Dynamic",
-            })
-        await dynamic_poller.result()
 
-        static_poller = await network_client.public_ip_addresses.begin_create_or_update(
+        async_poller = await network_client.public_ip_addresses.begin_create_or_update(
             RESOURCE_GROUP, PUBLIC_IP_NAME, {
                 "location": "northeurope",
-                "public_ip_allocation_method": "Static",
+                "public_ip_allocation_method": method,
             })
-        public_ip_address = await static_poller.result()
-        print(public_ip_address.ip_address)
+        public_ip_address = await async_poller.result()
+
+        if method == "Static":
+            print(public_ip_address.ip_address)
+            method = "Dynamic"
+        else:
+            method = "Static"
 
     await network_client.close()
     await credential.close()
