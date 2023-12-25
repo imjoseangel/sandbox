@@ -25,7 +25,7 @@ class LoginScreen(Screen):
         self.manager.current = 'signup_screen'
 
     def login(self, uname, pword):
-        with open('users.json') as file:
+        with open('users.json', encoding='UTF-8') as file:
             users = json.load(file)
 
         if uname in users and pword == users[uname]['password']:
@@ -48,7 +48,7 @@ class LoginScreenSuccess(Screen):
         feelings = [Path(filename).stem for filename in feelingsdata]
 
         if feel in feelings:
-            with open(f'quotes/{feel}.txt') as file:
+            with open(f'quotes/{feel}.txt', encoding='UTF-8') as file:
                 quotes = file.readlines()
             self.ids.quote.text = random.choice(quotes)
         else:
@@ -58,13 +58,13 @@ class LoginScreenSuccess(Screen):
 class SignUpScreen(Screen):
 
     def add_user(self, uname, pword):
-        with open('users.json') as file:
+        with open('users.json', encoding='UTF-8') as file:
             users = json.load(file)
 
         users[uname] = {'username': uname, 'password': pword,
                         'created': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-        with open('users.json', 'w') as file:
+        with open('users.json', 'w', encoding='UTF-8') as file:
             json.dump(users, file)
 
         self.manager.current = 'sign_up_screen_success'
