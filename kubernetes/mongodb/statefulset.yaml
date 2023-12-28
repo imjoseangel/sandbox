@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: chaos-mongodb
+  labels:
+    app: mongodb
+    release: "db"
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+      release: "db"
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        release: "db"
+    spec:
+      containers:
+        - name: chaos-mongodb
+          image: docker.io/library/mongo:4.4
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "root"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "1234"
+            - name: MONGODB_ENABLE_IPV6
+              value: "no"
+            - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+              value: "no"
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+              subPath:
+          resources:
+            {}
+      volumes:
+        - name: data
+          emptyDir: {}
