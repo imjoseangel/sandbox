@@ -44,7 +44,7 @@ def make_dns_query(domain, dnstype):
 sock = socket.socket()
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-x = sock.bind(('0.0.0.0', 12345))
+x = sock.bind(('localhost', 12345))
 y = sock.connect(('8.8.8.8', 53))
 
 bytestream = make_dns_query('example.com', 1)
