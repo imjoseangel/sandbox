@@ -51,7 +51,8 @@ def main():
     ParseArgs()
 
     logging.info("Test message")
-    logging.critical("Test message")
+    logging.warning("Test message")
+    logging.error("Test message")
 
 
 if __name__ == '__main__':
