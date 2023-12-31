@@ -47,6 +47,8 @@ class ParseArgs():
 def main():
     options = ParseArgs()
 
+    logging.info("TEST")
+
 
 if __name__ == '__main__':
     main()
