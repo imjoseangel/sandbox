@@ -21,7 +21,7 @@ class ParseArgs():
         # Parse arguments passed at cli
         self.parse_arguments()
 
-        logging.basicConfig(format="%(levelname)s - %(process)d - %(asctime)s - %(message)s",
+        logging.basicConfig(format="%(asctime)s - %(levelname)-8s - %(name)s - %(message)s",
                             datefmt="%d-%m-%y %H:%M:%S",
                             stream=sys.stdout,
                             level=eval(f'logging.{self.debug.get(self.args.verbose)}'))
@@ -48,7 +48,7 @@ class ParseArgs():
 
 
 def main():
-    options = ParseArgs()
+    ParseArgs()
 
     logging.info("Test message")
     logging.critical("Test message")
