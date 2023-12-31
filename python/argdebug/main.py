@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import logging
+import sys
 
 
 class ParseArgs():
@@ -27,6 +29,9 @@ class ParseArgs():
                             help='enable verbose (default 0)',
                             required=False,
                             default=0)
+
+        logging.basicConfig(format="%(asctime)s - %(message)s",
+                            datefmt="%d-%b-%y %H:%M:%S", stream=sys.stdout, level=logging.INFO)
 
         self.args = parser.parse_args()
 
