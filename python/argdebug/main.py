@@ -11,14 +11,17 @@ class ParseArgs():
 
     def __init__(self) -> None:
 
-        self.debug = {0: "INFO",
-                      1: "WARNING",
-                      2: "DEBUG"}
+        self.debug = {0: "NOTSET",
+                      1: "DEBUG",
+                      2: "INFO",
+                      3: "WARNING",
+                      4: "ERROR",
+                      5: "CRITICAL"}
 
         # Parse arguments passed at cli
         self.parse_arguments()
 
-        logging.basicConfig(format="%(asctime)s - %(message)s",
+        logging.basicConfig(format="%(levelname)s: %(asctime)s - %(message)s",
                             datefmt="%d-%b-%y %H:%M:%S",
                             stream=sys.stdout,
                             level=eval(f'logging.{self.debug.get(self.args.verbose)}'))
@@ -37,9 +40,9 @@ class ParseArgs():
         parser.add_argument('-v', '--verbose',
                             help='enable verbose (default 0)',
                             type=int,
-                            choices=range(0, 3),
+                            choices=range(0, 6),
                             required=False,
-                            default=0)
+                            default=3)
 
         self.args = parser.parse_args()
 
@@ -48,6 +51,7 @@ def main():
     options = ParseArgs()
 
     logging.info("TEST")
+    logging.critical("TEST")
 
 
 if __name__ == '__main__':
