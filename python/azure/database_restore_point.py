@@ -29,10 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
+    version = "v0.0.1"
     response = client.databases.begin_create_or_update(
         resource_group_name="sbx-neu-dev-jam-rg",
         server_name="sbx-neu-dev-jam-sql",
-        database_name="sbx-neu-dev-jam-sql_copy",
+        database_name=f"sbx-neu-dev-jam-sql{version}",
         parameters={
             "location": "northeurope",
             "properties": {
