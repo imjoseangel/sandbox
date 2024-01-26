@@ -33,7 +33,7 @@ def main():
     response = client.databases.begin_create_or_update(
         resource_group_name="sbx-neu-dev-jam-rg",
         server_name="sbx-neu-dev-jam-sql",
-        database_name=f"sbx-neu-dev-jam-sql{version}",
+        database_name=f"sbx-neu-dev-jam-sql_{version}",
         parameters={
             "location": "northeurope",
             "properties": {
