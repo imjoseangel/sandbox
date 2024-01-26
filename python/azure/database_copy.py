@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import logging
+import sys
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.sql import SqlManagementClient
 
@@ -24,26 +26,40 @@ from azure.mgmt.sql import SqlManagementClient
 
 
 def main():
+
+    logging.basicConfig(format="%(asctime)s - %(levelname)-8s - %(name)s - %(message)s",
+                        datefmt="%d-%m-%y %H:%M:%S",
+                        stream=sys.stdout,
+                        level=logging.INFO)
+
+    subscription_id = "00000000-1111-2222-3333-444444444444"
+    srcversion = "v0.0.1"
+    dstversion = "v0.0.2"
+    resource_group = "sbx-neu-dev-jam-rg"
+    server_name = "sbx-neu-dev-jam-sql"
+    database_name = "sbx-neu-dev-jam-sql"
+    location = "northeurope"
+
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id=subscription_id,
     )
 
-    version = "v0.0.1"
     response = client.databases.begin_create_or_update(
-        resource_group_name="sbx-neu-dev-jam-rg",
-        server_name="sbx-neu-dev-jam-sql",
-        database_name=f"sbx-neu-dev-jam-sql_{version}",
+        resource_group_name=resource_group,
+        server_name=server_name,
+        database_name=f"{database_name}_{dstversion}",
         parameters={
-            "location": "northeurope",
+            "location": location,
             "properties": {
                 "createMode": "Copy",
-                "sourceDatabaseId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/sbx-neu-dev-jam-rg/providers/Microsoft.Sql/servers/sbx-neu-dev-jam-sql/databases/sbx-neu-dev-jam-sql",
+                "sourceDatabaseId": f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Sql/servers/{server_name}/databases/{database_name}_{srcversion}",
             },
             "sku": {"name": "GP_S_Gen5", "tier": "GeneralPurpose", "family": "Gen5", "capacity": 1},
         },
     ).result()
-    print(response)
+
+    logging.info(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-02-01-preview/examples/CreateDatabaseCopyMode.json
