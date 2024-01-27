@@ -32,7 +32,13 @@ def main():
         subscription_id=subscription_id,
     )
 
-    response = client.databases.begin_create_or_update(
+    client.databases.begin_delete(
+        resource_group_name=resource_group,
+        server_name=server_name,
+        database_name=f"{database_name}_{dstversion}",
+    ).result()
+
+    create = client.databases.begin_create_or_update(
         resource_group_name=resource_group,
         server_name=server_name,
         database_name=f"{database_name}_{dstversion}",
@@ -44,11 +50,11 @@ def main():
                 f"resourceGroups/{resource_group}/providers/Microsoft.Sql/"
                 f"servers/{server_name}/databases/{database_name}_{srcversion}",
             },
-            "sku": {"name": "Standard", "tier": "Standard", "capacity": 20},
+            "sku": {"name": "S0", "tier": "Standard"},
         },  # type: ignore
     ).result()  # type: ignore
 
-    logging.info(response)
+    logging.info(create)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/
