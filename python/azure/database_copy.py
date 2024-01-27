@@ -44,7 +44,7 @@ def main():
                 f"resourceGroups/{resource_group}/providers/Microsoft.Sql/"
                 f"servers/{server_name}/databases/{database_name}_{srcversion}",
             },
-            "sku": {"name": "GP_S_Gen5", "tier": "GeneralPurpose", "family": "Gen5", "capacity": 1},
+            "sku": {"name": "Standard", "tier": "Standard", "capacity": 20},
         },  # type: ignore
     ).result()  # type: ignore
 
