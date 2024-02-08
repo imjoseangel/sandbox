@@ -48,36 +48,43 @@ except KeyError:
 try:
     location = config['app']['location']
 except KeyError:
-    logging.error("'app.location' key not found on config.toml")
+    logging.error("'app.location' key not found in config.toml")
     sys.exit(1)
 
 try:
     appname = config['app']['name']
 except KeyError:
-    logging.error("'app.name' key not found on config.toml")
+    logging.error("'app.name' key not found in config.toml")
     sys.exit(1)
 
 try:
     hostname = config['app']['hostname']
 except KeyError:
-    logging.error("'app.hostname' key not found on config.toml")
+    logging.error("'app.hostname' key not found in config.toml")
+    sys.exit(1)
+
+try:
+    timesec = config['app']['timesec']
+except KeyError:
+    logging.error("'app.timesec' key not found in config.toml")
     sys.exit(1)
 
 
 def trackavailability(scheduler):
     # schedule the next call first
-    scheduler.enter(60, 1, trackavailability, (scheduler,))
-    logging.info(f"Tracking availability for {hostname} - {location}")
+    scheduler.enter(timesec, 1, trackavailability, (scheduler,))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
     try:
         duration = datetime.fromtimestamp(requests.get(
             hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+        logging.info(f"Availability for {hostname} - {location} - SUCCESS")
         success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
+        logging.warning(f"Availability for {hostname} - {location} - FAIL")
         duration = "00.00:00:00"
         success = False
 
@@ -104,7 +111,6 @@ def trackavailability(scheduler):
     }
 
     try:
-        print(body)
         req = requests.post(url=url, json=body, timeout=30)
         logging.info(req.content)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
@@ -115,6 +121,7 @@ def main():
 
     try:
         scheduler = sched.scheduler(time.time, time.sleep)
+        logging.info(f"Tracking availability for {hostname} - {location}")
         trackavailability(scheduler)
         scheduler.run()
     except KeyboardInterrupt:
