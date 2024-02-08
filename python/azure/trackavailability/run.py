@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+""" This code sends availability test every minute (default) to
+Azure Application Insights."""
+
 from datetime import datetime
 import logging
 import os
