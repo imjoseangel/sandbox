@@ -90,7 +90,7 @@ def trackavailability(scheduler):
                 "duration": duration,
                 "success": success,
                 "runLocation": location,
-                "message": "Sample Webtest Result",
+                "message": f"{appname} Availability Test {'Success' if success else 'Fail'}",
                 "properties": {}
             },
             "baseType": "AvailabilityData"
@@ -113,10 +113,13 @@ def trackavailability(scheduler):
 
 def main():
 
-    scheduler = sched.scheduler(time.time, time.sleep)
-    trackavailability(scheduler)
-    # scheduler.enter(1, 1, trackavailability, (scheduler,))
-    scheduler.run()
+    try:
+        scheduler = sched.scheduler(time.time, time.sleep)
+        trackavailability(scheduler)
+        # scheduler.enter(1, 1, trackavailability, (scheduler,))
+        scheduler.run()
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':
