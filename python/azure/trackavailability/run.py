@@ -41,7 +41,7 @@ except KeyError:
 
 appname = os.environ.get('APPNAME', 'Test Application')
 location = os.environ.get('LOCATION', 'westeurope')
-hostname = os.environ.get('HOSTNAME', 'https://www.example.com')
+urlname = os.environ.get('URLNAME', 'https://www.example.com')
 timesec = os.environ.get('TIMESEC', 60)
 
 
@@ -52,14 +52,14 @@ def trackavailability(scheduler):
 
     try:
         duration = datetime.fromtimestamp(requests.get(
-            hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
-        logging.info(f"Availability for {hostname} - {location} - SUCCESS")
+            urlname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+        logging.info(f"Availability for {urlname} - {location} - SUCCESS")
         success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
-        logging.warning(f"Availability for {hostname} - {location} - FAIL")
+        logging.warning(f"Availability for {urlname} - {location} - FAIL")
         duration = "00.00:00:00"
         success = False
 
@@ -96,7 +96,7 @@ def main():
 
     try:
         scheduler = sched.scheduler(time.time, time.sleep)
-        logging.info(f"Tracking availability for {hostname} - {location}")
+        logging.info(f"Tracking availability for {urlname} - {location}")
         trackavailability(scheduler)
         scheduler.run()
     except KeyboardInterrupt:
