@@ -6,7 +6,6 @@ import os
 import sched
 import sys
 import time
-import tomllib
 import uuid
 import requests
 
@@ -15,12 +14,6 @@ logging.basicConfig(format="%(asctime)s - %(levelname)-5s - %(name)s - %(message
                     stream=sys.stdout,
                     level=logging.INFO)
 
-try:
-    with open("config.toml", "rb") as f:
-        config = tomllib.load(f)
-except FileNotFoundError:
-    logging.error("config.toml file not found")
-    sys.exit(1)
 
 try:
     connectionstring = os.environ['APPLICATIONINSIGHTS_CONNECTION_STRING']
@@ -45,29 +38,11 @@ except KeyError:
                   "environment variable. Missing Quotes?")
     sys.exit(1)
 
-try:
-    location = config['app']['location']
-except KeyError:
-    logging.error("'app.location' key not found in config.toml")
-    sys.exit(1)
 
-try:
-    appname = config['app']['name']
-except KeyError:
-    logging.error("'app.name' key not found in config.toml")
-    sys.exit(1)
-
-try:
-    hostname = config['app']['hostname']
-except KeyError:
-    logging.error("'app.hostname' key not found in config.toml")
-    sys.exit(1)
-
-try:
-    timesec = config['app']['timesec']
-except KeyError:
-    logging.error("'app.timesec' key not found in config.toml")
-    sys.exit(1)
+appname = os.environ.get('APPNAME', 'Test Application')
+location = os.environ.get('LOCATION', 'westeurope')
+hostname = os.environ.get('HOSTNAME', 'https://www.example.com')
+timesec = os.environ.get('TIMESEC', 60)
 
 
 def trackavailability(scheduler):

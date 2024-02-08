@@ -1,5 +1,0 @@
-[app]
-name = "Test Application"
-location = "westeurope"
-hostname = "https://www.example.com"
-timesec = 60
