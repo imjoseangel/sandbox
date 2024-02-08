@@ -1,5 +1,5 @@
 [base]
 location = "westeurope"
 
-[app.webserver]
-Port = 80
+[app]
+name = "Test Application"

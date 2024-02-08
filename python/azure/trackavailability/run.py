@@ -76,6 +76,7 @@ body = {
 
 def main():
     try:
+        print(body)
         req = requests.post(url=url, json=body, timeout=30)
         logging.info(req.content)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
