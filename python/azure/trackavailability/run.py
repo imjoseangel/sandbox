@@ -68,8 +68,9 @@ except KeyError:
 
 def trackavailability(scheduler):
     # schedule the next call first
-    scheduler.enter(60, 1, trackavailability, (scheduler,))
+    scheduler.enter(5, 1, trackavailability, (scheduler,))
     logging.info(f"Tracking availability for {hostname} - {location}")
+    currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
     duration = datetime.fromtimestamp(requests.get(
         hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S:%f0")
 
@@ -106,7 +107,8 @@ def trackavailability(scheduler):
 def main():
 
     scheduler = sched.scheduler(time.time, time.sleep)
-    scheduler.enter(1, 1, trackavailability, (scheduler,))
+    trackavailability(scheduler)
+    # scheduler.enter(1, 1, trackavailability, (scheduler,))
     scheduler.run()
 
 
