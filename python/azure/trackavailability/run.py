@@ -73,9 +73,13 @@ def trackavailability(scheduler):
     try:
         duration = datetime.fromtimestamp(requests.get(
             hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+        success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
+    except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
+        duration = "00.00:00:00"
+        success = False
 
     body = {
         "data": {
@@ -84,7 +88,7 @@ def trackavailability(scheduler):
                 "id": str(uuid.uuid4()),
                 "name": appname,
                 "duration": duration,
-                "success": True,
+                "success": success,
                 "runLocation": location,
                 "message": "Sample Webtest Result",
                 "properties": {}
