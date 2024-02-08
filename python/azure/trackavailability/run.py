@@ -46,6 +46,10 @@ timesec = os.environ.get('TIMESEC', 60)
 
 
 def trackavailability(scheduler):
+    """ Track Function
+    This function contains the main logic for the Availability Test
+    sent to Azure Application Insights"""
+
     # schedule the next call first
     scheduler.enter(timesec, 1, trackavailability, (scheduler,))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
@@ -53,13 +57,13 @@ def trackavailability(scheduler):
     try:
         duration = datetime.fromtimestamp(requests.get(
             urlname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
-        logging.info(f"Availability for {urlname} - {location} - SUCCESS")
+        logging.info("Availability for %s - %s - SUCCESS", urlname, location)
         success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
-        logging.warning(f"Availability for {urlname} - {location} - FAIL")
+        logging.warning("Availability for %s - %s - FAIL", urlname, location)
         duration = "00.00:00:00"
         success = False
 
@@ -93,10 +97,12 @@ def trackavailability(scheduler):
 
 
 def main():
+    """ Main Function """
 
     try:
         scheduler = sched.scheduler(time.time, time.sleep)
-        logging.info(f"Tracking availability for {urlname} - {location}")
+        logging.info(
+            "Tracking availability for %s - %s", urlname, location)
         trackavailability(scheduler)
         scheduler.run()
     except KeyboardInterrupt:
