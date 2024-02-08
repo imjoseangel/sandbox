@@ -37,8 +37,6 @@ except ValueError:
                   "environment variable. Empty?")
     sys.exit(1)
 
-currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
-
 try:
     url = f'{connmap["IngestionEndpoint"]}v2/track'  # type: ignore
     ikey = connmap['InstrumentationKey']  # type: ignore
@@ -71,8 +69,13 @@ def trackavailability(scheduler):
     scheduler.enter(5, 1, trackavailability, (scheduler,))
     logging.info(f"Tracking availability for {hostname} - {location}")
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
-    duration = datetime.fromtimestamp(requests.get(
-        hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S:%f0")
+
+    try:
+        duration = datetime.fromtimestamp(requests.get(
+            hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+    except requests.exceptions.MissingSchema as e:
+        logging.error(e)
+        sys.exit(1)
 
     body = {
         "data": {
@@ -80,7 +83,7 @@ def trackavailability(scheduler):
                 "ver": 2,
                 "id": str(uuid.uuid4()),
                 "name": appname,
-                "duration": "00.00:00:10",
+                "duration": duration,
                 "success": True,
                 "runLocation": location,
                 "message": "Sample Webtest Result",
