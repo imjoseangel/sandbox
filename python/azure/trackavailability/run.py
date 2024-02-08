@@ -116,7 +116,6 @@ def main():
     try:
         scheduler = sched.scheduler(time.time, time.sleep)
         trackavailability(scheduler)
-        # scheduler.enter(1, 1, trackavailability, (scheduler,))
         scheduler.run()
     except KeyboardInterrupt:
         pass
