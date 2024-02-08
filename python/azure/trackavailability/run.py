@@ -3,7 +3,9 @@
 from datetime import datetime
 import logging
 import os
+import sched
 import sys
+import time
 import tomllib
 import uuid
 import requests
@@ -35,7 +37,7 @@ except ValueError:
                   "environment variable. Empty?")
     sys.exit(1)
 
-time = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
+currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
 try:
     url = f'{connmap["IngestionEndpoint"]}v2/track'  # type: ignore
@@ -48,45 +50,64 @@ except KeyError:
 try:
     location = config['app']['location']
 except KeyError:
-    logging.error("app.location key not found on config.toml")
+    logging.error("'app.location' key not found on config.toml")
     sys.exit(1)
 
 try:
     appname = config['app']['name']
 except KeyError:
-    logging.error("app.name key not found on config.toml")
+    logging.error("'app.name' key not found on config.toml")
     sys.exit(1)
 
-body = {
-    "data": {
-        "baseData": {
-            "ver": 2,
-            "id": str(uuid.uuid4()),
-            "name": appname,
-            "duration": "00.00:00:10",
-            "success": True,
-            "runLocation": location,
-            "message": "Sample Webtest Result",
-            "properties": {}
+try:
+    hostname = config['app']['hostname']
+except KeyError:
+    logging.error("'app.hostname' key not found on config.toml")
+    sys.exit(1)
+
+
+def trackavailability(scheduler):
+    # schedule the next call first
+    scheduler.enter(60, 1, trackavailability, (scheduler,))
+    logging.info(f"Tracking availability for {hostname} - {location}")
+    duration = datetime.fromtimestamp(requests.get(
+        hostname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S:%f0")
+
+    body = {
+        "data": {
+            "baseData": {
+                "ver": 2,
+                "id": str(uuid.uuid4()),
+                "name": appname,
+                "duration": "00.00:00:10",
+                "success": True,
+                "runLocation": location,
+                "message": "Sample Webtest Result",
+                "properties": {}
+            },
+            "baseType": "AvailabilityData"
         },
-        "baseType": "AvailabilityData"
-    },
-    "ver": 1,
-    "name": "Microsoft.ApplicationInsights.Metric",
-    "time": time,
-    "sampleRate": 100,
-    "iKey": ikey,
-    "flags": 0
-}
+        "ver": 1,
+        "name": "Microsoft.ApplicationInsights.Metric",
+        "time": currenttime,
+        "sampleRate": 100,
+        "iKey": ikey,
+        "flags": 0
+    }
 
-
-def main():
     try:
         print(body)
         req = requests.post(url=url, json=body, timeout=30)
         logging.info(req.content)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
         logging.error("Check connectivity. Connection Error")
+
+
+def main():
+
+    scheduler = sched.scheduler(time.time, time.sleep)
+    scheduler.enter(1, 1, trackavailability, (scheduler,))
+    scheduler.run()
 
 
 if __name__ == '__main__':
