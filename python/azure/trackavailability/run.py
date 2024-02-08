@@ -89,7 +89,7 @@ def trackavailability(scheduler):
         req = requests.post(url=url, json=body, timeout=30)
         logging.info(req.content.decode("utf-8"))
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
-        logging.error("Check connectivity. Connection Error")
+        logging.error("Connection Error")
 
 
 def main():
