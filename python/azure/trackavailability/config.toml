@@ -1,5 +1,3 @@
-[base]
-location = "westeurope"
-
 [app]
 name = "Test Application"
+location = "westeurope"

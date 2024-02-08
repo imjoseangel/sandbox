@@ -46,9 +46,15 @@ except KeyError:
     sys.exit(1)
 
 try:
-    location = config['base']['location']
+    location = config['app']['location']
 except KeyError:
-    logging.error("location key not found on config.toml")
+    logging.error("app.location key not found on config.toml")
+    sys.exit(1)
+
+try:
+    appname = config['app']['name']
+except KeyError:
+    logging.error("app.name key not found on config.toml")
     sys.exit(1)
 
 body = {
@@ -56,7 +62,7 @@ body = {
         "baseData": {
             "ver": 2,
             "id": str(uuid.uuid4()),
-            "name": "Microsoft Support Sample Webtest Result",
+            "name": appname,
             "duration": "00.00:00:10",
             "success": True,
             "runLocation": location,
