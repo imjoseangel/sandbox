@@ -110,8 +110,7 @@ def main():
         trackavailability(scheduler)
         scheduler.run()
     except KeyboardInterrupt:
-        pass
-
+        logging.info("Exiting...)
 
 if __name__ == '__main__':
     main()
