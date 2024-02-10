@@ -60,7 +60,7 @@ def trackavailability(scheduler):
 
     try:
         duration = datetime.fromtimestamp(requests.get(
-            urlname, timeout=30).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+            urlname, timeout=30, verify=False).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
         logging.info("Availability for %s - %s - SUCCESS", urlname, location)
         success = True
     except requests.exceptions.MissingSchema as e:
