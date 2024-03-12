@@ -5,6 +5,7 @@
 Azure Application Insights."""
 
 from datetime import datetime
+import asyncio
 import logging
 import os
 import sched
@@ -44,14 +45,10 @@ except KeyError:
     sys.exit(1)
 
 
-def trackavailability(scheduler, appname, location, urlname, timesec):
+async def trackavailability(appname, location, urlname):
     """ Track Function
     This function contains the main logic for the Availability Test
     sent to Azure Application Insights"""
-
-    # schedule the next call first
-    scheduler.enter(timesec, 1, trackavailability,
-                    (scheduler, appname, location, urlname, timesec))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
     try:
@@ -100,27 +97,27 @@ def main():
     """ Main Function """
 
     try:
-        with open('config.yaml') as f:
-            applications = yaml.load(f, Loader=yaml.SafeLoader)
+        with open('config.yaml', encoding='UTF-8') as configfile:
+            config = yaml.safe_load(configfile)
     except FileNotFoundError:
         logging.error("File `config.yaml` not found")
         sys.exit(1)
 
-    try:
-        scheduler = sched.scheduler(time.time, time.sleep)
+    for application in config['applications']:
 
-        appname = os.environ.get('APPNAME', 'Test Application')
-        location = os.environ.get('LOCATION', 'westeurope')
-        urlname = os.environ.get('URLNAME', 'https://www.example.com')
-        timesec = os.environ.get('TIMESEC', 60)
+        try:
 
-        logging.info(
-            "Tracking availability for %s - %s", urlname, location)
+            appname = application['name']
+            location = application['location']
+            urlname = application['url']
 
-        trackavailability(scheduler, appname, location, urlname, timesec)
-        scheduler.run()
-    except KeyboardInterrupt:
-        logging.info("Exiting...")
+            logging.info(
+                "Tracking availability for %s - %s", urlname, location)
+
+            asyncio.run(trackavailability(appname, location, urlname))
+
+        except KeyboardInterrupt:
+            logging.info("Exiting...")
 
 
 if __name__ == '__main__':
