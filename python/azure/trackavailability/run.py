@@ -43,19 +43,14 @@ except KeyError:
     sys.exit(1)
 
 
-appname = os.environ.get('APPNAME', 'Test Application')
-location = os.environ.get('LOCATION', 'westeurope')
-urlname = os.environ.get('URLNAME', 'https://www.example.com')
-timesec = os.environ.get('TIMESEC', 60)
-
-
-def trackavailability(scheduler):
+def trackavailability(scheduler, appname, location, urlname, timesec):
     """ Track Function
     This function contains the main logic for the Availability Test
     sent to Azure Application Insights"""
 
     # schedule the next call first
-    scheduler.enter(timesec, 1, trackavailability, (scheduler,))
+    scheduler.enter(timesec, 1, trackavailability,
+                    (scheduler, appname, location, urlname, timesec))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
     try:
@@ -105,9 +100,16 @@ def main():
 
     try:
         scheduler = sched.scheduler(time.time, time.sleep)
+
+        appname = os.environ.get('APPNAME', 'Test Application')
+        location = os.environ.get('LOCATION', 'westeurope')
+        urlname = os.environ.get('URLNAME', 'https://www.example.com')
+        timesec = os.environ.get('TIMESEC', 60)
+
         logging.info(
             "Tracking availability for %s - %s", urlname, location)
-        trackavailability(scheduler)
+
+        trackavailability(scheduler, appname, location, urlname, timesec)
         scheduler.run()
     except KeyboardInterrupt:
         logging.info("Exiting...")
