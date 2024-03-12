@@ -12,6 +12,7 @@ import sys
 import time
 import uuid
 import requests
+import yaml
 
 logging.basicConfig(format="%(asctime)s - %(levelname)-5s - %(name)s - %(message)s",
                     datefmt="%d-%m-%y %H:%M:%S",
@@ -97,6 +98,13 @@ def trackavailability(scheduler, appname, location, urlname, timesec):
 
 def main():
     """ Main Function """
+
+    try:
+        with open('config.yaml') as f:
+            applications = yaml.load(f, Loader=yaml.SafeLoader)
+    except FileNotFoundError:
+        logging.error("File `config.yaml` not found")
+        sys.exit(1)
 
     try:
         scheduler = sched.scheduler(time.time, time.sleep)

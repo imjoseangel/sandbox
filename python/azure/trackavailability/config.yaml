@@ -1,0 +1,10 @@
+---
+applications:
+  - name: Test Application 1
+    location: westeurope
+    urlname: https://www.example.com
+    time: 60
+  - name: Test Application 2
+    location: westeurope
+    urlname: https://www.google.com
+    time: 60
