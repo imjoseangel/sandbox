@@ -110,7 +110,7 @@ def main():
         scheduler = sched.scheduler(time.time, time.sleep)
         applications = config['applications']
 
-        for _, application in enumerate(applications):
+        for application in applications:
 
             timesec = application['time']
             appname = application['name']
