@@ -5,7 +5,6 @@
 Azure Application Insights."""
 
 from datetime import datetime
-import asyncio
 import logging
 import os
 import sched
@@ -13,7 +12,6 @@ import sys
 import time
 import uuid
 import requests
-import yaml
 
 logging.basicConfig(format="%(asctime)s - %(levelname)-5s - %(name)s - %(message)s",
                     datefmt="%d-%m-%y %H:%M:%S",
@@ -45,25 +43,31 @@ except KeyError:
     sys.exit(1)
 
 
-async def trackavailability(appname, location, urlname):
+appname = os.environ.get('APPNAME', 'Test Application')
+location = os.environ.get('LOCATION', 'westeurope')
+urlname = os.environ.get('URLNAME', 'https://www.example.com')
+timesec = os.environ.get('TIMESEC', 5)
+
+
+def trackavailability(scheduler):
     """ Track Function
     This function contains the main logic for the Availability Test
     sent to Azure Application Insights"""
+
+    # schedule the next call first
+    scheduler.enter(timesec, 1, trackavailability, (scheduler,))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
     try:
         duration = datetime.fromtimestamp(requests.get(
-            urlname, timeout=30,
-            verify=False).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
-        logging.info("Availability for %s - %s - SUCCESS",
-                     urlname, location)
+            urlname, timeout=30, verify=False).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+        logging.info("Availability for %s - %s - SUCCESS", urlname, location)
         success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
-        logging.warning("Availability for %s - %s - FAIL",
-                        urlname, location)
+        logging.warning("Availability for %s - %s - FAIL", urlname, location)
         duration = "00.00:00:00"
         success = False
 
@@ -100,34 +104,13 @@ def main():
     """ Main Function """
 
     try:
-        with open('config.yaml', encoding='UTF-8') as configfile:
-            config = yaml.safe_load(configfile)
-    except FileNotFoundError:
-        logging.error("File `config.yaml` not found")
-        sys.exit(1)
-
-    for application in config['applications']:
-
-        try:
-
-            appname = application['name']
-            location = application['location']
-            urlname = application['url']
-
-            logging.info(
-                "Tracking availability for %s - %s", urlname, location)
-
-            loop = asyncio.get_event_loop()
-            task = loop.create_task(
-                trackavailability(appname, location, urlname))
-
-            try:
-                loop.run_until_complete(task)
-            except asyncio.CancelledError:
-                pass
-
-        except KeyboardInterrupt:
-            logging.info("Exiting...")
+        scheduler = sched.scheduler(time.time, time.sleep)
+        logging.info(
+            "Tracking availability for %s - %s", urlname, location)
+        trackavailability(scheduler)
+        scheduler.run()
+    except KeyboardInterrupt:
+        logging.info("Exiting...")
 
 
 if __name__ == '__main__':
