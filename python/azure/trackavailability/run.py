@@ -112,7 +112,7 @@ def main():
 
         for _, application in enumerate(applications):
 
-            timesec = application['timesec']
+            timesec = application['time']
             appname = application['name']
             location = application['location']
             urlname = application['url']
