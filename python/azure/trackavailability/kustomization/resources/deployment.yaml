@@ -33,7 +33,7 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:
-          - mountPath: /run/config.yaml
+          - mountPath: /app/config.yaml
             name: config-volume
             subPath: config.yaml
             readOnly: true
