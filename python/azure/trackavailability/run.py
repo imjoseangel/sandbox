@@ -53,14 +53,17 @@ async def trackavailability(appname, location, urlname):
 
     try:
         duration = datetime.fromtimestamp(requests.get(
-            urlname, timeout=30, verify=False).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
-        logging.info("Availability for %s - %s - SUCCESS", urlname, location)
+            urlname, timeout=30,
+            verify=False).elapsed.total_seconds()).strftime("00.00:%M:%S.%f0")
+        logging.info("Availability for %s - %s - SUCCESS",
+                     urlname, location)
         success = True
     except requests.exceptions.MissingSchema as e:
         logging.error(e)
         sys.exit(1)
     except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
-        logging.warning("Availability for %s - %s - FAIL", urlname, location)
+        logging.warning("Availability for %s - %s - FAIL",
+                        urlname, location)
         duration = "00.00:00:00"
         success = False
 
@@ -114,7 +117,14 @@ def main():
             logging.info(
                 "Tracking availability for %s - %s", urlname, location)
 
-            asyncio.run(trackavailability(appname, location, urlname))
+            loop = asyncio.get_event_loop()
+            task = loop.create_task(
+                trackavailability(appname, location, urlname))
+
+            try:
+                loop.run_until_complete(task)
+            except asyncio.CancelledError:
+                pass
 
         except KeyboardInterrupt:
             logging.info("Exiting...")
