@@ -12,6 +12,7 @@ import sys
 import time
 import uuid
 import requests
+import yaml
 
 logging.basicConfig(format="%(asctime)s - %(levelname)-5s - %(name)s - %(message)s",
                     datefmt="%d-%m-%y %H:%M:%S",
@@ -43,19 +44,14 @@ except KeyError:
     sys.exit(1)
 
 
-appname = os.environ.get('APPNAME', 'Test Application')
-location = os.environ.get('LOCATION', 'westeurope')
-urlname = os.environ.get('URLNAME', 'https://www.example.com')
-timesec = os.environ.get('TIMESEC', 5)
-
-
-def trackavailability(scheduler):
+def trackavailability(scheduler, timesec, appname, location, urlname):
     """ Track Function
     This function contains the main logic for the Availability Test
     sent to Azure Application Insights"""
 
     # schedule the next call first
-    scheduler.enter(timesec, 1, trackavailability, (scheduler,))
+    scheduler.enter(timesec, 1, trackavailability,
+                    (scheduler, timesec, appname, location, urlname))
     currenttime = datetime.utcnow().strftime("%Y-%m-%dT%X.%f0Z")
 
     try:
@@ -104,11 +100,31 @@ def main():
     """ Main Function """
 
     try:
+        with open('config.yaml', 'r', encoding='UTF-8') as configfile:
+            config = yaml.safe_load(configfile)
+    except FileNotFoundError:
+        logging.error('File "config.yaml" not found')
+        sys.exit(1)
+
+    try:
         scheduler = sched.scheduler(time.time, time.sleep)
-        logging.info(
-            "Tracking availability for %s - %s", urlname, location)
-        trackavailability(scheduler)
+        applications = config['applications']
+
+        for _, application in enumerate(applications):
+
+            timesec = application['timesec']
+            appname = application['name']
+            location = application['location']
+            urlname = application['url']
+
+            logging.info(
+                "Tracking availability for %s - %s", urlname, location)
+
+            trackavailability(scheduler, timesec, appname, location, urlname)
+
         scheduler.run()
+    except KeyError as e:
+        logging.error(f'Key {e} not found in "config.yaml"...')
     except KeyboardInterrupt:
         logging.info("Exiting...")
 

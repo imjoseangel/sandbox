@@ -3,7 +3,7 @@ applications:
   - name: Test Application 1
     location: westeurope
     url: https://www.example.com
-    time: 10
+    time: 5
   - name: Test Application 2
     location: westeurope
     url: https://www.google.com
