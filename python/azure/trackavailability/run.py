@@ -124,7 +124,7 @@ def main():
 
         scheduler.run()
     except KeyError as e:
-        logging.error(f'Key {e} not found in "config.yaml"...')
+        logging.error('Key %s not found in "config.yaml"...', e)
     except KeyboardInterrupt:
         logging.info("Exiting...")
 
