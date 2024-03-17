@@ -31,7 +31,7 @@ def main():
         sys.exit(1)
 
     # encoded_jwt = crypto_client.encrypt(
-    #     EncryptionAlgorithm.rsa_oaep, PAYLOAD)
+        EncryptionAlgorithm.rsa_oaep_256, PAYLOAD)
     encoded_jwt = jwt.encode(PAYLOAD, key=private_key, algorithm="RS256")
 
     print(f"Encoded JWT: {encoded_jwt}")
