@@ -27,7 +27,8 @@ claims = {
 header = {"alg": "RS256", "typ": "JWT"}
 
 # Serialize and base64 URL encode the header and payload
-header_and_payload = f"{base64.urlsafe_b64encode(json.dumps(header).encode()).decode()}.{base64.urlsafe_b64encode(json.dumps(claims).encode()).decode()}"
+header_and_payload = (f"{base64.urlsafe_b64encode(json.dumps(header).encode()).decode()}"
+                      f".{base64.urlsafe_b64encode(json.dumps(claims).encode()).decode()}")
 
 # Authenticate to Azure Key Vault
 credential = DefaultAzureCredential()
