@@ -11,8 +11,8 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, SignatureAlgorithm
 
 # Azure Key Vault details
-vault_url = "https://your-key-vault-name.vault.azure.net"
-key_name = "your-rsa-key-name"
+vault_url = "https://four.vault.azure.net"
+key_name = "jwt"
 
 # JWT claims
 claims = {
