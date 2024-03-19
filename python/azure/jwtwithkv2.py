@@ -41,6 +41,6 @@ digest = hashlib.sha256(header_and_payload.encode()).digest()
 signature = crypto_client.sign(SignatureAlgorithm.rs256, digest)
 
 # Create the final JWT
-jwt_token = f"{header_and_payload}.{base64.urlsafe_b64encode(signature).decode()}"
+jwt_token = f"{header_and_payload}.{base64.urlsafe_b64encode(signature).decode()}" # type: ignore
 
 print(f"Encoded JWT: {jwt_token}")
