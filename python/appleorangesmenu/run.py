@@ -3,21 +3,19 @@
 from rich import print as pprint
 
 
-def print_menu():
-    """
-    A function to print the menu options for the user interface.
-    """
+def display_menu():
+    """Display the menu options."""
+    options = ["Oranges", "Mixed", "Exit"]
 
-    pprint("1. Oranges")
-    pprint("2. Mixed")
-    pprint("3. Exit")
+    for index, option in enumerate(options, 1):
+        pprint(f"{index}. {option}")
 
 
 loop = True
 
 while loop:
     try:
-        print_menu()
+        display_menu()
         box = input("Select the Apples Box [1-3]: ")
         match box:
             case "1":
