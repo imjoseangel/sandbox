@@ -28,6 +28,14 @@ class TestAddFunction(unittest.TestCase):
         result = add("1", "2")
         self.assertEqual(result, "12")
 
+    def test_add_floats(self):
+        result = add(0.1, 0.2)
+        self.assertAlmostEqual(result, 0.3)
+
+    def test_add_mixed_types(self):
+        with self.assertRaises(TypeError):
+            add(1, "2")
+
 
 # If this file is run (but not if it's imported),
 # collect the tests and execute them.
