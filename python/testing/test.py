@@ -21,6 +21,13 @@ class TestAddFunction(unittest.TestCase):
         result = add(1, 2)
         self.assertEqual(result, 3)
 
+        result = add(1, -2)
+        self.assertEqual(result, -1)
+
+    def test_add_strings(self):
+        result = add("1", "2")
+        self.assertEqual(result, "12")
+
 
 # If this file is run (but not if it's imported),
 # collect the tests and execute them.
