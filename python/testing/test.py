@@ -13,6 +13,14 @@ class TestAddFunction(unittest.TestCase):
 
     # Write the test. It must be a method of a TestCase type
     # and the name MUST start with "test" to be detected
+    def setUp(self):
+        # Anything you attach to self here is available
+        # in other tests
+        print('This is run before each test')
+
+    def tearDown(self):
+        print('This is run after each test')
+
     def test_add_integers(self):
 
         # Write an assertion. Assertions are lines of code
