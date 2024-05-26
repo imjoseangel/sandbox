@@ -50,7 +50,7 @@ def not_state_transitions(txt):
     return (newState, txt)
 
 
-def neg_state(txt):
+def neg_state():
     print("Hallo")
     return ("neg_state", "")
 
