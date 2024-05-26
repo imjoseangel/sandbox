@@ -40,5 +40,4 @@ class StateMachine:
             if newState.upper() in self.endStates:
                 print("reached ", newState)
                 break
-            else:
-                handler = self.handlers[newState.upper()]
+            handler = self.handlers[newState.upper()]
