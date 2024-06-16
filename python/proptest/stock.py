@@ -76,3 +76,12 @@ def test_stock_level_plus_quantity_equals_original_stock_level(item, quantity):
     (status, item, quantity) = order(wh, item, quantity)
     if status == "ok":
         assert wh.stock_count(item) + quantity == initial_stock_level
+
+
+@given(item=some.sampled_from(["shoes", "hats"]), quantity=some.integers())
+def test_stock_level_plus_any_quantity(item, quantity):
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    initial_stock_level = wh.stock_count(item)
+    (status, item, quantity) = order(wh, item, quantity)
+    if status == "ok":
+        assert wh.stock_count(item) + quantity == initial_stock_level
