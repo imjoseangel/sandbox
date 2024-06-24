@@ -56,18 +56,16 @@ def runterraform(verb, args=''):
 
     try:
 
-        tf_proc = subprocess.Popen('terraform ' + verb + ' ' + args,
-                                   shell=True,
-                                   executable="/bin/bash",
-                                   stdin=None,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
+        with subprocess.Popen('terraform ' + verb + ' ' + args,
+                              shell=True,
+                              executable="/bin/bash",
+                              stdin=None,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT) as tf_proc:
 
-        for line in tf_proc.stdout:
-            logging.info(line.strip().decode('utf-8'))
-
-        tf_proc.stdout.close()
-        tf_proc.wait()
+            if tf_proc.stdout:
+                for line in tf_proc.stdout:
+                    logging.info(line.strip().decode('utf-8'))
 
         return tf_proc
 
