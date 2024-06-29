@@ -1,8 +1,8 @@
 import os
+from typing import Mapping, Any
 import kopf
 import kubernetes
 import yaml
-from typing import Collection, Mapping, Any
 
 
 @kopf.on.create('ephemeralvolumeclaims')
