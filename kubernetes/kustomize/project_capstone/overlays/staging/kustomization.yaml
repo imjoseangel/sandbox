@@ -1,5 +1,5 @@
-bases:
-  - ../../base
+resources:
+  - ../../resources
 
 configMapGenerator:
   - name: db-config
