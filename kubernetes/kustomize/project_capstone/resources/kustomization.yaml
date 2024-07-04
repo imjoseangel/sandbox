@@ -3,5 +3,8 @@ resources:
   - db/
   - monitoring/
 
-commonLabels:
-  project: lambda
+labels:
+  - includeSelectors: false
+    pairs:
+      app.kubernetes.io/name: lambda
+      project: lambda
