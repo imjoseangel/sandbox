@@ -20,8 +20,8 @@ commonAnnotations:
 
 namespace: sandbox
 
-namePreffix: myapp-
-nameSuffix: -dev
+namePrefix: myapp-
+nameSufix: -dev
 
 images:
   - name: mongo
