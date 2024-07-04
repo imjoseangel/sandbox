@@ -7,4 +7,4 @@ configMapGenerator:
       - postgresql.conf
 
 patches:
-  - patch: db-patch.yaml
+  - path: db-patch.yaml
