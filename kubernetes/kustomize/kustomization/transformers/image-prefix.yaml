@@ -1,0 +1,12 @@
+---
+apiVersion: builtin
+kind: PrefixTransformer
+metadata:
+  name: image-prefix
+
+prefix: mytrusted.registry/
+
+fieldSpecs:
+- path: spec/template/spec/containers/image
+- path: spec/template/spec/initContainers/image
+- path: spec/image  # for kind Prometheus and Alertmanager
