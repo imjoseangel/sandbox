@@ -4,7 +4,7 @@ resources:
 nameSuffix: -prod
 
 patches:
-  - patch: api-patch.yaml
+  - path: api-patch.yaml
 
 components:
   - ../../components/auth
