@@ -21,7 +21,7 @@ commonAnnotations:
 namespace: sandbox
 
 namePrefix: myapp-
-nameSufix: -dev
+nameSuffix: -dev
 
 images:
   - name: mongo
