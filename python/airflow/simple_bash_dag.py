@@ -20,8 +20,8 @@ default_args = {
 dag = DAG(
     dag_id=my_dag_id,
     default_args=default_args,
-    start_date=datetime(2019, 6, 17),
-    schedule_interval=timedelta(seconds=5)
+    start_date=datetime(2024, 5, 2),
+    schedule=timedelta(seconds=5)
 )
 
 
