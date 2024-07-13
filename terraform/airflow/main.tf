@@ -61,6 +61,10 @@ output "airflowdb" {
   value = "postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${local.map["random_password"]}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer"
 }
 
+output "pgbouncer" {
+  value = "db+postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${local.map["random_password"]}@${var.airflowdbhost}.postgres.database.azure.com:5432/pgbouncer?sslmode=prefer"
+}
+
 output "airflowusername" {
   value = random_pet.airflowusername.id
 }
