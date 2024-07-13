@@ -1,9 +1,9 @@
 locals {
-  map = {
-    "webserver_secret" = random_id.token.hex,
-    "random_password"  = nonsensitive(random_password.password.result),
+  map = tomap({
+    "webserver_secret" = random_id.token.hex
+    "random_password"  = nonsensitive(random_password.password.result)
     "fernet_key"       = data.external.fernet_key.result.value
-  }
+  })
 }
 
 data "external" "fernet_key" {
@@ -44,5 +44,5 @@ output "random_password" {
 }
 
 output "map" {
-  value = local.map
+  value = flatten([for key, value in local.map : { name = key, value = value }])
 }
