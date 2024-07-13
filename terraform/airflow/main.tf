@@ -3,6 +3,8 @@ locals {
     "webserver_secret" = random_id.token.hex
     "random_password"  = nonsensitive(random_password.password.result)
     "fernet_key"       = null_resource.fernet_key.triggers.stdout
+    "airflowdb"        = nonsensitive("postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer")
+    "pgbouncer"        = nonsensitive("db+postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/pgbouncer?sslmode=prefer")
   })
 }
 
@@ -51,32 +53,6 @@ variable "airflowdbhost" {
   default = "airflowpsql"
 }
 
-output "fernet_key" {
-  value = null_resource.fernet_key.triggers.stdout
-}
-
-output "webserver_secret" {
-  value     = random_id.token.hex
-  sensitive = false
-}
-
-output "random_password" {
-  value     = random_password.password.result
-  sensitive = true
-}
-
 output "map" {
   value = flatten([for key, value in local.map : { name = key, value = value }])
-}
-
-output "airflowdb" {
-  value = "postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${local.map["random_password"]}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer"
-}
-
-output "pgbouncer" {
-  value = "db+postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${local.map["random_password"]}@${var.airflowdbhost}.postgres.database.azure.com:5432/pgbouncer?sslmode=prefer"
-}
-
-output "airflowusername" {
-  value = random_pet.airflowusername.id
 }
