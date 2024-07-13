@@ -19,6 +19,11 @@ data "external" "fernet_key" {
   ]
 }
 
+resource "random_pet" "airflowusername" {
+  prefix = "airflow"
+  length = 1
+}
+
 resource "random_id" "token" {
   byte_length = 16
 }
@@ -27,6 +32,11 @@ resource "random_password" "password" {
   length           = 16
   special          = true
   override_special = "!#$%*-_=+<>:?"
+}
+
+variable "airflowdbhost" {
+  type    = string
+  default = "airflowpsql"
 }
 
 output "fernet_key" {
@@ -45,4 +55,12 @@ output "random_password" {
 
 output "map" {
   value = flatten([for key, value in local.map : { name = key, value = value }])
+}
+
+output "airflowdb" {
+  value = "postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${local.map["random_password"]}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer"
+}
+
+output "airflowusername" {
+  value = random_pet.airflowusername.id
 }
