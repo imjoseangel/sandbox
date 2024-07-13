@@ -5,6 +5,8 @@ locals {
     "fernet_key"       = null_resource.fernet_key.triggers.stdout
     "airflowdb"        = nonsensitive("postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer")
     "pgbouncer"        = nonsensitive("db+postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/pgbouncer?sslmode=prefer")
+    "tenantid"         = data.azuread_client_config.main.tenant_id
+    "clientid"         = data.azuread_client_config.main.object_id
   })
 }
 
@@ -84,8 +86,4 @@ terraform {
     }
   }
   required_version = ">= 1.0.0"
-}
-
-provider "azuread" {
-  tenant_id = "00000000-0000-0000-0000-000000000000"
 }
