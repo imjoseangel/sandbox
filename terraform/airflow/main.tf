@@ -1,3 +1,11 @@
+locals {
+  map = {
+    "webserver_secret" = random_id.token.hex,
+    "random_password"  = nonsensitive(random_password.password.result),
+    "fernet_key"       = data.external.fernet_key.result.value
+  }
+}
+
 data "external" "fernet_key" {
   program = [
     "python",
@@ -33,4 +41,8 @@ output "webserver_secret" {
 output "random_password" {
   value     = random_password.password.result
   sensitive = true
+}
+
+output "map" {
+  value = local.map
 }
