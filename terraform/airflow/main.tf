@@ -8,6 +8,8 @@ locals {
   })
 }
 
+data "azuread_client_config" "main" {}
+
 data "external" "fernet_key" {
   program = [
     "python",
@@ -55,4 +57,35 @@ variable "airflowdbhost" {
 
 output "map" {
   value = flatten([for key, value in local.map : { name = key, value = value }])
+}
+
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.81.0"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "2.53.1"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.2"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.2"
+    }
+    external = {
+      source  = "hashicorp/external"
+      version = "2.3.3"
+    }
+  }
+  required_version = ">= 1.0.0"
+}
+
+provider "azuread" {
+  tenant_id = "00000000-0000-0000-0000-000000000000"
 }
