@@ -2,7 +2,7 @@ locals {
   map = tomap({
     "webserver_secret" = random_id.token.hex
     "random_password"  = nonsensitive(random_password.password.result)
-    "fernet_key"       = data.external.fernet_key.result.value
+    "fernet_key"       = null_resource.fernet_key.triggers.stdout
   })
 }
 
