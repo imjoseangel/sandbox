@@ -19,6 +19,18 @@ data "external" "fernet_key" {
   ]
 }
 
+resource "null_resource" "fernet_key" {
+  triggers = {
+    stdout = data.external.fernet_key.result.value
+  }
+
+  lifecycle {
+    ignore_changes = [
+      triggers
+    ]
+  }
+}
+
 resource "random_pet" "airflowusername" {
   prefix = "airflow"
   length = 1
@@ -40,7 +52,7 @@ variable "airflowdbhost" {
 }
 
 output "fernet_key" {
-  value = data.external.fernet_key.result.value
+  value = null_resource.fernet_key.triggers.stdout
 }
 
 output "webserver_secret" {
