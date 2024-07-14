@@ -1,4 +1,6 @@
 locals {
+  python = (substr(pathexpand("~"), 0, 1) == "/") ? "python3" : "python.exe"
+  fernet = "fernet.py"
   map = tomap({
     "webserver_secret" = random_id.token.hex
     "random_password"  = nonsensitive(random_password.password.result)
@@ -12,16 +14,23 @@ locals {
 
 data "azuread_client_config" "main" {}
 
+# data "external" "fernet_key" {
+#   program = [
+#     "${local.python}",
+#     "-c",
+#     join("", [
+#       "from cryptography.fernet import Fernet;",
+#       "import json;",
+#       "fernet_key = Fernet.generate_key().decode();",
+#       "print(json.dumps({'value': fernet_key}));"
+#     ])
+#   ]
+# }
+
 data "external" "fernet_key" {
   program = [
-    "python",
-    "-c",
-    join("", [
-      "from cryptography.fernet import Fernet;",
-      "import json;",
-      "fernet_key = Fernet.generate_key().decode();",
-      "print(json.dumps({'value': fernet_key}));"
-    ])
+    "${local.python}",
+    "${local.fernet}",
   ]
 }
 
