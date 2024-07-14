@@ -1,17 +1,3 @@
-locals {
-  python = (substr(pathexpand("~"), 0, 1) == "/") ? "python3" : "python.exe"
-  fernet = "fernet.py"
-  map = tomap({
-    "webserver_secret" = random_id.token.hex
-    "random_password"  = nonsensitive(random_password.password.result)
-    "fernet_key"       = null_resource.fernet_key.triggers.stdout
-    "airflowdb"        = nonsensitive("postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/${random_pet.airflowusername.id}?sslmode=prefer")
-    "pgbouncer"        = nonsensitive("db+postgresql://${random_pet.airflowusername.id}%40${var.airflowdbhost}:${random_password.password.result}@${var.airflowdbhost}.postgres.database.azure.com:5432/pgbouncer?sslmode=prefer")
-    "tenantid"         = data.azuread_client_config.main.tenant_id
-    "clientid"         = data.azuread_client_config.main.object_id
-  })
-}
-
 data "azuread_client_config" "main" {}
 
 # data "external" "fernet_key" {
@@ -51,6 +37,10 @@ resource "random_pet" "airflowusername" {
   length = 1
 }
 
+resource "time_rotating" "main" {
+  rotation_days = 730
+}
+
 resource "random_id" "token" {
   byte_length = 16
 }
@@ -61,38 +51,22 @@ resource "random_password" "password" {
   override_special = "!#$%*-_=+<>:?"
 }
 
-variable "airflowdbhost" {
-  type    = string
-  default = "airflowpsql"
-}
+resource "azuread_application" "main" {
+  display_name = lower(format("%s-sso", resource.random_pet.airflowusername.id))
+  owners       = [data.azuread_client_config.main.object_id]
 
-output "map" {
-  value = flatten([for key, value in local.map : { name = key, value = value }])
-}
+  required_resource_access {
+    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
 
-
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.81.0"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "2.53.1"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.6.2"
-    }
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.2"
-    }
-    external = {
-      source  = "hashicorp/external"
-      version = "2.3.3"
+    resource_access {
+      id   = "df021288-bdef-4463-88db-98f22de89214" # User.Read.All
+      type = "Role"
     }
   }
-  required_version = ">= 1.0.0"
+
+  password {
+    display_name = lower(format("%s-sso-secret", resource.random_pet.airflowusername.id))
+    start_date   = time_rotating.main.id
+    end_date     = timeadd(time_rotating.main.id, "17520h")
+  }
 }
