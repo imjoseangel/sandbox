@@ -1,17 +1,17 @@
 data "azuread_client_config" "main" {}
 
-# data "external" "fernet_key" {
-#   program = [
-#     "${local.python}",
-#     "-c",
-#     join("", [
-#       "from cryptography.fernet import Fernet;",
-#       "import json;",
-#       "fernet_key = Fernet.generate_key().decode();",
-#       "print(json.dumps({'value': fernet_key}));"
-#     ])
-#   ]
-# }
+data "external" "fernet_key2" {
+  program = [
+    "${local.python}",
+    "-c",
+    join("", [
+      "from cryptography.fernet import Fernet;",
+      "import json;",
+      "fernet_key = Fernet.generate_key().decode();",
+      "print(json.dumps({'value': fernet_key}));"
+    ])
+  ]
+}
 
 data "external" "fernet_key" {
   program = [
