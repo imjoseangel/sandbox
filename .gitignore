@@ -92,6 +92,7 @@ Temporary Items
 
 #  Local .terraform directories
 **/.terraform/*
+**/.terragrunt-cache/*
 
 # .tfstate files
 *.tfstate
@@ -102,5 +103,6 @@ Temporary Items
 
 # .hcl files
 *.hcl
+!terragrunt.hcl
 
 # End of https://www.gitignore.io/api/ansible,windows,osx
