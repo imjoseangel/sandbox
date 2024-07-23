@@ -70,3 +70,8 @@ resource "azuread_application" "main" {
     end_date     = timeadd(time_rotating.main.id, "17520h")
   }
 }
+
+resource "azuread_service_principal" "main" {
+  client_id    = azuread_application.main.client_id
+  use_existing = true
+}
