@@ -9,15 +9,19 @@ def cpu_bound_task(n):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run a CPU-bound task with threads")
-    parser.add_argument("--threads", type=int, default=4, help="Number of threads")
-    parser.add_argument("--tasks", type=int, default=10, help="Number of tasks")
+    parser = argparse.ArgumentParser(
+        description="Run a CPU-bound task with threads")
+    parser.add_argument("--threads", type=int, default=4,
+                        help="Number of threads")
+    parser.add_argument("--tasks", type=int, default=10,
+                        help="Number of tasks")
     parser.add_argument(
         "--size", type=int, default=5000000, help="Task size (n for sum of squares)"
     )
     args = parser.parse_args()
 
-    print(f"Running {args.tasks} tasks of size {args.size} with {args.threads} threads")
+    print(f"Running {args.tasks} tasks of size {
+          args.size} with {args.threads} threads")
 
     start_time = time.time()
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
