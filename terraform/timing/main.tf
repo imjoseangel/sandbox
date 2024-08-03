@@ -23,7 +23,8 @@ output "locals" {
 
 output "time_rotating" {
   value = {
-    not_before_date = time_rotating.main.rfc3339,
-    expiration_date = time_rotating.main.rotation_rfc3339
+    not_before_date  = time_rotating.main.rfc3339,
+    expiration_date  = time_rotating.main.rotation_rfc3339
+    expiration_date2 = timeadd(time_rotating.main.id, "4320h")
   }
 }
