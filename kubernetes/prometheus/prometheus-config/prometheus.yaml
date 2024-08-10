@@ -8,6 +8,14 @@ spec:
   serviceMonitorSelector:
     matchLabels:
       team: frontend
+  serviceMonitorNamespaceSelector:
+    matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: In
+        values:
+          - default
+          - example
+          - monitoring
   resources:
     requests:
       memory: 400Mi
