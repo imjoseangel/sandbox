@@ -2,12 +2,12 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: example-app
+  name: cloudprobe
   labels:
     app.kubernetes.io/name: prometheus
 spec:
   selector:
     matchLabels:
-      app: example-app
+      app: cloudprober
   endpoints:
   - port: web

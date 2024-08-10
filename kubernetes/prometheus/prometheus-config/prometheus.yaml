@@ -13,9 +13,9 @@ spec:
       - key: kubernetes.io/metadata.name
         operator: In
         values:
-          - default
           - example
           - monitoring
+          - cloudprober
   resources:
     requests:
       memory: 400Mi
