@@ -9,3 +9,4 @@ resources:
   - clusterrolebinding.yaml
   - prometheus.yaml
   - serviceaccount.yaml
+  - servicemonitor.yaml
