@@ -12,7 +12,7 @@ func Sqrt(x float64) float64 {
 		z -= (z*z - x) / (2 * z)
 
 		fmt.Println(math.Abs(z - result))
-		if math.Abs(result-z) < 1e-5 {
+		if math.Abs(result-z) < 1e-6 {
 			break
 		}
 		result = z
@@ -21,6 +21,8 @@ func Sqrt(x float64) float64 {
 }
 
 func main() {
-	fmt.Println(Sqrt(10100))
-	fmt.Println(math.Sqrt(10100))
+	manual := Sqrt(2)
+	module := math.Sqrt(2)
+	fmt.Printf("Guess: %v, Expected: %v, Error: %v",
+		manual, module, math.Abs(manual-module))
 }
