@@ -6,16 +6,16 @@ import (
 )
 
 func Sqrt(x float64) float64 {
-	z := float64(1)
-	result := float64(1)
-	for i := 0; i < 100; i++ {
-		z -= (z*z - x) / (2 * z)
+	if x < 0 {
+		return math.NaN()
+	}
 
-		fmt.Println(math.Abs(z - result))
-		if math.Abs(result-z) < 1e-6 {
+	z := float64(1)
+	for i := 0; i < 100; i++ {
+		z = z - (z*z-x)/(2*z)
+		if math.Abs(z*z-x) < 1e-12 {
 			break
 		}
-		result = z
 	}
 	return z
 }
