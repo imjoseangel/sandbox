@@ -27,8 +27,9 @@ func Sqrt(x float64) (float64, error) {
 }
 
 func main() {
-	for _, number := range []float64{2, -2} {
-		result, err:= Sqrt(number)
+	numbers := []float64{2, -2}
+	for _, number := range numbers {
+		result, err := Sqrt(number)
 		if err != nil {
 			fmt.Println(err)
 		} else {
