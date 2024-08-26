@@ -1,17 +1,43 @@
 package main
 
-import "golang.org/x/tour/tree"
+import (
+	"sync"
+
+	"golang.org/x/tour/tree"
+)
 
 // Walk walks the tree t sending all values
 // from the tree to the channel ch.
-func Walk(t *tree.Tree, ch chan int) {
-	if t == nil {
-		return
+func Walk(t *tree.Tree, ch chan<- int) {
+	var wg sync.WaitGroup
+
+	var walk func(t *tree.Tree)
+	walk = func(t *tree.Tree) {
+		if t == nil {
+			return
+		}
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			walk(t.Left)
+		}()
+
+		ch <- t.Value
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			walk(t.Right)
+		}()
 	}
 
-	Walk(t.Left, ch)
-	ch <- t.Value
-	Walk(t.Right, ch)
+	walk(t)
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
 }
 
 // Same determines whether the trees
