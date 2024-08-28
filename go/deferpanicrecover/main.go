@@ -8,7 +8,7 @@ func c() (i int) {
 }
 
 func f() {
-	deferfunc() {
+	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered in f", r)
 		}
