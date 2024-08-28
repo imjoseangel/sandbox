@@ -12,21 +12,32 @@ type Fetcher interface {
 
 // Crawl uses fetcher to recursively crawl
 // pages starting with url, to a maximum of depth.
+var seen = make(map[string]bool) // for not revisiting same pages
+
+// Crawl uses fetcher to recursively crawl pages starting with url, to a maximum of depth.
 func Crawl(url string, depth int, fetcher Fetcher) {
-	// TODO: Fetch URLs in parallel.
-	// TODO: Don't fetch the same URL twice.
-	// This implementation doesn't do either:
 	if depth <= 0 {
 		return
 	}
+	if seen[url] {
+		return
+	}
+	seen[url] = true
 	body, urls, err := fetcher.Fetch(url)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Printf("found: %s %q\n", url, body)
+	ch := make(chan string)
 	for _, u := range urls {
-		Crawl(u, depth-1, fetcher)
+		go func(url string) {
+			Crawl(url, depth-1, fetcher)
+			ch <- url
+		}(u)
+	}
+	for range urls {
+		<-ch
 	}
 	return
 }
