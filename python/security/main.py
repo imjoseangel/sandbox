@@ -99,9 +99,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except InvalidTokenError:
+    except InvalidTokenError as exc:
+        raise credentials_exception from exc
+    if token_data.username is not None:
+        user = get_user(fake_users_db, username=token_data.username)
+    else:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
