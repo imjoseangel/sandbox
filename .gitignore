@@ -105,4 +105,7 @@ Temporary Items
 *.hcl
 !terragrunt.hcl
 
+# .env files
+.env
+
 # End of https://www.gitignore.io/api/ansible,windows,osx
