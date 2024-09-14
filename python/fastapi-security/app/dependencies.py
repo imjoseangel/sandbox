@@ -117,9 +117,9 @@ async def get_current_active_user(
     return current_user
 
 
-async def get_token_header(x_token: Annotated[str, Header()]):
-    if x_token != "399b419e7ba981e5e98fbf65326ba1ac27ea00410f303afe2d198b336c7900dd":
-        raise HTTPException(status_code=400, detail="X-Token header invalid")
+async def get_token_header(x_api_key: Annotated[str, Header()]):
+    if x_api_key != "399b419e7ba981e5e98fbf65326ba1ac27ea00410f303afe2d198b336c7900dd":
+        raise HTTPException(status_code=400, detail="x-api-key header invalid")
 
 
 async def get_query_token(token: str):
