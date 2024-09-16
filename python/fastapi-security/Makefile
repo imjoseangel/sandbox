@@ -13,7 +13,7 @@ help:  ## Display this help
 .PHONY: runuvi
 runuvi: ## Run app with uvicorn
 	$(info Make: Run app)
-	@uvicorn --app-dir app main:app --host 0.0.0.0 --port 8000
+	@python -m uvicorn --app-dir app main:app --host 0.0.0.0 --port 8000
 
 .PHONY: run
 run: ## Run app
