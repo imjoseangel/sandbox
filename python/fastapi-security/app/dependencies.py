@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from datetime import datetime, timedelta, timezone
+import logging
 from typing import Annotated
 
 import jwt
@@ -7,7 +11,6 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import BaseModel
-
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -47,6 +50,7 @@ class UserInDB(User):
     hashed_password: str
 
 
+logging.getLogger('passlib').setLevel(logging.ERROR)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

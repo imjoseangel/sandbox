@@ -1,12 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from datetime import timedelta
 from typing import Annotated
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..dependencies import (authenticate_user, fake_users_db,
-                            create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES,
-                            Token)
+from app.dependencies import (authenticate_user, fake_users_db,
+                              create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES,
+                              Token)
 
 router = APIRouter()
 

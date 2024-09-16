@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from fastapi import Depends, FastAPI
 
-from .dependencies import get_token_header, get_current_active_user
-from .internal import admin
-from .routers import items, users, token
+from app.dependencies import get_token_header, get_current_active_user
+from app.internal import admin
+from app.routers import items, users, token
 
 app = FastAPI(title="Auth Service", version="1.0.0")
 

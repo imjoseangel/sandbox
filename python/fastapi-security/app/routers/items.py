@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..dependencies import get_token_header
+from app.dependencies import get_token_header
 
 router = APIRouter(
     prefix="/items",
