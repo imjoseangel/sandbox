@@ -8,12 +8,13 @@ from llama_index.core.workflow import (
 from llama_index.llms.ollama import Ollama
 import asyncio
 
+
 class JokeEvent(Event):
     joke: str
 
 
 class JokeFlow(Workflow):
-    llm = Ollama(model="llama3.1:latest", request_timeout=120.0)
+    llm = Ollama(model="llama3.2:latest", request_timeout=120.0)
 
     @step
     async def generate_joke(self, ev: StartEvent) -> JokeEvent:
@@ -30,6 +31,7 @@ class JokeFlow(Workflow):
         prompt = f"Give a thorough analysis and critique of the following joke: {joke}"
         response = await self.llm.acomplete(prompt)
         return StopEvent(result=str(response))
+
 
 async def main():
     w = JokeFlow(timeout=60, verbose=False)
