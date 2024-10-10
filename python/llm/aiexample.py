@@ -1,3 +1,4 @@
+import asyncio
 from llama_index.core.workflow import (
     Event,
     StartEvent,
@@ -6,7 +7,6 @@ from llama_index.core.workflow import (
     step,
 )
 from llama_index.llms.ollama import Ollama
-import asyncio
 
 
 class JokeEvent(Event):
