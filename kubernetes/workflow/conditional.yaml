@@ -11,18 +11,16 @@ spec:
     # flip a coin
     - - name: flip-coin
         template: flip-coin
-    # evaluate the result in parallel
     - - name: approval
         template: approval
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
     - - name: create-regex
-        template: create                       # call create template if ~ "hea"
+        template: create
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*0 to destroy.*'"
       - name: destroy-regex
-        template: destroy                       # call create template if ~ "tai"
+        template: destroy
         when: "'{{steps.approval.outputs.parameters.approve}}' == 'YES'"
 
-  # Return create or destroy based on a random number
   - name: flip-coin
     script:
       image: python:alpine3.6
