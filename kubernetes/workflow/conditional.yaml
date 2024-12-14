@@ -13,7 +13,7 @@ spec:
         template: flip-coin
     - - name: approval
         template: approval
-        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
+        when: "'{{steps.flip-coin.outputs.result}}' !~ '.*0 to destroy.*'"
     - - name: create-regex
         template: create
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*0 to destroy.*'"
