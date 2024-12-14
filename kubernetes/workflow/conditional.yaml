@@ -14,10 +14,10 @@ spec:
     # evaluate the result in parallel
     - - name: heads-regex
         template: heads                       # call heads template if ~ "hea"
-        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*hea.*'"
+        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*0 to destroy.*'"
       - name: tails-regex
         template: tails                       # call heads template if ~ "tai"
-        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*tai.*'"
+        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
 
   # Return heads or tails based on a random number
   - name: flip-coin
@@ -26,23 +26,17 @@ spec:
       command: [python]
       source: |
         import random
-        result = "it was heads" if random.randint(0,1) == 0 else "it was tails"
+        result = "0 to destroy" if random.randint(0,1) == 0 else "1 to destroy"
         print(result)
 
   - name: heads
     container:
       image: alpine:3.6
       command: [sh, -c]
-      args: ["echo \"it was heads\""]
+      args: ["echo \"0 to destroy\""]
 
   - name: tails
     container:
       image: alpine:3.6
       command: [sh, -c]
-      args: ["echo \"it was tails\""]
-
-  - name: heads-tails-or-twice-tails
-    container:
-      image: alpine:3.6
-      command: [sh, -c]
-      args: ["echo \"it was heads the first flip and tails the second. Or it was two times tails.\""]
+      args: ["echo \"1 to destroy\""]
