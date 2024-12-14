@@ -12,12 +12,15 @@ spec:
     - - name: flip-coin
         template: flip-coin
     # evaluate the result in parallel
+    - - name: approval
+        template: approval
+        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
     - - name: create-regex
         template: create                       # call create template if ~ "hea"
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*0 to destroy.*'"
       - name: destroy-regex
         template: destroy                       # call create template if ~ "tai"
-        when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
+        when: "'{{steps.approval.outputs.parameters.approve}}' == 'YES'"
 
   # Return create or destroy based on a random number
   - name: flip-coin
@@ -40,3 +43,20 @@ spec:
       image: alpine:3.6
       command: [sh, -c]
       args: ["echo \"1 to destroy\""]
+
+  - name: approval
+    suspend: {}
+    inputs:
+        parameters:
+          - name: approve
+            default: 'NO'
+            enum:
+                - 'YES'
+                - 'NO'
+            description: >-
+              Choose YES to confirm deployment
+    outputs:
+        parameters:
+          - name: approve
+            valueFrom:
+                supplied: {}
