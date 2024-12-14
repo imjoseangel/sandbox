@@ -1,0 +1,210 @@
+# IMPORTANT NOTE: Fake data is used for this example
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: workflow-template-workloadidentity
+spec:
+  arguments:
+    parameters:
+    - name: identity
+      description: Input a name for the Identity (lowercase)
+    - name: namespace
+      description: Input the namespace where identity will run
+      value: workflow
+    - name: serviceaccount
+      description: Input the serviceaccount for the Kubernetes namespace
+  entrypoint: terraform-deploy
+  artifactGC:
+    strategy: OnWorkflowDeletion
+    forceFinalizerRemoval: true
+  templates:
+    - name: terraform-deploy
+      steps:
+        - - name: clone
+            template: git-clone
+        - - name: init
+            template: tf-init
+            arguments:
+              artifacts:
+              - name: git-clone
+                from: "{{steps.clone.outputs.artifacts.git-clone}}"
+        - - name: plan
+            template: tf-plan
+            arguments:
+              artifacts:
+              - name: tf-init
+                from: "{{steps.init.outputs.artifacts.tf-init}}"
+        - - name: approval
+            template: approval
+        - - name: apply
+            template: tf-apply
+            when: '{{steps.approval.outputs.parameters.approve}} == YES'
+            arguments:
+              artifacts:
+              - name: tf-plan
+                from: "{{steps.plan.outputs.artifacts.tf-plan-git}}"
+    - name: git-clone
+      container:
+        image: registry.k8s.io/git-sync/git-sync:v4.4.0
+        command:
+          - /git-sync
+        args:
+          - --repo=https://github.com/imjoseangel/iac-deployment
+          - --one-time
+        workingDir: /git
+          - mountPath: /git
+            name: git
+      volumes:
+        - name: git
+          emptyDir: {}
+      outputs:
+        artifacts:
+        - name: git-clone
+          path: /git
+    - name: tf-init
+      inputs:
+        artifacts:
+          - name: git-clone
+            path: /git
+        parameters:
+          - name: identity
+            value: '{{workflow.parameters.identity}}'
+      container:
+        image: hashicorp/terraform:1.10.1
+        command:
+          - terraform
+        args:
+          - -chdir=/git/iac-deployment/core/identity
+          - init
+          - -reconfigure
+          - -upgrade
+          - -backend-config=./../../envs/dev/backend.hcl
+          - -backend-config=key={{inputs.parameters.identity}}-identity.tfstate
+          - -plugin-dir=./../../pkgs
+        env:
+          - name: ARM_SUBSCRIPTION_ID
+            value: 6712f57d-26ba-416b-abb2-268526e17381
+          - name: ARM_USE_OIDC
+            value: "true"
+          - name: ARM_OIDC_TOKEN_FILE_PATH
+            value: /var/run/secrets/azure/tokens/azure-identity-token
+          - name: ARM_CLIENT_ID
+            value: bf021e86-60f0-4891-8ea8-bed9ffbbb864
+          - name: ARM_TENANT_ID
+            value: 709ecd08-0589-4235-aff0-5e6988c4dc65
+        workingDir: /git
+      outputs:
+        artifacts:
+        - name: tf-init
+          path: /git
+    - name: tf-plan
+      inputs:
+        artifacts:
+          - name: tf-init
+            path: /git
+        parameters:
+          - name: identity
+            value: '{{workflow.parameters.identity}}'
+          - name: namespace
+            value: '{{workflow.parameters.namespace}}'
+          - name: serviceaccount
+            value: '{{workflow.parameters.serviceaccount}}'
+      container:
+        image: hashicorp/terraform:1.10.1
+        command:
+          - terraform
+        args:
+          - -chdir=/git/iac-deployment/core/identity
+          - plan
+          - -var-file=envs/dev/terraform.tfvars
+          - -var-file=./../../envs/dev/terraform.tfvars
+          - -out=/git/terraform.plan
+        env:
+          - name: ARM_SUBSCRIPTION_ID
+            value: 6712f57d-26ba-416b-abb2-268526e17381
+          - name: ARM_USE_OIDC
+            value: "true"
+          - name: ARM_OIDC_TOKEN_FILE_PATH
+            value: /var/run/secrets/azure/tokens/azure-identity-token
+          - name: ARM_CLIENT_ID
+            value: bf021e86-60f0-4891-8ea8-bed9ffbbb864
+          - name: ARM_TENANT_ID
+            value: 709ecd08-0589-4235-aff0-5e6988c4dc65
+          - name: TF_VAR_identity_name
+            value: '{{inputs.parameters.identity}}'
+          - name: TF_VAR_workload_sa_namespace
+            value: '{{inputs.parameters.namespace}}'
+          - name: TF_VAR_workload_sa_name
+            value: '{{inputs.parameters.serviceaccount}}'
+        workingDir: /git
+      outputs:
+        artifacts:
+        - name: tf-plan
+          path: /git/terraform.plan
+          archive:
+            none: {}
+        - name: tf-plan-git
+          path: /git
+    - name: approval
+      suspend: {}
+      inputs:
+          parameters:
+            - name: approve
+              default: 'NO'
+              enum:
+                  - 'YES'
+                  - 'NO'
+              description: >-
+                Choose YES to confirm deployment
+      outputs:
+          parameters:
+            - name: approve
+              valueFrom:
+                  supplied: {}
+    - name: tf-apply
+      inputs:
+        artifacts:
+          - name: tf-plan
+            path: /git
+        parameters:
+          - name: identity
+            value: '{{workflow.parameters.identity}}'
+          - name: namespace
+            value: '{{workflow.parameters.namespace}}'
+          - name: serviceaccount
+            value: '{{workflow.parameters.serviceaccount}}'
+      container:
+        image: hashicorp/terraform:1.10.1
+        command:
+          - terraform
+        args:
+          - -chdir=/git/iac-deployment/core/identity
+          - apply
+          - -auto-approve
+          - -var-file=envs/dev/terraform.tfvars
+          - -var-file=./../../envs/dev/terraform.tfvars
+        env:
+          - name: ARM_SUBSCRIPTION_ID
+            value: 6712f57d-26ba-416b-abb2-268526e17381
+          - name: ARM_USE_OIDC
+            value: "true"
+          - name: ARM_OIDC_TOKEN_FILE_PATH
+            value: /var/run/secrets/azure/tokens/azure-identity-token
+          - name: ARM_CLIENT_ID
+            value: bf021e86-60f0-4891-8ea8-bed9ffbbb864
+          - name: ARM_TENANT_ID
+            value: 709ecd08-0589-4235-aff0-5e6988c4dc65
+          - name: TF_VAR_identity_name
+            value: '{{inputs.parameters.identity}}'
+          - name: TF_VAR_workload_sa_namespace
+            value: '{{inputs.parameters.namespace}}'
+          - name: TF_VAR_workload_sa_name
+            value: '{{inputs.parameters.serviceaccount}}'
+        workingDir: /git
+
+# ############################### RBAC ############################### #
+#
+# # Azure IAM:
+#     - Managed Identity Contributor
+#     - Azure Kubernetes Service Cluster User Role
