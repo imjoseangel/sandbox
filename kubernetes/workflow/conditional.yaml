@@ -12,14 +12,14 @@ spec:
     - - name: flip-coin
         template: flip-coin
     # evaluate the result in parallel
-    - - name: heads-regex
-        template: heads                       # call heads template if ~ "hea"
+    - - name: create-regex
+        template: create                       # call create template if ~ "hea"
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*0 to destroy.*'"
-      - name: tails-regex
-        template: tails                       # call heads template if ~ "tai"
+      - name: destroy-regex
+        template: destroy                       # call create template if ~ "tai"
         when: "'{{steps.flip-coin.outputs.result}}' =~ '.*1 to destroy.*'"
 
-  # Return heads or tails based on a random number
+  # Return create or destroy based on a random number
   - name: flip-coin
     script:
       image: python:alpine3.6
@@ -29,13 +29,13 @@ spec:
         result = "0 to destroy" if random.randint(0,1) == 0 else "1 to destroy"
         print(result)
 
-  - name: heads
+  - name: create
     container:
       image: alpine:3.6
       command: [sh, -c]
       args: ["echo \"0 to destroy\""]
 
-  - name: tails
+  - name: destroy
     container:
       image: alpine:3.6
       command: [sh, -c]
