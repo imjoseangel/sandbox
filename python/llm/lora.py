@@ -3,7 +3,7 @@ from llama_index.core import Settings, SimpleDirectoryReader, SummaryIndex, Vect
 from llama_index.core.agent import AgentRunner, FunctionCallingAgentWorker
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.tools import QueryEngineTool
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.ollama import OllamaEmbedding
 
 # load lora_paper.pdf documents
 documents = SimpleDirectoryReader(
@@ -15,13 +15,10 @@ splitter = SentenceSplitter(chunk_size=1024)
 # Create nodes from documents
 nodes = splitter.get_nodes_from_documents(documents)
 
-Settings.embed_model = HuggingFaceEmbedding(
-    model_name="BAAI/bge-small-en-v1.5")
-Settings.llm = Ollama(model="qwen2.5-coder", request_timeout=120.0,
+Settings.embed_model = OllamaEmbedding(base_url="https://zidp-ollama-uat.zih.zurich.com", model_name="nomic-embed-text:latest",
+                                       ollama_additional_kwargs={"mirostat": 0})
+Settings.llm = Ollama(base_url="https://zidp-ollama-uat.zih.zurich.com", model="qwen2.5-coder", request_timeout=120.0,
                       temperature=0.0, context_window=2048)
-
-llm = Ollama(model="qwen2.5-coder", request_timeout=120.0,
-             temperature=0.0, context_window=2048)
 
 summary_index = SummaryIndex(nodes)
 vector_index = VectorStoreIndex(nodes)
@@ -45,7 +42,7 @@ vector_tool = QueryEngineTool.from_defaults(
 
 agent_worker = FunctionCallingAgentWorker.from_tools(
     tools=[vector_tool, summary_tool],
-    llm=llm,
+    llm=Settings.llm,
     verbose=True
 )
 agent = AgentRunner(agent_worker)
