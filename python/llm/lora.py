@@ -15,9 +15,9 @@ splitter = SentenceSplitter(chunk_size=1024)
 # Create nodes from documents
 nodes = splitter.get_nodes_from_documents(documents)
 
-Settings.embed_model = OllamaEmbedding(base_url="https://zidp-ollama-uat.zih.zurich.com", model_name="nomic-embed-text:latest",
+Settings.embed_model = OllamaEmbedding(base_url="http://localhost:11434", model_name="nomic-embed-text:latest",
                                        ollama_additional_kwargs={"mirostat": 0})
-Settings.llm = Ollama(base_url="https://zidp-ollama-uat.zih.zurich.com", model="qwen2.5-coder", request_timeout=120.0,
+Settings.llm = Ollama(base_url="http://localhost:11434", model="qwen2.5-coder", request_timeout=120.0,
                       temperature=0.0, context_window=2048)
 
 summary_index = SummaryIndex(nodes)
