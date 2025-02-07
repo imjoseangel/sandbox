@@ -31,12 +31,13 @@ functions = ChatOllama(model="qwen2.5:3b", format="json")
 @tool
 def fetch_info(query: str):
     """Retrieve information from the knowledge base."""
-    return retriever.get_relevant_documents(query)
+    return retriever.invoke(query)
 
 
-template = '''You are a {role}. Perform your duties professionally.
+template_system = '''
+You are a {role}. Perform your duties professionally.'''
 
-Answer the following questions as best you can. You have access to the following tools:
+template_user = '''Answer the following questions as best you can. You have access to the following tools:
 
 {tools}
 
@@ -53,12 +54,13 @@ Final Answer: the final answer to the original input question
 
 Begin!
 
-Question: {input}
+Question: {{input}}
 Thought:{agent_scratchpad}'''
 
 # Define the agent template
 agent_prompt = ChatPromptTemplate.from_messages([
-    ("system", template),
+    ("system", template_system),
+    ("user", template_user),
     MessagesPlaceholder("messages")
 ])
 
@@ -111,6 +113,7 @@ scenario = "Mission: Locate the missing SS Meridian in the North Atlantic."
 
 messages = [scenario]
 state = {"messages": messages}
+
 while True:
     result = chain.invoke(state)
     if END in result:
