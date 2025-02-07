@@ -6,11 +6,7 @@ from langchain import hub
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import tool
 from langchain_ollama import OllamaLLM as Ollama
-from langchain_core.messages import (
-    HumanMessage,
-    SystemMessage,
-    trim_messages,
-)
+from langchain_core.messages import HumanMessage, SystemMessage, trim_messages
 
 
 class WikipediaArticleExporter(BaseModel):
@@ -34,24 +30,50 @@ def wikipedia_text_exporter(article: str) -> dict[str, str]:
 
 
 class ChatHistoryManager:
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Initialize the ChatHistoryManager with a default system message.
+        """
         self.chat_history: List[Union[HumanMessage, SystemMessage]] = [
-            SystemMessage(content="You're a helpful assistant.")]
+            SystemMessage(content="You're a helpful assistant.")
+        ]
 
-    def append_chat_history(self, user_input, response):
+    def append_chat_history(self, user_input: str, response: str) -> None:
+        """
+        Append a user input and system response to the chat history.
+
+        Args:
+            user_input (str): The input message from the user.
+            response (str): The response message from the system.
+        """
         self.chat_history.append(HumanMessage(content=user_input))
         self.chat_history.append(SystemMessage(content=response))
 
-    def trim_chat_history(self):
+    def trim_chat_history(self, max_tokens: int = 5) -> None:
+        """
+        Trim the chat history to the last `max_tokens` messages.
+
+        Args:
+            max_tokens (int): The maximum number of messages to keep. Default is 5.
+        """
         self.chat_history = trim_messages(
             self.chat_history,
             token_counter=len,  # len will simply count the number of messages rather than tokens
-            max_tokens=5,  # allow up to 5 messages
+            max_tokens=max_tokens,  # allow up to max_tokens messages
             strategy="last",
             start_on="human",
             include_system=True,
             allow_partial=False,
         )
+
+    def get_chat_history(self) -> List[Union[HumanMessage, SystemMessage]]:
+        """
+        Get the current chat history.
+
+        Returns:
+            List[Union[HumanMessage, SystemMessage]]: The current chat history.
+        """
+        return self.chat_history
 
 
 def invoke(user_input, history_manager: ChatHistoryManager):
