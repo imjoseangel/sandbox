@@ -1,8 +1,9 @@
-from fastapi import FastAPI, BackgroundTasks
-from pydantic import BaseModel
 import asyncio
 import multiprocessing
 import pika
+
+from pydantic import BaseModel
+from fastapi import FastAPI, BackgroundTasks
 
 app = FastAPI()
 
@@ -15,7 +16,8 @@ def connect_to_rabbitmq():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
     channel = connection.channel()
-    channel.queue_declare(queue='task_queue')
+    channel.queue_declare(queue='task_queue', durable=True,
+                          arguments={"x-queue-type": "quorum"})
     return connection, channel
 
 
@@ -23,6 +25,9 @@ def process_message(ch, method, properties, body):
     print(f"Received {body}")
     # Simulate a long-running task
     asyncio.run(asyncio.sleep(1))
+    if body == b'stop':
+        print("Received stop message, shutting down")
+        ch.stop_consuming()
     print(f"Processed {body}")
 
 
