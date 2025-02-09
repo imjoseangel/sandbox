@@ -24,6 +24,11 @@ class EndpointList(BaseModel):
     endpoints: list[Endpoint]
 
 
+client = ollama.Client(
+    host='http://localhost:11434',
+)
+
+
 def connect_to_rabbitmq():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
@@ -67,6 +72,10 @@ async def send_message_endpoint(message: Message, background_tasks: BackgroundTa
 
 @app.get("/metadata/")
 async def hello_world():
+    prompt = '''
+            I have one endpoint,
+            named metadata, with path /metadata to show instructions.
+            '''
     response = ollama.chat(
         messages=[{
             'role': 'system',
@@ -78,10 +87,7 @@ async def hello_world():
             'role': 'user',
             'temperature': 0.1,
             'num_ctx': 2048,
-            'content': '''
-            I have one endpoint,
-            named metadata, with path /metadata to show instructions.
-            '''
+            'content': prompt
         }],
         model='gemma2:9b',
         format=EndpointList.model_json_schema(),
