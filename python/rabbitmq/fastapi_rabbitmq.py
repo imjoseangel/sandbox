@@ -1,5 +1,7 @@
 import asyncio
 import multiprocessing
+
+import ollama
 import pika
 
 from pydantic import BaseModel
@@ -10,6 +12,15 @@ app = FastAPI()
 
 class Message(BaseModel):
     content: str
+
+
+class Endpoint(BaseModel):
+    name: str
+    endpoint: str
+
+
+class EndpointList(BaseModel):
+    endpoints: list[Endpoint]
 
 
 def connect_to_rabbitmq():
@@ -53,9 +64,28 @@ async def send_message_endpoint(message: Message, background_tasks: BackgroundTa
     return {"message": "Message will be sent in background"}
 
 
-@app.get("/hello-world/")
+@app.get("/metadata/")
 async def hello_world():
-    return {"message": "Hello, World!"}
+    response = ollama.chat(
+        messages=[
+            {
+                'role': 'user',
+                'content': '''
+            I have two endpoints.
+            Endpoint / to show welcome message.
+            I also have a metadata, endpoint /metadata to show instructions.
+        ''',
+            }
+        ],
+        model='gemma2:9b',
+        format=EndpointList.model_json_schema(),
+    )
+
+    if response.message.content is None:
+        raise ValueError("No response from LLM")
+
+    endpoints = EndpointList.model_validate_json(response.message.content)
+    return endpoints
 
 
 @app.get("/")
