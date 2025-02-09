@@ -28,5 +28,9 @@ response = chat(
     model='gemma2:9b',
     format=PetList.model_json_schema(),
 )
-pets = PetList.model_validate_json(response.message.content)
-print(pets)
+
+if response.message.content is None:
+    raise ValueError("No response from LLM")
+else:
+    pets = PetList.model_validate_json(response.message.content)
+    print(pets)
