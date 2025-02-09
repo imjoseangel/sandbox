@@ -58,6 +58,11 @@ async def hello_world():
     return {"message": "Hello, World!"}
 
 
+@app.get("/")
+async def root():
+    return {"version": "v1alpha1"}
+
+
 def start_consumer_process():
     process = multiprocessing.Process(target=consume_messages)
     process.start()
