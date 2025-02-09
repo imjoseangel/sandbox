@@ -33,8 +33,12 @@ def connect_to_rabbitmq():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
     channel = connection.channel()
+    channel.exchange_declare(exchange='agent_exchange',
+                             exchange_type='fanout')
     channel.queue_declare(queue='task_queue', durable=True,
                           arguments={"x-queue-type": "quorum"})
+    channel.queue_bind(exchange='agent_exchange',
+                       queue='task_queue')
     return connection, channel
 
 
@@ -59,7 +63,8 @@ def consume_messages():
 
 async def send_message(message: str):
     connection, channel = connect_to_rabbitmq()
-    channel.basic_publish(exchange='', routing_key='task_queue', body=message)
+    channel.basic_publish(exchange='agent_exchange',
+                          routing_key='', body=message)
     print(f"Sent {message}")
     connection.close()
 
