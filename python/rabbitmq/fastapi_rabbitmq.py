@@ -17,6 +17,7 @@ class Message(BaseModel):
 class Endpoint(BaseModel):
     name: str
     endpoint: str
+    decription: str
 
 
 class EndpointList(BaseModel):
@@ -71,9 +72,8 @@ async def hello_world():
             {
                 'role': 'user',
                 'content': '''
-            I have two endpoints.
-            Endpoint / to show welcome message.
-            I also have a metadata, endpoint /metadata to show instructions.
+            I have one endpoint,
+            named metadata, with path /metadata to show instructions.
         ''',
             }
         ],
