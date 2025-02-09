@@ -68,15 +68,21 @@ async def send_message_endpoint(message: Message, background_tasks: BackgroundTa
 @app.get("/metadata/")
 async def hello_world():
     response = ollama.chat(
-        messages=[
+        messages=[{
+            'role': 'system',
+            'temperature': 0.0,
+            'num_ctx': 2048,
+            'content': 'You are an API developed with FastAPI'
+        },
             {
-                'role': 'user',
-                'content': '''
+            'role': 'user',
+            'temperature': 0.1,
+            'num_ctx': 2048,
+            'content': '''
             I have one endpoint,
             named metadata, with path /metadata to show instructions.
-        ''',
-            }
-        ],
+            '''
+        }],
         model='gemma2:9b',
         format=EndpointList.model_json_schema(),
     )
