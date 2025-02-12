@@ -43,7 +43,7 @@ class JokeFlow(Workflow):
 
 async def main():
     # Draw all
-    draw_all_possible_flows(JokeFlow, filename="joke_flow_all.html")
+    draw_all_possible_flows(JokeFlow(), filename="joke_flow_all.html")
 
     w = JokeFlow(timeout=60, verbose=False)
     result = await w.run(topic="cats")
