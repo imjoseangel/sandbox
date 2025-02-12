@@ -81,7 +81,7 @@ async def hello_world():
             I have one endpoint,
             named metadata, with path /metadata to show instructions.
             '''
-    response = ollama.chat(
+    response = client.chat(
         messages=[{
             'role': 'system',
             'temperature': 0.0,
