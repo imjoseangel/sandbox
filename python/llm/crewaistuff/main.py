@@ -1,9 +1,14 @@
 from crewai import Agent, Task, Crew, Process, LLM
 
+from crewai import Agent, Task, Crew, Process
+from crewai_tools import LlamaIndexTool
+
+
 llm = LLM(
     model="gemini/gemini-2.0-flash",
     temperature=0
 )
+
 
 researcher = Agent(
     role="{topic} Senior Researcher",
