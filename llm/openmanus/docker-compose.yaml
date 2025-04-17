@@ -1,0 +1,7 @@
+services:
+  openmanus:
+    build: .
+    volumes:
+      - ./config:/app/OpenManus/config
+    stdin_open: true
+    tty: true
