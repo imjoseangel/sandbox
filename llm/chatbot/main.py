@@ -1,31 +1,25 @@
-import logging
+from typing import Any, List
 import os
 import sys
-from typing import Any, List
 
 import gradio as gr
-
+import loguru
 import pymongo
 
 from llama_index.core import VectorStoreIndex, StorageContext
-from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
-from llama_index.llms.gemini import Gemini
-from llama_index.embeddings.gemini import GeminiEmbedding
-from llama_index.core.memory import ChatMemoryBuffer
-from llama_index.core.tools import QueryEngineTool, BaseTool
 from llama_index.core.agent import ReActAgent
-from llama_index.core.settings import Settings
 from llama_index.core.base.agent.types import StreamingAgentChatResponse
-
-
-# --- Configuration & Initialization ---
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+from llama_index.core.memory import ChatMemoryBuffer
+from llama_index.core.settings import Settings
+from llama_index.core.tools import QueryEngineTool, BaseTool
+from llama_index.embeddings.gemini import GeminiEmbedding
+from llama_index.llms.gemini import Gemini
+from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 
 
 # Initialize Gemini LLM & Embeddings
 Settings.llm = Gemini(api_key=os.getenv("GEMINI_API_KEY"),
-                      model_name="models/gemini-1.5-flash-latest")  # Changed to a standard model name
+                      model_name="models/gemini-1.5-flash-latest")
 Settings.embed_model = GeminiEmbedding(api_key=os.getenv(
     "GEMINI_API_KEY"), model_name="models/text-embedding-004")
 
@@ -33,11 +27,11 @@ Settings.embed_model = GeminiEmbedding(api_key=os.getenv(
 # --- Configuration ---
 MONGO_PASSWORD = os.getenv("MONGODB_PASSWORD")
 if not MONGO_PASSWORD:
-    logging.error(
+    loguru.logger.error(
         "Error: MONGODB_PASSWORD environment variable not set.")
     sys.exit(1)
 
-MONGO_DB = "XX"
+MONGO_DB = "xx"
 MONGO_HOST = "xx.hgmrw.mongodb.net"
 MONGO_CONNECTION_STRING = f"mongodb+srv://{MONGO_DB}:{MONGO_PASSWORD}@{MONGO_HOST}/"
 os.environ["MONGODB_URI"] = MONGO_CONNECTION_STRING
@@ -48,18 +42,18 @@ mongo_client: pymongo.MongoClient = pymongo.MongoClient(
     MONGO_CONNECTION_STRING)
 db_name = MONGO_DB
 collection_name = MONGO_COLLECTION
-index_name = MONGO_VECTORINDEX
+vector_index_name = MONGO_VECTORINDEX
 
 vector_store = MongoDBAtlasVectorSearch(
     client=mongo_client,
     db_name=db_name,
     collection_name=collection_name,
-    index_name=index_name,
+    vector_index_name=vector_index_name,
 )
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
 # --- Global Variables ---
-agent = None  # Will be initialized later
+agent = None
 
 # --- RAG Query Engine ---
 
@@ -70,7 +64,7 @@ def get_rag_query_engine():
     ).as_query_engine(
         similarity_top_k=3,
         response_mode="compact",
-        streaming=False  # Tool expects a single response, not a stream
+        streaming=False
     )
 
 # --- Custom Robust RAG Tool ---
@@ -80,20 +74,20 @@ class RobustQueryEngineTool(QueryEngineTool):
     async def _acall(self, **kwargs: Any) -> str:
         query_str = kwargs.get("input", "")
         if not isinstance(query_str, str) or not query_str.strip():
-            logging.warning(
+            loguru.logger.warning(
                 f"RobustQueryEngineTool received invalid input: {kwargs}")
             return "Error: Invalid or empty query provided to the document retriever."
 
         try:
-            # type: LlamaResponse
             response_obj = await self._query_engine.aquery(query_str)
 
             actual_response_str = getattr(response_obj, 'response', None)
+            loguru.logger.info(actual_response_str)
 
             if actual_response_str is None or actual_response_str.strip() == "":
                 num_source_nodes = len(response_obj.source_nodes) if response_obj and hasattr(
                     response_obj, 'source_nodes') else 0
-                logging.info(
+                loguru.logger.info(
                     f"RAG query for '{query_str}' yielded no text response. "
                     f"Source nodes found: {num_source_nodes}")
                 if num_source_nodes == 0:
@@ -104,23 +98,20 @@ class RobustQueryEngineTool(QueryEngineTool):
                             "answer could be synthesized from them.")
             return actual_response_str
         except Exception as e:
-            logging.error(
+            loguru.logger.error(
                 f"Error during RobustQueryEngineTool._acall for query "
                 f"'{query_str}': {e}", exc_info=True)
             return f"An error occurred while trying to retrieve documents: {str(e)}"
 
-
-# --- Import Tools ---
-# Make sure tools directory and files exist as previously described
-
 # --- Agent Initialization ---
+
 
 def initialize_agent():
     global agent
+
     actions_log = ["Initializing Agent..."]
     try:
         rag_query_engine = get_rag_query_engine()
-        # Use the RobustQueryEngineTool
         knowledge_base_tool = RobustQueryEngineTool.from_defaults(
             query_engine=rag_query_engine,
             name="knowledge_base_retriever",
@@ -138,16 +129,15 @@ def initialize_agent():
             tools=tools_for_agent,
             llm=Settings.llm,
             memory=chat_memory,
-            verbose=True,  # Logs thoughts to console, helpful for debugging
-            # LlamaIndex ReActAgent supports streaming out-of-the-box with astream_chat
+            verbose=True,
         )
         actions_log.append(
             "Agent initialized successfully with Knowledge Base Retriever tool.")
-        logging.info("Agent initialized.")
+        loguru.logger.info("Agent initialized.")
     except Exception as e:
         error_msg = f"Error initializing agent: {e}"
         actions_log.append(error_msg)
-        logging.error(error_msg, exc_info=True)
+        loguru.logger.error(error_msg, exc_info=True)
     return "\n".join(actions_log)
 
 
@@ -155,20 +145,17 @@ def initialize_agent():
 initialization_logs = initialize_agent()
 
 # --- Gradio Chat Interface Logic (with Streaming) ---
-# Adapted for gr.ChatInterface
 
 
 async def chat_bot_logic(message: str | None,
-                         # [[user, bot], [user, bot], ...]
                          history_list_of_lists: list,
                          session_state: dict,
                          current_actions_log_content: str):
     global agent
 
-    # Ensure current_actions_log_content is initialized if None (should not happen with value set)
     if current_actions_log_content is None:
         current_actions_log_content = initialization_logs
-    elif not isinstance(current_actions_log_content, str):  # Ensure it's a string
+    elif not isinstance(current_actions_log_content, str):
         current_actions_log_content = str(current_actions_log_content)
 
     turn_specific_log_entries = []
@@ -176,47 +163,41 @@ async def chat_bot_logic(message: str | None,
     if not agent:
         error_msg = "ERROR: Agent not initialized. Chat interface cannot function."
         turn_specific_log_entries.append(error_msg)
-        logging.error(error_msg)
-        if message:  # Only yield error if there was a user message trying to be processed
+        loguru.logger.error(error_msg)
+        if message:
             yield "Agent is not ready. Please check the application logs."
         new_full_log = current_actions_log_content + "\n\n" + \
             "\n".join(
-                turn_specific_log_entries)  # Added extra newline for spacing
-        yield "", session_state, new_full_log  # Yield empty chat string, state, and log
+                turn_specific_log_entries)
+        yield "", session_state, new_full_log
         return
 
-    # Handle "Clear" button click (message is None from gr.ChatInterface clear_btn)
     if message is None:
         agent.reset()
         turn_specific_log_entries.append(
             "SYSTEM: New conversation started by button. Memory has been cleared.")
-        logging.info(
+        loguru.logger.info(
             "New conversation started via clear button (message is None).")
-        session_state["chat_history"] = []  # Reset our state's history tracker
-        # No chat message to yield. gr.ChatInterface handles clearing the chat display.
+        session_state["chat_history"] = []
         new_full_log = current_actions_log_content + \
             "\n\n" + "\n".join(turn_specific_log_entries)
-        # Yield empty chat string, state, and log for additional_outputs
         yield "", session_state, new_full_log
         return
 
-    # Handle user message
     turn_specific_log_entries.append(f"User: {message}")
     turn_specific_log_entries.append("Chatbot thinking...")
 
-    # Handle "new conversation" text command (optional, clear_btn is primary)
     if message.lower().strip() == "new conversation":
         agent.reset()
         bot_response = "Okay, I've started a new conversation. How can I help you?"
         turn_specific_log_entries.append(
             "SYSTEM: New conversation started by text command. Memory has been cleared.")
-        logging.info(
+        loguru.logger.info(
             "New conversation started by user input 'new conversation'.")
-        session_state["chat_history"] = []  # Reset our state's history tracker
-        yield bot_response  # Stream bot response
+        session_state["chat_history"] = []
+        yield bot_response
         new_full_log = current_actions_log_content + \
             "\n\n" + "\n".join(turn_specific_log_entries)
-        # Yield final chat, state, and log
         yield bot_response, session_state, new_full_log
         return
 
@@ -229,7 +210,7 @@ async def chat_bot_logic(message: str | None,
             error_detail = (f"Unexpected response type from agent: {type(response_payload)}. "
                             f"Expected StreamingAgentChatResponse.")
             turn_specific_log_entries.append(f"ERROR: {error_detail}")
-            logging.error(error_detail)
+            loguru.logger.error(error_detail)
             full_response_text = "Error: Could not process agent response due to unexpected type."
             yield full_response_text  # Stream error to chat
             new_full_log = current_actions_log_content + \
@@ -238,7 +219,7 @@ async def chat_bot_logic(message: str | None,
             yield full_response_text, session_state, new_full_log
             return
 
-        logging.info(
+        loguru.logger.info(
             "Received StreamingAgentChatResponse object. Processing stream...")
         turn_specific_log_entries.append(
             "INFO: Processing agent response stream...")
@@ -253,7 +234,7 @@ async def chat_bot_logic(message: str | None,
             if response_obj:
                 actual_response_str = getattr(response_obj, 'response', None)
                 if actual_response_str:
-                    logging.info(
+                    loguru.logger.info(
                         "Stream yielded no text, using fallback from "
                         "response_payload.response.response.")
                     full_response_text = actual_response_str
@@ -261,7 +242,7 @@ async def chat_bot_logic(message: str | None,
 
         if hasattr(response_payload, 'sources') and response_payload.sources:
             final_stream_sources = response_payload.sources
-            logging.info(
+            loguru.logger.info(
                 f"Found {len(final_stream_sources)} sources after streaming.")
 
         turn_specific_log_entries.append(f"Chatbot: {full_response_text}")
@@ -286,19 +267,18 @@ async def chat_bot_logic(message: str | None,
         # Update our state tracker
         session_state["chat_history"] = history_list_of_lists
         new_full_log = current_actions_log_content + "\n\n" + \
-            "\n".join(turn_specific_log_entries)  # Added extra newline
-        # Yield final chat, state, and log
+            "\n".join(turn_specific_log_entries)
         yield full_response_text, session_state, new_full_log
         return
 
     except Exception as e:
         error_msg = f"Sorry, an error occurred: {str(e)}"
-        logging.error(f"Error during chat stream: {e}", exc_info=True)
+        loguru.logger.error(f"Error during chat stream: {e}", exc_info=True)
         turn_specific_log_entries.append(f"ERROR processing your request: {e}")
         yield error_msg  # Stream error to chat
         new_full_log = current_actions_log_content + \
             "\n\n" + "\n".join(turn_specific_log_entries)
-        yield error_msg, session_state, new_full_log  # Yield final chat, state, and log
+        yield error_msg, session_state, new_full_log
         return
 
 # --- Gradio Interface Definition ---
@@ -409,9 +389,8 @@ with gr.Blocks(theme=gr.themes.Citrus(primary_hue="blue"),
 
 
 if __name__ == "__main__":
-    logging.info("Starting Gradio app with streaming support...")
+    loguru.logger.info("Starting Gradio app with streaming support...")
     print("Initialization logs (also in UI on startup):\n", initialization_logs)
-    print("Finance Chatbot Expert is starting. Access it at the URL provided by Gradio.")
-    # .queue() is important for handling multiple users/requests and streaming
+    print("MongoDB Chatbot Expert is starting. Access it at the URL provided by Gradio.")
     demo.queue().launch(debug=False, share=False,
                         server_name='127.0.0.1', server_port=8080)
