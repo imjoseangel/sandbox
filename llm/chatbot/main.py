@@ -13,6 +13,7 @@ from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.settings import Settings
 from llama_index.core.tools import QueryEngineTool, BaseTool
 from llama_index.embeddings.gemini import GeminiEmbedding
+from llama_index.core.vector_stores import MetadataFilters, ExactMatchFilter  # Added import
 from llama_index.llms.gemini import Gemini
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 
@@ -58,13 +59,19 @@ agent = None
 # --- RAG Query Engine ---
 
 
-def get_rag_query_engine():
-    return VectorStoreIndex.from_vector_store(
+def get_rag_query_engine(metadata_filters: MetadataFilters | None = None):
+    """
+    Creates a RAG query engine from the global vector store.
+    Optionally applies metadata filters to the underlying retriever.
+    """
+    current_index = VectorStoreIndex.from_vector_store(
         vector_store=vector_store
-    ).as_query_engine(
+    )
+    return current_index.as_query_engine(
         similarity_top_k=3,
         response_mode="compact",
-        streaming=False
+        streaming=False,
+        filters=metadata_filters  # Apply filters here
     )
 
 # --- Custom Robust RAG Tool ---
@@ -73,13 +80,25 @@ def get_rag_query_engine():
 class RobustQueryEngineTool(QueryEngineTool):
     async def _acall(self, **kwargs: Any) -> str:
         query_str = kwargs.get("input", "")
+        filter_key = kwargs.get("filter_key")
+        filter_value = kwargs.get("filter_value")
+
         if not isinstance(query_str, str) or not query_str.strip():
             loguru.logger.warning(
                 f"RobustQueryEngineTool received invalid input: {kwargs}")
             return "Error: Invalid or empty query provided to the document retriever."
 
+        dynamic_filters = None
+        if filter_key and filter_value:
+            loguru.logger.info(
+                f"Applying dynamic filter: {filter_key} = {filter_value}")
+            dynamic_filters = MetadataFilters(
+                filters=[ExactMatchFilter(
+                    key=str(filter_key), value=str(filter_value))]
+            )
+
         try:
-            response_obj = await self._query_engine.aquery(query_str)
+            response_obj = await self._query_engine.aquery(query_str, filters=dynamic_filters)
 
             actual_response_str = getattr(response_obj, 'response', None)
             loguru.logger.info(actual_response_str)
@@ -111,16 +130,28 @@ def initialize_agent():
 
     actions_log = ["Initializing Agent..."]
     try:
-        rag_query_engine = get_rag_query_engine()
+        # Initialize the RAG query engine without any static filters.
+        # Dynamic filters will be applied by the tool based on agent's input.
+        rag_query_engine = get_rag_query_engine(metadata_filters=None)
+        loguru.logger.info(
+            "Initialized RAG query engine with no default filters.")
+
         knowledge_base_tool = RobustQueryEngineTool.from_defaults(
             query_engine=rag_query_engine,
             name="knowledge_base_retriever",
             description=(
-                "Use this tool to retrieve specific information, definitions, explanations, "
-                "best practices, and other contextual details from uploaded documents in the "
-                "MongoDB Atlas knowledge base. "
-                "For example, ask 'What is the formula for X?' or 'Explain Y best practices.'"
-            )
+                "Use this tool to retrieve specific information from the MongoDB Atlas knowledge base. "
+                "Provide the main query in the 'input' field. "
+                "If the user specifies a filter criterion (e.g., 'on page 20', 'for category X', 'in document Y'), "
+                "you can provide 'filter_key' and 'filter_value' arguments to narrow down the search. "
+                "For example, to search for 'MongoDB security' on page '20', the arguments would be: "
+                "input='MongoDB security', filter_key='metadata.page_label', filter_value='20'. "
+                "Another example: for 'summarize chapter 5', use: "
+                "input='summary', filter_key='metadata.chapter_title', filter_value='Chapter 5'. "
+                "If no specific filter is mentioned by the user, only provide the 'input' argument. "
+                "Common filter keys are 'metadata.page_label', 'metadata.file_name', 'metadata.category', etc. "
+                "Always use 'metadata.<actual_key_name>' for the filter_key."
+            ),
         )
         tools_for_agent: List[BaseTool] = [knowledge_base_tool]
         chat_memory = ChatMemoryBuffer.from_defaults(token_limit=3500)
