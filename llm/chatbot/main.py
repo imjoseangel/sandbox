@@ -8,7 +8,7 @@ import pymongo
 
 from llama_index.core import VectorStoreIndex, StorageContext
 from llama_index.core.agent import ReActAgent
-from llama_index.core.base.agent.types import StreamingAgentChatResponse
+from llama_index.core.chat_engine.types import StreamingAgentChatResponse
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.settings import Settings
 from llama_index.core.tools import QueryEngineTool, BaseTool

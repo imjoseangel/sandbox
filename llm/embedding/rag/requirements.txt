@@ -1,0 +1,9 @@
+llama-index-core
+llama-index-embeddings-ollama
+llama-index-llms-ollama
+llama-index-readers-file
+llama-index-vector-stores-mongodb
+loguru
+pdfminer.six
+pymongo
+pymupdf
