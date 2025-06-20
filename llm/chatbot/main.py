@@ -1,427 +1,300 @@
-from typing import Any, List
-import os
+import logging
+import threading
+import re
 import sys
 
-import gradio as gr
-import loguru
-import pymongo
-
-from llama_index.core import VectorStoreIndex, StorageContext
+from llama_index.core import PromptTemplate
+from llama_index.core import Settings
 from llama_index.core.agent import ReActAgent
-from llama_index.core.chat_engine.types import StreamingAgentChatResponse
+from llama_index.core.llms import ChatMessage, MessageRole
 from llama_index.core.memory import ChatMemoryBuffer
-from llama_index.core.settings import Settings
-from llama_index.core.tools import QueryEngineTool, BaseTool
-from llama_index.embeddings.gemini import GeminiEmbedding
-from llama_index.core.vector_stores import MetadataFilters, ExactMatchFilter  # Added import
 from llama_index.llms.gemini import Gemini
-from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 
+import gradio as gr
 
-# Initialize Gemini LLM & Embeddings
-Settings.llm = Gemini(api_key=os.getenv("GEMINI_API_KEY"),
-                      model_name="models/gemini-1.5-flash-latest")
-Settings.embed_model = GeminiEmbedding(api_key=os.getenv(
-    "GEMINI_API_KEY"), model_name="models/text-embedding-004")
-
-# Initialize MongoDB Atlas
 # --- Configuration ---
-MONGO_PASSWORD = os.getenv("MONGODB_PASSWORD")
-if not MONGO_PASSWORD:
-    loguru.logger.error(
-        "Error: MONGODB_PASSWORD environment variable not set.")
-    sys.exit(1)
 
-MONGO_DB = "xx"
-MONGO_HOST = "xx.hgmrw.mongodb.net"
-MONGO_CONNECTION_STRING = f"mongodb+srv://{MONGO_DB}:{MONGO_PASSWORD}@{MONGO_HOST}/"
-os.environ["MONGODB_URI"] = MONGO_CONNECTION_STRING
-MONGO_COLLECTION = "vector_collection"
-MONGO_VECTORINDEX = "vector_index"
-
-mongo_client: pymongo.MongoClient = pymongo.MongoClient(
-    MONGO_CONNECTION_STRING)
-db_name = MONGO_DB
-collection_name = MONGO_COLLECTION
-vector_index_name = MONGO_VECTORINDEX
-
-vector_store = MongoDBAtlasVectorSearch(
-    client=mongo_client,
-    db_name=db_name,
-    collection_name=collection_name,
-    vector_index_name=vector_index_name,
+logger = logging.getLogger(__name__)
+# Define your log format
+formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)-8s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-# --- Global Variables ---
-agent = None
-
-# --- RAG Query Engine ---
+# Get the root logger and configure it
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.DEBUG)
 
 
-def get_rag_query_engine(metadata_filters: MetadataFilters | None = None):
-    """
-    Creates a RAG query engine from the global vector store.
-    Optionally applies metadata filters to the underlying retriever.
-    """
-    current_index = VectorStoreIndex.from_vector_store(
-        vector_store=vector_store
+# Configure Console Handler to output to actual console
+console_handler = logging.StreamHandler(sys.__stdout__)
+console_handler.setFormatter(formatter)
+
+root_logger.addHandler(console_handler)
+
+
+MODEL = "models/gemini-1.5-flash-latest"
+
+Settings.llm = Gemini(
+    model=MODEL,
+    request_timeout=120.0,
+    temperature=0.0,
+    context_window=2048,
+)
+
+react_system_header_str = """\
+You are an advanced assistant that MUST use tools for EVERY user query without exception. Follow these rules ABSOLUTELY:
+
+## ABSOLUTE RULES
+1. **MANDATORY FIRST TOOL USE**: For EVERY user query, your FIRST response MUST be a tool call (Action). No exceptions.
+2. **NO MEMORY DEPENDENCE**: Never rely on conversation history or previous answers - always use tools to get fresh information.
+3. **STRICT SEQUENCE**: Follow this exact sequence for every query:
+   - Thought: Analyze the query
+   - Action: Call a tool (required first step)
+   - Observation: Tool result
+   - [Repeat Thought/Action/Observation if needed]
+   - Answer: Final response using ONLY current turn's tool outputs
+
+## TOOL USAGE PROTOCOL
+1. **ALWAYS START WITH TOOL**: Even if you think you know the answer, you MUST begin with a tool call.
+2. **REFRESH DATA**: For repeated queries, use tools again to get fresh data - never reuse old observations.
+3. **TOOL SELECTION**: Choose the most specific tool available for each query.
+
+## TOOLS AVAILABLE
+{tool_desc}
+
+## OUTPUT FORMAT
+Follow this exact format for EVERY response:
+
+Thought: [Analyze the query and select tool]
+Action: [tool_name]
+Action Input: {{"input": "query"}}
+Observation: [tool result]
+Answer: [Final response using ONLY current observations]
+
+## EXAMPLES
+**User:** What documents are available?
+**Thought:** User asks for available documents. Must use available_documents_listing tool.
+**Action:** available_documents_listing
+**Action Input:** {{}}
+**Observation:** ["Document A", "Document B"]
+**Answer:** The available documents are:
+- Document A
+- Document B
+
+**User:** Tell me about Document A
+**Thought:** Need details about Document A. Must use knowledge_base_retriever.
+**Action:** knowledge_base_retriever
+**Action Input:** {{"input": "details about Document A"}}
+**Observation:** [Document details...]
+**Answer:** Document A details: [...]
+"""
+
+react_system_prompt = PromptTemplate(react_system_header_str)
+chat_memory = ChatMemoryBuffer.from_defaults(token_limit=8196)
+
+agent = ReActAgent.from_tools(
+    tools=[
+    ],
+    llm=Settings.llm,
+    memory=chat_memory,
+    verbose=True,
+    max_iterations=10,
+    tool_retriever=None,
+    context="You MUST use tools for EVERY query without exception",
+    callback_manager=Settings.callback_manager,
+)
+
+agent.update_prompts({
+    "react_header": react_system_prompt,
+    "react_chat_refine": PromptTemplate(
+        "You MUST use tools to refine this answer. Current response: {existing_answer}\n"
+        "Now use appropriate tools to improve it."
     )
-    return current_index.as_query_engine(
-        similarity_top_k=3,
-        response_mode="compact",
-        streaming=False,
-        filters=metadata_filters  # Apply filters here
-    )
-
-# --- Custom Robust RAG Tool ---
+})
 
 
-class RobustQueryEngineTool(QueryEngineTool):
-    async def _acall(self, **kwargs: Any) -> str:
-        query_str = kwargs.get("input", "")
-        filter_key = kwargs.get("filter_key")
-        filter_value = kwargs.get("filter_value")
+class StdOutToLogger:
+    """
+    A class to redirect stdout to a Python logger, stripping ANSI codes.
+    """
 
-        if not isinstance(query_str, str) or not query_str.strip():
-            loguru.logger.warning(
-                f"RobustQueryEngineTool received invalid input: {kwargs}")
-            return "Error: Invalid or empty query provided to the document retriever."
+    def __init__(self, logger_instance, log_level=logging.INFO):
+        self.logger = logger_instance
+        self.log_level = log_level
+        self.line_buffer = ""
+        self.ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        self._thread_local_capture = threading.local()
 
-        dynamic_filters = None
-        if filter_key and filter_value:
-            loguru.logger.info(
-                f"Applying dynamic filter: {filter_key} = {filter_value}")
-            dynamic_filters = MetadataFilters(
-                filters=[ExactMatchFilter(
-                    key=str(filter_key), value=str(filter_value))]
+    def start_capture(self):
+        """Starts capturing stdout lines for the current thread."""
+        self._thread_local_capture.lines = []
+
+    def stop_capture(self) -> list[str]:
+        """Stops capturing stdout lines for the current thread and returns them."""
+        captured = getattr(self._thread_local_capture, 'lines', None)
+        if hasattr(self._thread_local_capture, 'lines'):
+            del self._thread_local_capture.lines
+        return captured if captured is not None else []
+
+    def is_capturing(self) -> bool:
+        """Returns True if capturing is active for the current thread."""
+        return hasattr(self._thread_local_capture, 'lines')
+
+    def write(self, message: str):
+        self.line_buffer += message
+        while '\n' in self.line_buffer:
+            line, self.line_buffer = self.line_buffer.split('\n', 1)
+            stripped_line = self.ansi_escape.sub('', line)
+            if stripped_line.strip():
+                self.logger.log(self.log_level, stripped_line)
+                if hasattr(self._thread_local_capture, 'lines'):
+                    self._thread_local_capture.lines.append(stripped_line)
+
+    def flush(self):
+        if self.line_buffer.strip():
+            line_to_log = self.ansi_escape.sub('', self.line_buffer)
+            if line_to_log.strip():
+                self.logger.log(self.log_level, line_to_log)
+                if hasattr(self._thread_local_capture, 'lines'):
+                    self._thread_local_capture.lines.append(line_to_log)
+            self.line_buffer = ""
+
+    def isatty(self):
+        # Make it appear as a TTY to encourage full output from libraries
+        return True
+
+
+stdout_redirector = StdOutToLogger(logger, log_level=logging.DEBUG)
+sys.stdout = stdout_redirector
+logger.info(
+    "Successfully redirected sys.stdout to the logging system.")
+
+
+def chat_bot_logic(message: str, gradio_history: list, session_state: dict):
+    if not message or not message.strip():
+        return "Please enter a non-empty message."
+
+    if not gradio_history:
+        session_state["chat_history"] = []
+        logger.info("Reset chat history for new session")
+
+    agent.reset()
+
+    stdout_capturer = stdout_redirector
+    stdout_capturer.start_capture()
+
+    try:
+        tool_enforced_prompt = (
+            f"REMEMBER: You MUST use tools for this query. User asked: {message}\n"
+            "Select the most appropriate tool now."
+        )
+
+        response_obj = agent.chat(
+            tool_enforced_prompt,
+            chat_history=session_state.get("chat_history", [])
+        )
+
+        captured_lines_attempt1 = stdout_capturer.stop_capture()
+        action_logged_attempt1 = any(
+            "Action:" in line for line in captured_lines_attempt1)
+
+        if not action_logged_attempt1:
+            logger.warning(
+                f"Agent did not log an 'Action:' for query '{message}'. "
+                "Forcing tool use with re-prompt."
             )
+            stdout_capturer.start_capture()
+            response_obj = agent.chat(
+                f"CRITICAL: You MUST use a tool and log 'Action:'. Original query: {message}",
+                chat_history=session_state.get("chat_history", [])
+            )
+            captured_lines_attempt2 = stdout_capturer.stop_capture()
 
-        try:
-            response_obj = await self._query_engine.aquery(query_str, filters=dynamic_filters)
-
-            actual_response_str = getattr(response_obj, 'response', None)
-            loguru.logger.info(actual_response_str)
-
-            if actual_response_str is None or actual_response_str.strip() == "":
-                num_source_nodes = len(response_obj.source_nodes) if response_obj and hasattr(
-                    response_obj, 'source_nodes') else 0
-                loguru.logger.info(
-                    f"RAG query for '{query_str}' yielded no text response. "
-                    f"Source nodes found: {num_source_nodes}")
-                if num_source_nodes == 0:
-                    return ("No relevant documents were found in the knowledge "
-                            "base to answer the query.")
-                else:
-                    return ("Relevant documents were found, but no direct "
-                            "answer could be synthesized from them.")
-            return actual_response_str
-        except Exception as e:
-            loguru.logger.error(
-                f"Error during RobustQueryEngineTool._acall for query "
-                f"'{query_str}': {e}", exc_info=True)
-            return f"An error occurred while trying to retrieve documents: {str(e)}"
-
-# --- Agent Initialization ---
-
-
-def initialize_agent():
-    global agent
-
-    actions_log = ["Initializing Agent..."]
-    try:
-        # Initialize the RAG query engine without any static filters.
-        # Dynamic filters will be applied by the tool based on agent's input.
-        rag_query_engine = get_rag_query_engine(metadata_filters=None)
-        loguru.logger.info(
-            "Initialized RAG query engine with no default filters.")
-
-        knowledge_base_tool = RobustQueryEngineTool.from_defaults(
-            query_engine=rag_query_engine,
-            name="knowledge_base_retriever",
-            description=(
-                "Use this tool to retrieve specific information from the MongoDB Atlas knowledge base. "
-                "Provide the main query in the 'input' field. "
-                "If the user specifies a filter criterion (e.g., 'on page 20', 'for category X', 'in document Y'), "
-                "you can provide 'filter_key' and 'filter_value' arguments to narrow down the search. "
-                "For example, to search for 'MongoDB security' on page '20', the arguments would be: "
-                "input='MongoDB security', filter_key='metadata.page_label', filter_value='20'. "
-                "Another example: for 'summarize chapter 5', use: "
-                "input='summary', filter_key='metadata.chapter_title', filter_value='Chapter 5'. "
-                "If no specific filter is mentioned by the user, only provide the 'input' argument. "
-                "Common filter keys are 'metadata.page_label', 'metadata.file_name', 'metadata.category', etc. "
-                "Always use 'metadata.<actual_key_name>' for the filter_key."
-            ),
-        )
-        tools_for_agent: List[BaseTool] = [knowledge_base_tool]
-        chat_memory = ChatMemoryBuffer.from_defaults(token_limit=3500)
-
-        agent = ReActAgent.from_tools(
-            tools=tools_for_agent,
-            llm=Settings.llm,
-            memory=chat_memory,
-            verbose=True,
-        )
-        actions_log.append(
-            "Agent initialized successfully with Knowledge Base Retriever tool.")
-        loguru.logger.info("Agent initialized.")
-    except Exception as e:
-        error_msg = f"Error initializing agent: {e}"
-        actions_log.append(error_msg)
-        loguru.logger.error(error_msg, exc_info=True)
-    return "\n".join(actions_log)
-
-
-# --- Call initializations ---
-initialization_logs = initialize_agent()
-
-# --- Gradio Chat Interface Logic (with Streaming) ---
-
-
-async def chat_bot_logic(message: str | None,
-                         history_list_of_lists: list,
-                         session_state: dict,
-                         current_actions_log_content: str):
-    global agent
-
-    if current_actions_log_content is None:
-        current_actions_log_content = initialization_logs
-    elif not isinstance(current_actions_log_content, str):
-        current_actions_log_content = str(current_actions_log_content)
-
-    turn_specific_log_entries = []
-
-    if not agent:
-        error_msg = "ERROR: Agent not initialized. Chat interface cannot function."
-        turn_specific_log_entries.append(error_msg)
-        loguru.logger.error(error_msg)
-        if message:
-            yield "Agent is not ready. Please check the application logs."
-        new_full_log = current_actions_log_content + "\n\n" + \
-            "\n".join(
-                turn_specific_log_entries)
-        yield "", session_state, new_full_log
-        return
-
-    if message is None:
-        agent.reset()
-        turn_specific_log_entries.append(
-            "SYSTEM: New conversation started by button. Memory has been cleared.")
-        loguru.logger.info(
-            "New conversation started via clear button (message is None).")
-        session_state["chat_history"] = []
-        new_full_log = current_actions_log_content + \
-            "\n\n" + "\n".join(turn_specific_log_entries)
-        yield "", session_state, new_full_log
-        return
-
-    turn_specific_log_entries.append(f"User: {message}")
-    turn_specific_log_entries.append("Chatbot thinking...")
-
-    if message.lower().strip() == "new conversation":
-        agent.reset()
-        bot_response = "Okay, I've started a new conversation. How can I help you?"
-        turn_specific_log_entries.append(
-            "SYSTEM: New conversation started by text command. Memory has been cleared.")
-        loguru.logger.info(
-            "New conversation started by user input 'new conversation'.")
-        session_state["chat_history"] = []
-        yield bot_response
-        new_full_log = current_actions_log_content + \
-            "\n\n" + "\n".join(turn_specific_log_entries)
-        yield bot_response, session_state, new_full_log
-        return
-
-    try:
-        response_payload = await agent.astream_chat(message)
-        full_response_text = ""
-        final_stream_sources = []
-
-        if not isinstance(response_payload, StreamingAgentChatResponse):
-            error_detail = (f"Unexpected response type from agent: {type(response_payload)}. "
-                            f"Expected StreamingAgentChatResponse.")
-            turn_specific_log_entries.append(f"ERROR: {error_detail}")
-            loguru.logger.error(error_detail)
-            full_response_text = "Error: Could not process agent response due to unexpected type."
-            yield full_response_text  # Stream error to chat
-            new_full_log = current_actions_log_content + \
-                "\n\n" + "\n".join(turn_specific_log_entries)
-            # Yield final chat, state, and log
-            yield full_response_text, session_state, new_full_log
-            return
-
-        loguru.logger.info(
-            "Received StreamingAgentChatResponse object. Processing stream...")
-        turn_specific_log_entries.append(
-            "INFO: Processing agent response stream...")
-
-        async for text_token in response_payload.async_response_gen():
-            if text_token:
-                full_response_text += text_token
-                yield full_response_text  # Stream to gr.ChatInterface
-
-        if not full_response_text:
-            response_obj = getattr(response_payload, 'response', None)
-            if response_obj:
-                actual_response_str = getattr(response_obj, 'response', None)
-                if actual_response_str:
-                    loguru.logger.info(
-                        "Stream yielded no text, using fallback from "
-                        "response_payload.response.response.")
-                    full_response_text = actual_response_str
-                    yield full_response_text  # Yield the fallback
-
-        if hasattr(response_payload, 'sources') and response_payload.sources:
-            final_stream_sources = response_payload.sources
-            loguru.logger.info(
-                f"Found {len(final_stream_sources)} sources after streaming.")
-
-        turn_specific_log_entries.append(f"Chatbot: {full_response_text}")
-
-        if final_stream_sources:
-            turn_specific_log_entries.append("ACTIONS & SOURCES:")
-            for i, tool_output_source in enumerate(final_stream_sources):
-                tool_name = tool_output_source.tool_name
-                raw_input_str = str(
-                    getattr(tool_output_source, 'raw_input', 'N/A'))[:200]
-                raw_output_str = str(
-                    getattr(tool_output_source, 'raw_output', 'N/A'))[:200]
-                turn_specific_log_entries.append(
-                    f"  Source {i+1}: Tool Used: '{tool_name}'\n"
-                    f"    Input: {raw_input_str}{'...' if len(str(getattr(tool_output_source, 'raw_input', ''))) > 200 else ''}\n"
-                    f"    Output: {raw_output_str}{'...' if len(str(getattr(tool_output_source, 'raw_output', ''))) > 200 else ''}\n"
+            if not any("Action:" in line for line in captured_lines_attempt2):
+                logger.error(
+                    f"Agent STILL did not log an 'Action:' on re-prompt for query '{message}'. "
+                    f"Response: {str(response_obj)}"
                 )
-        else:
-            turn_specific_log_entries.append(
-                "No explicit tool sources reported by the agent for this interaction.")
+            else:
+                logger.info(
+                    f"Agent logged 'Action:' on re-prompt for query '{message}'.")
 
-        # Update our state tracker
-        session_state["chat_history"] = history_list_of_lists
-        new_full_log = current_actions_log_content + "\n\n" + \
-            "\n".join(turn_specific_log_entries)
-        yield full_response_text, session_state, new_full_log
-        return
+        final_response_str = str(response_obj)
+
+        updated_history = session_state.get("chat_history", [])
+        updated_history.extend([
+            ChatMessage(role=MessageRole.USER, content=message),
+            ChatMessage(role=MessageRole.ASSISTANT, content=final_response_str)
+        ])
+        session_state["chat_history"] = updated_history
+
+        return final_response_str
 
     except Exception as e:
-        error_msg = f"Sorry, an error occurred: {str(e)}"
-        loguru.logger.error(f"Error during chat stream: {e}", exc_info=True)
-        turn_specific_log_entries.append(f"ERROR processing your request: {e}")
-        yield error_msg  # Stream error to chat
-        new_full_log = current_actions_log_content + \
-            "\n\n" + "\n".join(turn_specific_log_entries)
-        yield error_msg, session_state, new_full_log
-        return
+        logger.error(f"Error in chat_bot_logic: {str(e)}", exc_info=True)
+        if getattr(stdout_capturer, "is_capturing", lambda: False)():
+            stdout_capturer.stop_capture()
+        return f"Error processing request: {str(e)}"
 
-# --- Gradio Interface Definition ---
-with gr.Blocks(theme=gr.themes.Citrus(primary_hue="blue"),
-               title="MongoDB Chatbot Expert") as demo:
+
+with gr.Blocks(theme=gr.themes.Citrus(primary_hue="blue"), title="Chatbot") as demo:
     gr.HTML("""
     <style>
-        body {
-            background: #f8fafc;
-        }
-        .gradio-container {
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-        }
-        .chatbot-avatar-user {
-            border-radius: 50%;
-            border: 2px solid #d1eaff;
-            background: #e3f1ff;
-            width: 42px;
-            height: 42px;
-            object-fit: cover;
-            margin: 0 6px 0 0;
-        }
-        .chatbot-avatar-bot {
-            border-radius: 50%;
-            border: 2px solid #ffd580;
-            background: #fff8e1;
-            width: 42px;
-            height: 42px;
-            object-fit: cover;
-            margin: 0 0 0 6px;
-        }
-        .chatbot-message-user {
-            background: linear-gradient(90deg, #e3f1ff 0%, #c9e7ff 100%);
-            color: #222;
-        }
-        .chatbot-message-bot {
-            background: linear-gradient(90deg, #fff8e1 0%, #fff3c4 100%);
-        }
-        .actions-log {
-            font-family: monospace;
-            font-size: 13px;
-            background: #f4f4f5;
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            height: 520px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        .header-container {
-            position: sticky;
-            top: 0;
-            background: #ffffff;
-            z-index: 10;
-            padding-bottom: 8px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+        body { background: #f8fafc; font-family: 'Quicksand', sans-serif; font-size: 10px; color: #333; }
+        .gradio-container { font-family: 'Quicksand', sans-serif; font-size: 10px; }
+        .chatbot-avatar-user, .chatbot-avatar-bot { border-radius: 50%; width: 36px; height: 36px; object-fit: cover; }
+        .chatbot-avatar-user { border: 2px solid #d1eaff; background: #e3f1ff; margin: 0 6px 0 0; }
+        .chatbot-avatar-bot { border: 2px solid #ffd580; background: #fff8e1; margin: 0 0 0 6px; }
+        .chatbot-message-user { background: linear-gradient(90deg, #e3f1ff 0%, #c9e7ff 100%); color: #222; font-size: 13px; padding: 8px 12px; border-radius: 12px; }
+        .chatbot-message-bot { background: linear-gradient(90deg, #fff8e1 0%, #fff3c4 100%); font-size: 10px; padding: 8px 12px; border-radius: 12px; }
+        .actions-log { font-family: 'Courier New', monospace; font-size: 10px; background: #f4f4f5; border-radius: 12px; padding: 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); height: 520px; overflow-y: auto; white-space: pre-wrap; }
+        .header-container { position: sticky; top: 0; background: #ffffff; z-index: 10; padding-bottom: 8px; }
     </style>
     """)
 
     with gr.Column(elem_id="header", elem_classes="header-container"):
+        gr.HTML("""
+            <div style="display: flex; align-items: center; justify-content: left; width: 100%">
+                <img src="https://cdn-icons-png.flaticon.com/512/2490/2490408.png" style="width: 100px; height: 100px; margin-right: 10px;" />
+            </div>
+            """)
         gr.Markdown("""
-        # 🧑🏻‍💻 MongoDB Chatbot Expert 🤖
-
-        ## Welcome to your MongoDB assistant. Ask away!
+        # 👩🏻‍💻 Chatbot 🤖
 
         - 📄 **Knowledge Base**: Tips, facts, and business insights.
         - 🧠 **Context-Aware**: Handles ongoing conversations.
-        - 🔁 **Reset Session** to start from scratch.
-        - 📝 **Actions Log**: Real-time backend visibility.
+        - 🪣 **Reset Session** to start from scratch.
         """)
 
-    # session_state for agent's memory and other potential state variables
     session_data_state = gr.State(value={"chat_history": []})
 
     with gr.Row():
-        with gr.Column(scale=3):
-            actions_taken_display_ref = gr.Textbox(visible=False)
+        chat_ui = gr.ChatInterface(
+            fn=chat_bot_logic,
+            additional_inputs=[session_data_state],
+            type="messages",
+            examples=[["Give me all the available documents"]],
+            chatbot=gr.Chatbot(
+                label="Conversation",
+                avatar_images=(
+                    "https://img.icons8.com/fluency/96/user-female-circle.png",
+                    "https://img.icons8.com/fluency/96/chatbot.png"),
+                height=700,
+                show_label=True,
+                render_markdown=True,
+                autoscroll=True,
+                type="messages",
+            ),
+        )
 
-            chat_ui = gr.ChatInterface(
-                fn=chat_bot_logic,
-                additional_inputs=[session_data_state,
-                                   actions_taken_display_ref],
-
-                chatbot=gr.Chatbot(
-                    label="Conversation",
-                    bubble_full_width=True,
-                    avatar_images=(
-                        "https://img.icons8.com/fluency/96/user-female-circle.png",
-                        "https://img.icons8.com/fluency/96/chatbot.png"),
-                    height=700,
-                    show_label=True,
-                    render_markdown=True,
-                    autoscroll=True
-                ),
-            )
-        with gr.Column(scale=1):
-            gr.Markdown("## 📝 Actions Log")
-            actions_taken_display = gr.Textbox(
-                label="Chatbot Actions & System Logs",
-                lines=30,
-                interactive=False,
-                max_lines=40,
-                value=initialization_logs
-            )
-
-    chat_ui.additional_inputs = [session_data_state, actions_taken_display]
-    chat_ui.additional_outputs = [session_data_state, actions_taken_display]
-
+    chat_ui.additional_outputs = [session_data_state]
 
 if __name__ == "__main__":
-    loguru.logger.info("Starting Gradio app with streaming support...")
-    print("Initialization logs (also in UI on startup):\n", initialization_logs)
-    print("MongoDB Chatbot Expert is starting. Access it at the URL provided by Gradio.")
+    logger.info(f"Gradio version at runtime: {gr.__version__}")
+    logger.info("Starting Gradio app with streaming support...")
+    logger.info(
+        "Chatbot is starting. Access it at the URL provided by Gradio.")
     demo.queue().launch(debug=False, share=False,
-                        server_name='127.0.0.1', server_port=8080)
+                        server_name='0.0.0.0', server_port=8000)
