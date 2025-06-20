@@ -1,15 +1,18 @@
 import logging
-import threading
 import re
 import sys
+import threading
 
 from llama_index.core import PromptTemplate
 from llama_index.core import Settings
 from llama_index.core.agent import ReActAgent
 from llama_index.core.llms import ChatMessage, MessageRole
+from llama_index.core.tools import FunctionTool
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.llms.gemini import Gemini
+from llama_index.output_parsers.guardrails import GuardrailsOutputParser
 
+import guardrails as gd
 import gradio as gr
 
 # --- Configuration ---
@@ -32,6 +35,25 @@ console_handler.setFormatter(formatter)
 
 root_logger.addHandler(console_handler)
 
+rail_str = """
+<rail version="0.1">
+<output>
+    <string name="answer" description="The answer to the question"/>
+</output>
+
+<instructions>You are a helpful assistant.</instructions>
+
+<guidelines>
+    * The response should not contain jokes.
+    * The response should not contain harmful content.
+</guidelines>
+</rail>
+"""
+
+gd_parser = gd.Guard.from_rail_string(rail_str)
+
+
+output_parser = GuardrailsOutputParser(gd_parser)
 
 MODEL = "models/gemini-1.5-flash-latest"
 
@@ -40,6 +62,23 @@ Settings.llm = Gemini(
     request_timeout=120.0,
     temperature=0.0,
     context_window=2048,
+    output_parser=output_parser
+)
+
+
+def joke():
+    return "How much is two plus three?"
+
+
+joke_tool = FunctionTool.from_defaults(
+    fn=joke,
+    name="joke_tool",
+    description=("""
+        This tool is always used as a fallback when no other specific tool can address the user's request.
+        It indicates that the assistant does not have a dedicated tool for the current query.
+        Always respond in English. Please try rephrasing your request or ask about a different topic.
+        """),
+    return_direct=False,
 )
 
 react_system_header_str = """\
@@ -220,7 +259,20 @@ def chat_bot_logic(message: str, gradio_history: list, session_state: dict):
                 logger.info(
                     f"Agent logged 'Action:' on re-prompt for query '{message}'.")
 
-        final_response_str = str(response_obj)
+        final_response_str = response_obj.response
+
+        try:
+            validated = output_parser.parse(final_response_str)
+            if hasattr(validated, "answer"):
+                final_response_str = validated.answer
+            elif isinstance(validated, dict) and "answer" in validated:
+                final_response_str = validated["answer"]
+            else:
+                logger.warning(
+                    "Guardrails parsing failed, returning raw response.")
+        except Exception as e:
+            logger.error(
+                f"Guardrails output parsing failed: {e}", exc_info=True)
 
         updated_history = session_state.get("chat_history", [])
         updated_history.extend([
@@ -229,16 +281,32 @@ def chat_bot_logic(message: str, gradio_history: list, session_state: dict):
         ])
         session_state["chat_history"] = updated_history
 
-        return final_response_str
+        return final_response_str, session_state
+
+    except ValueError as e:
+        if "Reached max iterations" in str(e):
+            logger.error(
+                "Agent reached max iterations for this query.", exc_info=True)
+            return (
+                "Sorry, I could not answer your question because the maximum "
+                "number of reasoning steps was reached. "
+                "Please try rephrasing your request or ask something else.",
+                session_state
+            )
+        else:
+            logger.error(
+                f"ValueError in chat_bot_logic: {str(e)}", exc_info=True)
+            return f"Error processing request: {str(e)}", session_state
 
     except Exception as e:
         logger.error(f"Error in chat_bot_logic: {str(e)}", exc_info=True)
         if getattr(stdout_capturer, "is_capturing", lambda: False)():
             stdout_capturer.stop_capture()
-        return f"Error processing request: {str(e)}"
+        return f"Error processing request: {str(e)}", session_state
 
 
-with gr.Blocks(theme=gr.themes.Citrus(primary_hue="blue"), title="Chatbot") as demo:
+with gr.Blocks(theme=gr.themes.Citrus(primary_hue="blue"), title="Chatbot",
+               analytics_enabled=False) as chatbot:
     gr.HTML("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
@@ -296,5 +364,5 @@ if __name__ == "__main__":
     logger.info("Starting Gradio app with streaming support...")
     logger.info(
         "Chatbot is starting. Access it at the URL provided by Gradio.")
-    demo.queue().launch(debug=False, share=False,
-                        server_name='0.0.0.0', server_port=8000)
+    chatbot.queue().launch(debug=False, share=False,
+                           server_name='0.0.0.0', server_port=8000)
