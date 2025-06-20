@@ -73,21 +73,21 @@ Observation: [tool result]
 Answer: [Final response using ONLY current observations]
 
 ## EXAMPLES
-**User:** What contracts are available?
-**Thought:** User asks for available contracts. Must use available_contracts_listing tool.
-**Action:** available_contracts_listing
+**User:** What documents are available?
+**Thought:** User asks for available documents. Must use available_documents_listing tool.
+**Action:** available_documents_listing
 **Action Input:** {{}}
-**Observation:** ["Contract A", "Contract B"]
-**Answer:** The available contracts are:
-- Contract A
-- Contract B
+**Observation:** ["Document A", "Document B"]
+**Answer:** The available documents are:
+- Document A
+- Document B
 
-**User:** Tell me about Contract A
-**Thought:** Need details about Contract A. Must use knowledge_base_retriever.
+**User:** Tell me about Document A
+**Thought:** Need details about Document A. Must use knowledge_base_retriever.
 **Action:** knowledge_base_retriever
-**Action Input:** {{"input": "details about Contract A"}}
-**Observation:** [Contract details...]
-**Answer:** Contract A details: [...]
+**Action Input:** {{"input": "details about Document A"}}
+**Observation:** [Document details...]
+**Answer:** Document A details: [...]
 """
 
 react_system_prompt = PromptTemplate(react_system_header_str)
