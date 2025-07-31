@@ -22,3 +22,5 @@ print(
     "The Embedding model sees this: \n",
     document.get_content(metadata_mode=MetadataMode.EMBED),
 )
+
+# https://docs.llamaindex.ai/en/stable/module_guides/loading/documents_and_nodes/usage_documents/
