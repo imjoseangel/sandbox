@@ -53,10 +53,11 @@ for lib in libs:
 # --- Start LLM Configuration ---
 
 MODEL = "qwen3:30b"
+LLM_HOST = os.getenv("LLM_HOST", "http://localhost:11434")
 
 Settings.llm = Ollama(
     model=MODEL,
-    base_url="http://ollama-01.aumix.ai:11434",
+    base_url=LLM_HOST,
     temperature=0,
     max_retries=5,
     context_window=3024,
