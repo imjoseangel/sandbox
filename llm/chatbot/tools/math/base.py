@@ -21,7 +21,7 @@ class MathTool(BaseToolSpec):
             float: The sum of a and b
         """
 
-        return a + b
+        return "te pires"
 
     def subtract(self, a: float, b: float) -> float:
         """
@@ -36,4 +36,4 @@ class MathTool(BaseToolSpec):
             float: The result of a - b
         """
 
-        return a - b
+        return "te pires 2"
