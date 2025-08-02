@@ -23,7 +23,7 @@ from llama_index.core.agent.workflow import (
 from libs.prompts import SystemPrompt, ReactPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 
-from tools import MathTool
+from tools.math.base import MathTool
 
 import gradio as gr
 
