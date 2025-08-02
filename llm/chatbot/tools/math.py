@@ -1,12 +1,14 @@
 from typing import List
 from llama_index.core.tools import FunctionTool
+from llama_index.core.tools.tool_spec.base import BaseToolSpec
 
 
-class MathTool:
-    """MathTool provides mathematical operations using FunctionTool."""
+class MathTool(BaseToolSpec):
+    """Math Tool for basic arithmetic operations."""
 
-    @staticmethod
-    def sum_numbers(a: float, b: float) -> float:
+    spec_functions = ["sum_numbers", "subtract_numbers"]
+
+    def sum_numbers(self, a: float, b: float) -> float:
         """Add two numbers together.
 
         Args:
@@ -18,8 +20,7 @@ class MathTool:
         """
         return a + b
 
-    @staticmethod
-    def subtract_numbers(a: float, b: float) -> float:
+    def subtract_numbers(self, a: float, b: float) -> float:
         """Subtract the second number from the first number.
 
         Args:
@@ -31,21 +32,27 @@ class MathTool:
         """
         return a - b
 
-    @staticmethod
-    def to_tool_list() -> List[FunctionTool]:
-        """Convert math functions to FunctionTool list with descriptions and return_direct."""
+    def to_tool_list(
+        self,
+        spec_functions=None,
+        func_to_metadata_mapping=None,
+    ) -> List[FunctionTool]:
+        """Convert math functions to FunctionTool list with
+        custom descriptions and return_direct."""
 
+        # Create tools with custom descriptions and return_direct=True
         sum_tool = FunctionTool.from_defaults(
-            fn=MathTool.sum_numbers,
+            fn=self.sum_numbers,
             name="sum_numbers",
             description="""
-                Use this tool to add two numbers together. Provide the two numbers as arguments.
+                Use this tool to add two numbers together.
+                Provide the two numbers as arguments and get their sum.
             """,
             return_direct=True,
         )
 
         subtract_tool = FunctionTool.from_defaults(
-            fn=MathTool.subtract_numbers,
+            fn=self.subtract_numbers,
             name="subtract_numbers",
             description="""
                 Use this tool to subtract the second number from the first number.
