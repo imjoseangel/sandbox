@@ -1,4 +1,4 @@
-from tools.math import MathTool
+from tools.base import MathTool
 
 __version__ = "1.0.0"
 __author__ = "Jose Angel Munoz"
