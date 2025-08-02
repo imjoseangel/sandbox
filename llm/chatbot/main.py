@@ -6,7 +6,7 @@ import sys
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
 from llama_index.core import Settings
-from llama_index.llms.gemini import Gemini
+from llama_index.llms.ollama import Ollama
 from llama_index.core import PromptTemplate
 from llama_index.core.agent.workflow import ReActAgent
 from llama_index.core.llama_pack.base import BaseLlamaPack
@@ -52,13 +52,15 @@ for lib in libs:
 
 # --- Start LLM Configuration ---
 
-MODEL = "models/gemini-1.5-flash-latest"
+MODEL = "qwen3:30b"
 
-Settings.llm = Gemini(
+Settings.llm = Ollama(
     model=MODEL,
+    base_url="http://ollama-01.aumix.ai:11434",
     temperature=0,
     max_retries=5,
-    system_prompt=SystemPrompt()
+    context_window=3024,
+    system_prompt=SystemPrompt(),
 )
 
 # --- End LLM Configuration ---
@@ -166,6 +168,14 @@ class GradioReActAgentPack(BaseLlamaPack):
             handler = self.agent.run(user_msg=current_user_msg,
                                      memory=self.memory,
                                      ctx=self.context)
+
+            self.agent.update_prompts({
+                "react_header": self.react_prompt,
+                "react_chat_refine": PromptTemplate(
+                    "You MUST use tools to refine this answer. Current response: {existing_answer}\n"
+                    "Now use appropriate tools to improve it."
+                )
+            })
 
             async for event in handler.stream_events():
                 status_message = None
