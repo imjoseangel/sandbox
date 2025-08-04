@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import re
@@ -80,10 +81,11 @@ SUPPORTED_TOOLS = tool_spec.to_tool_list()
 class GradioReActAgentPack(BaseLlamaPack):
 
     def __init__(self, supported_tools: List[FunctionTool],
-                 **kwargs: Any,) -> None:
+                 **kwargs: Any) -> None:
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
         self.react_prompt = PromptTemplate(ReactPrompt())
+        self.auth = ("user", os.getenv("GRADIO_PASSWORD", "password"))
 
         self.agent = ReActAgent(
             tools=list(supported_tools),
@@ -116,9 +118,14 @@ class GradioReActAgentPack(BaseLlamaPack):
         to the history.
         """
         if isinstance(user_message, dict):
-            user_text = user_message.get("text", "")
+            user_text = user_message.get("text", "").strip()
         else:
-            user_text = user_message
+            user_text = str(user_message).strip() if user_message else ""
+
+        # Validate user input
+        if not user_text:
+            logger.warning("Empty user message received, ignoring")
+            return "", history
 
         logger.info(f"User message received: {user_text}")
 
@@ -130,51 +137,142 @@ class GradioReActAgentPack(BaseLlamaPack):
         self, chat_history: List[Dict[str, str]]
     ) -> AsyncGenerator[List[Dict[str, str]], None]:
         """
-        Generate the response from agent, and capture the stdout of the
-        ReActAgent's thoughts.
+        Generate the response from the agent, yielding real-time updates
+        based on the agent's event stream.
         """
-        # Clear memory and rebuild from our stored conversation history
-        self.memory.reset()
+        # Validate input
+        if not chat_history or len(chat_history) == 0:
+            logger.error("Empty chat history received")
+            return
 
-        # Rebuild entire conversation from stored history first
+        # Get the current user message and validate it
+        current_user_msg = chat_history[-1].get("content", "").strip()
+        if not current_user_msg:
+            logger.error("Empty user message received")
+            error_history = chat_history[:-1] + \
+                [{"role": "user", "content": chat_history[-1]["content"]},
+                 {"role": "assistant", "content": "❌ **Error**: Empty message received. "
+                 "Please enter a valid question."}]
+            yield error_history
+            return
+
+        # Don't reset memory completely - instead manage it more carefully
+        # Only clear the memory if we have too many messages to avoid token limits
+        if len(self.conversation_history) > 20:  # Keep last 20 messages
+            self.memory.reset()
+            # Keep only the last 10 conversations
+            recent_history = self.conversation_history[-10:]
+            self.conversation_history = recent_history
+            for msg in recent_history:
+                if hasattr(msg, 'content') and msg.content and msg.content.strip():
+                    self.memory.put(msg)
+
+        # Filter out any status messages or tool-related content from conversation history
+        clean_history = []
         for msg in self.conversation_history:
-            self.memory.put(msg)
+            if hasattr(msg, 'content') and msg.content and msg.content.strip():
+                # Skip messages that contain tool-related status indicators
+                if not any(indicator in msg.content.lower() for indicator in
+                           ['🤔', '🔧', '🔍', '💬', '✅', '🎉', '❌', 'thinking',
+                            'calling tool', 'setting up']):
+                    clean_history.append(msg)
 
-        # Then add any new messages from chat_history that aren't in our stored history
+        # Add any new messages from chat_history that aren't in our stored history
         for message in chat_history[:-1]:
-            if message["role"] == "user":
-                user_message = ChatMessage(
-                    role="user", content=message["content"])
-                if not any(msg.content == message["content"] and
-                           msg.role == "user" for msg in self.conversation_history):
-                    self.memory.put(user_message)
-                    self.conversation_history.append(user_message)
-            elif message["role"] == "assistant":
-                bot_message = ChatMessage(
-                    role="assistant", content=message["content"])
-                if not any(msg.content == message["content"] and
-                           msg.role == "assistant" for msg in self.conversation_history):
-                    self.memory.put(bot_message)
-                    self.conversation_history.append(bot_message)
+            content = message.get("content", "").strip()
+            if not content:
+                continue
 
-        # Get the current user message
-        current_user_msg = chat_history[-1]["content"]
+            if message["role"] == "user":
+                user_message = ChatMessage(role="user", content=content)
+                if not any(msg.content == content and msg.role == "user" for msg in clean_history):
+                    self.memory.put(user_message)
+            elif message["role"] == "assistant":
+                # Only add clean assistant responses (no status messages)
+                if not any(indicator in content.lower() for indicator in
+                           ['🤔', '🔧', '🔍', '💬', '✅', '🎉', '❌',
+                            'thinking', 'calling tool', 'setting up']):
+                    bot_message = ChatMessage(
+                        role="assistant", content=content)
+                    if not any(msg.content == content and msg.role == "assistant"
+                               for msg in clean_history):
+                        self.memory.put(bot_message)
+
+        # Create the current user message and add to memory
         current_user_message = ChatMessage(
             role="user", content=current_user_msg)
         self.memory.put(current_user_message)
 
+        response_content = ""
+        last_status = ""
+
         try:
-            response = await self.agent.run(user_msg=current_user_msg,
-                                            memory=self.memory,
-                                            ctx=self.context)
+            # Validate that we have a proper user message before proceeding
+            if not current_user_msg or not current_user_msg.strip():
+                raise ValueError("Empty or invalid user message")
 
-            resp = response.response
+            # Create a fresh handler for each request
+            handler = self.agent.run(
+                user_msg=current_user_msg,
+                memory=self.memory,
+                ctx=self.context
+            )
 
-            if isinstance(resp, ChatMessage):
-                response_content = resp.content
+            # Update prompts with clear tool selection guidance
+            self.agent.update_prompts({
+                "react_header": self.react_prompt,
+                "react_chat_refine": PromptTemplate(
+                    "You MUST use tools to refine this answer.\n"
+                    "IMPORTANT: Select tools based ONLY on the current question.\n"
+                    "For addition: use sum_numbers. For subtraction: use subtract_numbers.\n"
+                    "Current response: {existing_answer}\n"
+                    "Now use appropriate tools to improve it."
+                )
+            })
+
+            async for event in handler.stream_events():
+                status_message = None
+                if isinstance(event, ToolCall):
+                    tool_name = event.tool_name
+                    _ = ", ".join(
+                        f"{k}='{v}'" for k, v in event.tool_kwargs.items())
+                    status_message = f"🤔 **Thinking...** - Calling tool: `{tool_name}`"
+                elif isinstance(event, AgentSetup):
+                    status_message = f"🔧 **Setting up agent...** {event.setup_info}"
+                elif isinstance(event, AgentInput):
+                    status_message = f"🔍 **Input received**: {current_user_msg}"
+                elif isinstance(event, AgentStream):
+                    status_message = "💬 **Preparing response...**"
+                elif isinstance(event, ToolCallResult):
+                    status_message = f"✅ **Tool `{event.tool_name}` Executed**"
+                elif isinstance(event, AgentOutput):
+                    response_content += event.response.content or ""
+                    status_message = "🎉 **Response generated**"
+
+                if status_message and status_message != last_status:
+                    status_history = chat_history[:-1] + \
+                        [{"role": "user", "content": chat_history[-1]["content"]},
+                         {"role": "assistant", "content": status_message}]
+                    yield status_history
+                    last_status = status_message
+                    await asyncio.sleep(1)
+
+                if response_content:
+                    # Stream final response as it comes in
+                    streaming_history = chat_history[:-1] + \
+                        [{"role": "user", "content": chat_history[-1]["content"]},
+                         {"role": "assistant", "content": response_content}]
+                    yield streaming_history
+
+            # Await the final response object to ensure completion
+            response = await handler
+
+            if isinstance(response.response, ChatMessage):
+                response_content = response.response.content or ""
             else:
-                response_content = str(resp)
+                response_content = str(response.response)
 
+            # Clean up response
             response_content = re.sub(
                 r"^[\s\n\r]*(assistant:|user:)[\s\n\r]*",
                 "",
@@ -182,16 +280,32 @@ class GradioReActAgentPack(BaseLlamaPack):
                 flags=re.IGNORECASE
             )
 
-        except Exception as e:
+        except ValueError as e:
+            if "Got empty message" in str(e) or "Empty or invalid user message" in str(e):
+                logger.error(f"Empty message error: {e}")
+                response_content = "❌ **Error**: Please enter a valid question or statement."
+            else:
+                logger.error(f"ValueError during agent execution: {e}")
+                response_content = f"❌ **Error**: {str(e)}"
+        except (RuntimeError, TypeError) as e:
             logger.error(f"Error during agent execution: {e}")
             response_content = f"❌ **Error**: {str(e)}"
 
-        # Store the conversation in our persistent history
-        self.conversation_history.append(current_user_message)
-        assistant_message = ChatMessage(
-            role="assistant", content=response_content)
-        self.conversation_history.append(assistant_message)
-        self.memory.put(assistant_message)
+        # Store the conversation in our persistent history (only clean responses)
+        if current_user_message and current_user_message.content and \
+           current_user_message.content.strip():
+            self.conversation_history.append(current_user_message)
+
+        # Only store clean assistant responses in conversation history
+        if (response_content and
+            response_content.strip() and
+            not any(indicator in response_content.lower() for indicator in
+                    ['🤔', '🔧', '🔍', '💬', '✅', '🎉', '❌', 'thinking',
+                     'calling tool', 'setting up'])):
+            assistant_message = ChatMessage(
+                role="assistant", content=response_content)
+            self.conversation_history.append(assistant_message)
+            self.memory.put(assistant_message)
 
         updated_history = chat_history[:-1] + \
             [{"role": "user", "content": chat_history[-1]["content"]},
@@ -283,8 +397,7 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         chatbot.launch(server_name="0.0.0.0", server_port=8000,
                        favicon_path="assets/logo.png", auth=None,
-                       auth_message=AuthHTML(),
-                       allowed_paths=["assets/logo.png"],)
+                       auth_message=AuthHTML(), allowed_paths=["assets/logo.png"],)
 
 
 if __name__ == "__main__":

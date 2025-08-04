@@ -50,7 +50,7 @@ class MathTool(BaseToolSpec):
                 Provide the two numbers as arguments and get their sum.
                 DO NOT use this for subtraction operations.
             """,
-            return_direct=True,
+            return_direct=False,
         )
 
         subtract_tool = FunctionTool.from_defaults(
@@ -62,7 +62,7 @@ class MathTool(BaseToolSpec):
                 Provide the minuend (first number) and subtrahend (second number) as arguments.
                 DO NOT use this for addition operations.
             """,
-            return_direct=True,
+            return_direct=False,
         )
 
         return [sum_tool, subtract_tool]
