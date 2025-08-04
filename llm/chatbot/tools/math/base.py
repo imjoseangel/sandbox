@@ -45,8 +45,10 @@ class MathTool(BaseToolSpec):
             fn=self.sum_numbers,
             name="sum_numbers",
             description="""
-                Use this tool to add two numbers together.
+                Use this tool ONLY for addition operations (+, plus, add, sum).
+                Examples: "1 + 1", "add 5 and 3", "what's the sum of 2 and 4"
                 Provide the two numbers as arguments and get their sum.
+                DO NOT use this for subtraction operations.
             """,
             return_direct=True,
         )
@@ -55,8 +57,10 @@ class MathTool(BaseToolSpec):
             fn=self.subtract_numbers,
             name="subtract_numbers",
             description="""
-                Use this tool to subtract the second number from the first number.
-                Provide the minuend and subtrahend as arguments.
+                Use this tool ONLY for subtraction operations (-, minus, subtract, difference).
+                Examples: "9.9 - 9.11", "subtract 5 from 10", "what's 8 minus 3"
+                Provide the minuend (first number) and subtrahend (second number) as arguments.
+                DO NOT use this for addition operations.
             """,
             return_direct=True,
         )

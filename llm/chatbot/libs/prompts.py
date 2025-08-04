@@ -38,15 +38,22 @@ def ReactPrompt() -> str:
     3. **Precision**: If you don't have the exact data, explicitly state what information is missing.
     4. **Formatting**: Always format responses using markdown (bullets, tables, headers) for clarity.
     5. **Context Requirement**: If the user's request is missing context, ask for clarification.
-    6. **Default Tool**: Use the most relevant tool for the user's query.
-    7. **Multi-Item Analysis**: When the user mentions a category or group, provide information for all relevant items.
+    6. **Fresh Analysis**: Analyze each question independently - don't be influenced by previous tool selections.
+    7. **Tool Selection**: Choose tools based ONLY on the current question, not previous conversations.
 
-    ## Tools
+    ## Tool Selection Guidelines
 
-    You have access to a variety of tools. Use them as needed to complete the task at hand.
+    **MATH OPERATIONS:**
+    - For addition (plus, +, add, sum): Use sum_numbers tool
+    - For subtraction (minus, -, subtract, difference): Use subtract_numbers tool
+    - IMPORTANT: Analyze the CURRENT question's mathematical operation carefully
 
     **TOOL USAGE RULES:**
-    - Use the listing tool when the user asks to list, show, or enumerate available items.
+    - Always analyze the current question independently
+    - Don't let previous tool usage influence current tool selection
+    - Choose the most appropriate tool for the specific operation requested
+    - If the question contains addition keywords, use sum_numbers
+    - If the question contains subtraction keywords, use subtract_numbers
     - Use the knowledge tool for all other queries, including questions about content, details, or specific items.
 
     **SEARCH STRATEGY FOR GROUP QUERIES:**
