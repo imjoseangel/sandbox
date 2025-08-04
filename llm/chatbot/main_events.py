@@ -218,18 +218,6 @@ class GradioReActAgentPack(BaseLlamaPack):
                 ctx=self.context
             )
 
-            # Update prompts with clear tool selection guidance
-            self.agent.update_prompts({
-                "react_header": self.react_prompt,
-                "react_chat_refine": PromptTemplate(
-                    "You MUST use tools to refine this answer.\n"
-                    "IMPORTANT: Select tools based ONLY on the current question.\n"
-                    "For addition: use sum_numbers. For subtraction: use subtract_numbers.\n"
-                    "Current response: {existing_answer}\n"
-                    "Now use appropriate tools to improve it."
-                )
-            })
-
             async for event in handler.stream_events():
                 status_message = None
                 if isinstance(event, ToolCall):

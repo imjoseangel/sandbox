@@ -27,6 +27,7 @@ import gradio as gr
 from libs.prompts import SystemPrompt, ReactPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
+import asyncio
 
 
 # --- Start Logging Configuration ---
@@ -126,6 +127,53 @@ class GradioReActAgentPack(BaseLlamaPack):
         new_message = {"role": "user", "content": user_text}
         return "", [*history, new_message]
 
+    async def _stream_agent_events(
+        self,
+        handler,
+        chat_history: List[Dict[str, str]],
+        current_user_msg: str
+    ) -> AsyncGenerator[List[Dict[str, str]], None]:
+        """
+        Stream agent events and provide real-time status updates.
+        """
+
+        response_content = ""
+        last_status = None
+
+        async for event in handler.stream_events():
+            status_message = None
+            if isinstance(event, ToolCall):
+                tool_name = event.tool_name
+                _ = ", ".join(
+                    f"{k}='{v}'" for k, v in event.tool_kwargs.items())
+                status_message = f"🧰 **Calling tool**: `{tool_name}`"
+            elif isinstance(event, AgentSetup):
+                status_message = f"⚙️ **Setting up agent...** {event.setup_info}"
+            elif isinstance(event, AgentInput):
+                status_message = f"⌨️ **Input received**: {current_user_msg}"
+            elif isinstance(event, AgentStream):
+                status_message = "🤔 **Thinking...**"
+            elif isinstance(event, ToolCallResult):
+                status_message = f"✅ **Tool `{event.tool_name}` Executed**"
+            elif isinstance(event, AgentOutput):
+                response_content += event.response.content or ""
+                status_message = "🎉 **Response generated**"
+
+            if status_message and status_message != last_status:
+                status_history = chat_history[:-1] + \
+                    [{"role": "user", "content": chat_history[-1]["content"]},
+                        {"role": "assistant", "content": status_message}]
+                yield status_history
+                last_status = status_message
+                await asyncio.sleep(1)
+
+            if response_content:
+                # Stream final response as it comes in
+                streaming_history = chat_history[:-1] + \
+                    [{"role": "user", "content": chat_history[-1]["content"]},
+                        {"role": "assistant", "content": response_content}]
+                yield streaming_history
+
     async def _generate_response(
         self, chat_history: List[Dict[str, str]]
     ) -> AsyncGenerator[List[Dict[str, str]], None]:
@@ -164,16 +212,21 @@ class GradioReActAgentPack(BaseLlamaPack):
         self.memory.put(current_user_message)
 
         try:
-            response = await self.agent.run(user_msg=current_user_msg,
-                                            memory=self.memory,
-                                            ctx=self.context)
+            handler = self.agent.run(user_msg=current_user_msg,
+                                     memory=self.memory,
+                                     ctx=self.context)
 
-            resp = response.response
+            async for update in self._stream_agent_events(handler, chat_history,
+                                                          current_user_msg):
+                yield update
 
-            if isinstance(resp, ChatMessage):
-                response_content = resp.content
+            # Await the final response object to ensure completion
+            response = await handler
+
+            if isinstance(response.response, ChatMessage):
+                response_content = response.response.content or ""
             else:
-                response_content = str(resp)
+                response_content = str(response.response)
 
             response_content = re.sub(
                 r"^[\s\n\r]*(assistant:|user:)[\s\n\r]*",
