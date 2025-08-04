@@ -5,16 +5,19 @@ import re
 import sys
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-from llama_index.core import Settings
-from llama_index.llms.ollama import Ollama
 from llama_index.core import PromptTemplate
+from llama_index.core import Settings
 from llama_index.core.agent.workflow import ReActAgent
 from llama_index.core.llama_pack.base import BaseLlamaPack
 from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
 from llama_index.core.tools import FunctionTool
 from llama_index.core.workflow import Context
+from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import (
+    AgentInput,
+    AgentOutput,
+    AgentSetup,
     AgentStream,
     ToolCall,
     ToolCallResult,
@@ -173,7 +176,8 @@ class GradioReActAgentPack(BaseLlamaPack):
             self.agent.update_prompts({
                 "react_header": self.react_prompt,
                 "react_chat_refine": PromptTemplate(
-                    "You MUST use tools to refine this answer. Current response: {existing_answer}\n"
+                    "You MUST use tools to refine this answer.\n"
+                    "Current response: {existing_answer}\n"
                     "Now use appropriate tools to improve it."
                 )
             })
@@ -184,11 +188,18 @@ class GradioReActAgentPack(BaseLlamaPack):
                     tool_name = event.tool_name
                     _ = ", ".join(
                         f"{k}='{v}'" for k, v in event.tool_kwargs.items())
-                    status_message = f"🤔 **Thinking...**\n- Calling tool: `{tool_name}`"
+                    status_message = f"🤔 **Thinking...** - Calling tool: `{tool_name}`"
+                elif isinstance(event, AgentSetup):
+                    status_message = f"🔧 **Setting up agent...** {event.setup_info}"
+                elif isinstance(event, AgentInput):
+                    status_message = f"🔍 **Input received**: {current_user_msg}"
+                elif isinstance(event, AgentStream):
+                    status_message = "💬 **Preparing response...**"
                 elif isinstance(event, ToolCallResult):
                     status_message = f"✅ **Tool `{event.tool_name}` Executed**"
-                elif isinstance(event, AgentStream):
-                    response_content += event.delta
+                elif isinstance(event, AgentOutput):
+                    response_content += event.response.content or ""
+                    status_message = "🎉 **Response generated**"
 
                 if status_message and status_message != last_status:
                     status_history = chat_history[:-1] + \
@@ -252,7 +263,8 @@ class GradioReActAgentPack(BaseLlamaPack):
         # Define custom CSS for borders on both chat components
         custom_css = CustomCSS()
 
-        with gr.Blocks(theme=gr.themes.Origin(primary_hue="blue"), css=custom_css, title="Smart Assistant") as chatbot:
+        with gr.Blocks(theme=gr.themes.Default(primary_hue="blue"),
+                       css=custom_css, title="Smart Assistant") as chatbot:
             with gr.Row(equal_height=True):
                 with gr.Column(scale=2):
                     gr.Markdown("""
@@ -263,7 +275,8 @@ class GradioReActAgentPack(BaseLlamaPack):
                 with gr.Column(scale=8):
                     gr.Markdown(
                         """
-                        <div style="background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #0369a1;">
+                        <div style="background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+                        padding: 20px; border-radius: 12px; border-left: 4px solid #0369a1;">
                         <h1 style="color: #0369a1;">🤖 Smart Assistant</h1>
                         <p>Welcome to your smart assistant! Get instant insights with natural language.</p>
                         </div>
