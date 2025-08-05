@@ -168,7 +168,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                         {"role": "assistant", "content": status_message}]
                 yield status_history
                 last_status = status_message
-                await asyncio.sleep(0.3)
+                await asyncio.sleep(0.7)
 
             if response_content:
                 # Stream final response as it comes in
