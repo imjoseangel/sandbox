@@ -142,6 +142,9 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         async for event in handler.stream_events():
             status_message = None
+
+            logger.debug(f"Received event: {type(event).__name__} - {event}")
+
             if isinstance(event, ToolCall):
                 tool_name = event.tool_name
                 _ = ", ".join(
