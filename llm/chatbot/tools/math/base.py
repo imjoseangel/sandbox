@@ -12,11 +12,11 @@ class MathTool(BaseToolSpec):
         """Add two numbers together.
 
         Args:
-            a (float): The first number
-            b (float): The second number
+            a: First number
+            b: Second number
 
         Returns:
-            float: The sum of a and b
+            Sum of a and b
         """
         return a + b
 
@@ -24,11 +24,11 @@ class MathTool(BaseToolSpec):
         """Subtract the second number from the first number.
 
         Args:
-            a (float): The first number (minuend)
-            b (float): The second number (subtrahend)
+            a: First number (minuend)
+            b: Second number (subtrahend)
 
         Returns:
-            float: The result of a - b
+            Result of a - b
         """
         return a - b
 
@@ -40,29 +40,19 @@ class MathTool(BaseToolSpec):
         """Convert math functions to FunctionTool list with
         custom descriptions and return_direct."""
 
-        # Create tools with custom descriptions and return_direct=True
+        # Create tools with concise descriptions and return_direct=True
         sum_tool = FunctionTool.from_defaults(
             fn=self.sum_numbers,
             name="sum_numbers",
-            description="""
-                Use this tool ONLY for addition operations (+, plus, add, sum).
-                Examples: "1 + 1", "add 5 and 3", "what's the sum of 2 and 4"
-                Provide the two numbers as arguments and get their sum.
-                DO NOT use this for subtraction operations.
-            """,
-            return_direct=False,
+            description="Calculate the sum of two numbers. Use for addition (+, plus, add, sum).",
+            return_direct=True,
         )
 
         subtract_tool = FunctionTool.from_defaults(
             fn=self.subtract_numbers,
             name="subtract_numbers",
-            description="""
-                Use this tool ONLY for subtraction operations (-, minus, subtract, difference).
-                Examples: "9.9 - 9.11", "subtract 5 from 10", "what's 8 minus 3"
-                Provide the minuend (first number) and subtrahend (second number) as arguments.
-                DO NOT use this for addition operations.
-            """,
-            return_direct=False,
+            description="Calculate the difference between two numbers. Use for subtraction (-, minus, subtract).",
+            return_direct=True,
         )
 
         return [sum_tool, subtract_tool]

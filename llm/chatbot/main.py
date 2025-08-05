@@ -61,7 +61,7 @@ OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 Settings.llm = Ollama(
     model=MODEL,
     base_url=OLLAMA_HOST,
-    temperature=0,
+    temperature=0.0,  # Set to 0 for more deterministic responses
     max_retries=5,
     context_window=3024,
     system_prompt=SystemPrompt(),
@@ -88,16 +88,12 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         self.agent = ReActAgent(
             tools=list(supported_tools),
-            verbose=True,
+            verbose=False,  # Disable verbose mode to reduce overthinking
             memory=self.memory,
-            max_iterations=10,
+            max_iterations=3,  # Reduce iterations for faster responses
         )
         self.agent.update_prompts({
-            "react_header": self.react_prompt,
-            "react_chat_refine": PromptTemplate(
-                "You MUST use tools to refine this answer. Current response: {existing_answer}\n"
-                "Now use appropriate tools to improve it."
-            )
+            "react_header": self.react_prompt
         })
         self.context: Context = Context(workflow=self.agent)
 
@@ -179,8 +175,8 @@ class GradioReActAgentPack(BaseLlamaPack):
                     logger.info(f"Agent output content: {response_content}")
                     thinking_count = 0
                 case _:
-                    status_message = "⏳ **Processing event...**"
-                    logger.info(f"Unknown event status: {status_message}")
+                    logger.debug(
+                        f"Unhandled event type: {type(event).__name__}")
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + \
