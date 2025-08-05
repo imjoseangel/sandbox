@@ -139,6 +139,8 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         response_content = ""
         last_status = None
+        thinking_count = 0
+        last_thinking_update = 0
 
         async for event in handler.stream_events():
             status_message = None
@@ -151,27 +153,46 @@ class GradioReActAgentPack(BaseLlamaPack):
                     _ = ", ".join(
                         f"{k}='{v}'" for k, v in event.tool_kwargs.items())
                     status_message = f"🧰 **Calling tool** `{tool_name}`"
+                    thinking_count = 0
                 case AgentSetup():
-                    status_message = f"⚙️ **Setting up agent...** {event.setup_info}"
+                    status_message = "⚙️ **Setting up agent...**"
+                    logger.info(f"Agent setup status: {status_message}")
+                    thinking_count = 0
                 case AgentInput():
                     status_message = f"⏳ **Processing...** {current_user_msg}"
+                    logger.info(f"Agent input status: {status_message}")
+                    thinking_count = 0
                 case AgentStream():
-                    status_message = "🤔 **Thinking...**"
+                    thinking_count += 1
+                    if thinking_count - last_thinking_update >= 10:
+                        dots = "." * (1 + (thinking_count // 10) % 3)
+                        status_message = f"🤔 **Thinking{dots}**"
+                        last_thinking_update = thinking_count
                 case ToolCallResult():
                     status_message = f"✅ **Tool `{event.tool_name}` Executed**"
+                    logger.info(f"Tool call result status: {status_message}")
+                    thinking_count = 0
                 case AgentOutput():
                     response_content += event.response.content or ""
                     status_message = "🎉 **Response generated**"
+                    logger.info(f"Agent output status: {status_message}")
+                    logger.info(f"Agent output content: {response_content}")
+                    thinking_count = 0
                 case _:
                     status_message = "⏳ **Processing event...**"
+                    logger.info(f"Unknown event status: {status_message}")
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + \
                     [{"role": "user", "content": chat_history[-1]["content"]},
                         {"role": "assistant", "content": status_message}]
                 yield status_history
+
                 last_status = status_message
-                await asyncio.sleep(0.7)
+                if status_message and status_message.startswith("🤔 **Thinking"):
+                    await asyncio.sleep(0.3)
+                else:
+                    await asyncio.sleep(0.7)
 
             if response_content:
                 # Stream final response as it comes in
