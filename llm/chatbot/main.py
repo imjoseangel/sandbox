@@ -191,28 +191,10 @@ class GradioReActAgentPack(BaseLlamaPack):
         for msg in self.conversation_history:
             self.memory.put(msg)
 
-        # Then add any new messages from chat_history that aren't in our stored history
-        for message in chat_history[:-1]:
-            if message["role"] == "user":
-                user_message = ChatMessage(
-                    role="user", content=message["content"])
-                if not any(msg.content == message["content"] and
-                           msg.role == "user" for msg in self.conversation_history):
-                    self.memory.put(user_message)
-                    self.conversation_history.append(user_message)
-            elif message["role"] == "assistant":
-                bot_message = ChatMessage(
-                    role="assistant", content=message["content"])
-                if not any(msg.content == message["content"] and
-                           msg.role == "assistant" for msg in self.conversation_history):
-                    self.memory.put(bot_message)
-                    self.conversation_history.append(bot_message)
-
         # Get the current user message
         current_user_msg = chat_history[-1]["content"]
         current_user_message = ChatMessage(
             role="user", content=current_user_msg)
-        self.memory.put(current_user_message)
 
         try:
             handler = self.agent.run(user_msg=current_user_msg,
@@ -242,8 +224,11 @@ class GradioReActAgentPack(BaseLlamaPack):
             logger.error(f"Error during agent execution: {e}")
             response_content = f"❌ **Error**: {str(e)}"
 
-        # Store the conversation in our persistent history
-        self.conversation_history.append(current_user_message)
+        # Store the conversation in our persistent history (only if not already there)
+        if not any(msg.content == current_user_message.content and
+                   msg.role == "user" for msg in self.conversation_history):
+            self.conversation_history.append(current_user_message)
+
         assistant_message = ChatMessage(
             role="assistant", content=response_content)
         self.conversation_history.append(assistant_message)
