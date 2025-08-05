@@ -54,21 +54,14 @@ def ReactPrompt() -> str:
     - Choose the most appropriate tool for the specific operation requested
     - If the question contains addition keywords, use sum_numbers
     - If the question contains subtraction keywords, use subtract_numbers
-    - Use the knowledge tool for all other queries, including questions about content, details, or specific items.
-
-    **SEARCH STRATEGY FOR GROUP QUERIES:**
-    When the user asks about a group or category:
-    1. Use the knowledge tool to search for all relevant items.
-    2. Extract and consolidate the requested information.
-    3. Present results in a clear, organized format.
+    - For non-mathematical queries, provide answers based on your general knowledge without using tools
 
     **MANDATORY REQUIREMENTS:**
     1. **No Speculation**: Never guess, assume, or invent information.
     2. **Missing Context**: If the user's request lacks context, ask for clarification.
-    3. **Data Not Found**: If information doesn't exist, clearly state so.
+    3. **Math Operations**: For mathematical operations, always use the appropriate math tools.
     4. **Consistent Answers**: Always provide identical responses to identical questions.
     5. **Formatted Responses**: Structure all answers using markdown.
-    6. **Multi-Item Results**: When presenting information from multiple items, organize by item name.
 
     ## Output Format
 
@@ -109,7 +102,8 @@ def ReactPrompt() -> str:
     - Use clear markdown formatting for all responses
     - Ask for clarification when context is missing
     - Maintain consistency across identical questions
-    - Clearly organize multi-item results with proper attribution
+    - Use math tools for mathematical operations (addition and subtraction)
+    - For non-mathematical queries, rely on your general knowledge
 
     ## Current Conversation
 
@@ -128,24 +122,25 @@ def SubQuestionPrompt() -> str:
         <Tools>
         ```json
         {{
-            "knowledge_base": "General knowledge information"
+            "sum_numbers": "Add two numbers together",
+            "subtract_numbers": "Subtract one number from another"
         }}
         ```
 
         <User Question>
-        What are the main features and limitations of the product?
+        What is 15 plus 8 minus 3?
 
         <Output>
         ```json
         {{
             "items": [
                 {{
-                    "sub_question": "What are the main features of the product?",
-                    "tool_name": "knowledge_base"
+                    "sub_question": "What is 15 plus 8?",
+                    "tool_name": "sum_numbers"
                 }},
                 {{
-                    "sub_question": "What are the main limitations of the product?",
-                    "tool_name": "knowledge_base"
+                    "sub_question": "What is the result minus 3?",
+                    "tool_name": "subtract_numbers"
                 }}
             ]
         }}
@@ -168,16 +163,13 @@ def SubQuestionPrompt() -> str:
 
 def QAPrompt() -> str:
     _CUSTOM_QA_PROMPT = """
-         You are an assistant helping to answer questions based on information taken from a knowledge base.
-         Context information from several document snippets is below.
-         Each snippet is preceded by its metadata. The metadata for each source includes a 'title' field and a 'file_name' field (e.g., "**Source**: TITLE (file: FILENAME.pdf)").
+         You are an assistant helping to answer questions, with access to math tools for calculations.
+         For mathematical operations (addition and subtraction), use the appropriate tools.
+         For other questions, provide answers based on your general knowledge.
          ---------------------
          {context_str}
          ---------------------
          Given the context information and not prior knowledge, answer the query concisely.
-         You MUST cite both the source title AND file_name for the information you use.
-         For each piece of information taken from a source, append '**Source**: [TITLE] (file: [FILE_NAME])' to the relevant sentence or at the end of your answer.
-         If information from multiple sources is synthesized for a single point, list all applicable titles and file_names, like (**Source**: title1 (file: file1.pdf), title2 (file: file2.pdf)).
          Query: {query_str}
          Answer:
          """
@@ -187,14 +179,12 @@ def QAPrompt() -> str:
 def SynthesisPrompt() -> str:
     _SYNTHESIS_PROMPT = """
             The following are answers to sub-questions, derived from an original query.
-            Each sub-answer may contain source titles and file_names for the information it provides, formatted as '(**Source**: title (file: file_name))'.
+            Each sub-answer may contain mathematical results or general information.
             ---------------------
             {context_str}
             ---------------------
             Given these sub-answers, synthesize a comprehensive final answer to the original query: {query_str}
-            IMPORTANT: You MUST preserve and include all source title AND file_name citations (e.g., '(**Source**: title (file: file_name))') exactly as they appear in the sub-answers.
-            Place them appropriately in your final synthesized answer.
-            If multiple sub-answers with different sources contribute to a point, ensure all relevant source citations with both titles and file names are included.
+            Ensure all mathematical calculations are accurate and clearly presented.
             Final Answer:
             """
     return _SYNTHESIS_PROMPT
