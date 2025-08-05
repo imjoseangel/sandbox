@@ -145,22 +145,25 @@ class GradioReActAgentPack(BaseLlamaPack):
 
             logger.debug(f"Received event: {type(event).__name__} - {event}")
 
-            if isinstance(event, ToolCall):
-                tool_name = event.tool_name
-                _ = ", ".join(
-                    f"{k}='{v}'" for k, v in event.tool_kwargs.items())
-                status_message = f"🧰 **Calling tool**: `{tool_name}`"
-            elif isinstance(event, AgentSetup):
-                status_message = f"⚙️ **Setting up agent...** {event.setup_info}"
-            elif isinstance(event, AgentInput):
-                status_message = f"⌨️ **Processing...**: {current_user_msg}"
-            elif isinstance(event, AgentStream):
-                status_message = "🤔 **Thinking...**"
-            elif isinstance(event, ToolCallResult):
-                status_message = f"✅ **Tool `{event.tool_name}` Executed**"
-            elif isinstance(event, AgentOutput):
-                response_content += event.response.content or ""
-                status_message = "🎉 **Response generated**"
+            match event:
+                case ToolCall():
+                    tool_name = event.tool_name
+                    _ = ", ".join(
+                        f"{k}='{v}'" for k, v in event.tool_kwargs.items())
+                    status_message = f"🧰 **Calling tool** `{tool_name}`"
+                case AgentSetup():
+                    status_message = f"⚙️ **Setting up agent...** {event.setup_info}"
+                case AgentInput():
+                    status_message = f"⏳ **Processing...** {current_user_msg}"
+                case AgentStream():
+                    status_message = "🤔 **Thinking...**"
+                case ToolCallResult():
+                    status_message = f"✅ **Tool `{event.tool_name}` Executed**"
+                case AgentOutput():
+                    response_content += event.response.content or ""
+                    status_message = "🎉 **Response generated**"
+                case _:
+                    status_message = "⏳ **Processing event...**"
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + \
