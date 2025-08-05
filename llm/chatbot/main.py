@@ -149,7 +149,9 @@ class GradioReActAgentPack(BaseLlamaPack):
                 status_message = f"🧰 **Calling tool**: `{tool_name}`"
             elif isinstance(event, AgentSetup):
                 status_message = f"⚙️ **Setting up agent...** {event.setup_info}"
-            elif isinstance(event, (AgentStream, AgentInput)):
+            elif isinstance(event, AgentInput):
+                status_message = f"⌨️ **Processing...**: {current_user_msg}"
+            elif isinstance(event, AgentStream):
                 status_message = "🤔 **Thinking...**"
             elif isinstance(event, ToolCallResult):
                 status_message = f"✅ **Tool `{event.tool_name}` Executed**"
@@ -163,7 +165,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                         {"role": "assistant", "content": status_message}]
                 yield status_history
                 last_status = status_message
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.3)
 
             if response_content:
                 # Stream final response as it comes in
