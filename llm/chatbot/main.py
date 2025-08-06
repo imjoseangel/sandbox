@@ -38,7 +38,7 @@ formatter = logging.Formatter(
 )
 
 root_logger = logging.getLogger()
-root_logger.setLevel(os.getenv("LOG_LEVEL", "DEBUG"))
+root_logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 console_handler = logging.StreamHandler(sys.__stdout__)
 console_handler.setFormatter(formatter)
