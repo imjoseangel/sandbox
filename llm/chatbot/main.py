@@ -80,8 +80,7 @@ SUPPORTED_TOOLS = tool_spec.to_tool_list()
 
 class GradioReActAgentPack(BaseLlamaPack):
 
-    def __init__(self, supported_tools: List[FunctionTool],
-                 **kwargs: Any,) -> None:
+    def __init__(self, supported_tools: List[FunctionTool]) -> None:
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
         self.react_prompt = PromptTemplate(ReactPrompt())
@@ -240,7 +239,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                 flags=re.IGNORECASE
             )
 
-        except Exception as e:
+        except (ValueError, RuntimeError, ConnectionError, TimeoutError) as e:
             logger.error(f"Error during agent execution: {e}")
             response_content = f"❌ **Error**: {str(e)}"
 
@@ -289,7 +288,8 @@ class GradioReActAgentPack(BaseLlamaPack):
                         <div style="background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
                         padding: 20px; border-radius: 12px; border-left: 4px solid #0369a1;">
                         <h1 style="color: #0369a1;">🤖 Smart Assistant</h1>
-                        <p>Welcome to your smart assistant! Get instant insights with natural language.</p>
+                        <p>Welcome to your smart assistant!
+                        Get instant insights with natural language.</p>
                         </div>
                         """
                     )
@@ -349,5 +349,4 @@ class GradioReActAgentPack(BaseLlamaPack):
 
 
 if __name__ == "__main__":
-    GradioReActAgentPack(supported_tools=SUPPORTED_TOOLS,
-                         run_from_main=True).run()
+    GradioReActAgentPack(supported_tools=SUPPORTED_TOOLS).run()
