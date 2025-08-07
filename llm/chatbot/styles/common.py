@@ -64,6 +64,43 @@ def CustomCSS() -> str:
             line-height: 1.5 !important;
         }
 
+        /* User message styling - Pastel Blue theme */
+        #chatbot .message.user,
+        #chatbot .user {
+            background-color: #dbeafe !important; /* Pastel blue background */
+            color: #1e40af !important; /* Dark blue text for contrast */
+            border-radius: 18px 18px 4px 18px !important;
+            padding: 12px 16px !important;
+            margin: 8px 0 !important;
+            box-shadow: 0 2px 8px rgba(219, 234, 254, 0.4) !important;
+            border: 1px solid #bfdbfe !important;
+        }
+
+        /* Bot message styling - Pastel Orange theme */
+        #chatbot .message.bot,
+        #chatbot .bot {
+            background-color: #fed7aa !important; /* Pastel orange background */
+            color: #c2410c !important; /* Dark orange text for contrast */
+            border-radius: 18px 18px 18px 4px !important;
+            padding: 12px 16px !important;
+            margin: 8px 0 !important;
+            box-shadow: 0 2px 8px rgba(254, 215, 170, 0.4) !important;
+            border: 1px solid #fdba74 !important;
+        }
+
+        /* Message text styling */
+        #chatbot .message.user p,
+        #chatbot .user p {
+            color: #1e40af !important; /* Dark blue text */
+            margin: 0 !important;
+        }
+
+        #chatbot .message.bot p,
+        #chatbot .bot p {
+            color: #c2410c !important; /* Dark orange text */
+            margin: 0 !important;
+        }
+
         /* Modern input field */
         #chat_input {
             border: none !important;
