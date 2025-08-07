@@ -294,6 +294,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                     height=640,
                     show_label=False
                 )
+                # https://www.gradio.app/4.44.1/docs/gradio/chatinterface
                 chat_window.like(self._handle_like, None, None)
 
             with gr.Row():
