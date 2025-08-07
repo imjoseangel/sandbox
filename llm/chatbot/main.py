@@ -270,6 +270,12 @@ class GradioReActAgentPack(BaseLlamaPack):
                 )
         return clear
 
+    def _handle_like(self, data: gr.LikeData):
+        if data.liked:
+            print("You upvoted this response: ", data.value)
+        else:
+            print("You downvoted this response: ", data.value)
+
     def run(self, *args: Any, **kwargs: Any) -> Any:
         """Run chat with ReActAgent."""
         with gr.Blocks(theme="default", css=CustomCSS(), title="Smart Assistant") as chatbot:
@@ -288,6 +294,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                     height=640,
                     show_label=False
                 )
+                chat_window.like(self._handle_like, None, None)
 
             with gr.Row():
                 chat_input = gr.MultimodalTextbox(
