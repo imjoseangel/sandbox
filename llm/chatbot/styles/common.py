@@ -370,7 +370,30 @@ def CustomCSS() -> str:
             transition: all 0.2s ease !important;
         }
 
+        /* Special styling for New Chat button */
+        #clear_button {
+            background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border-radius: 20px !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+        }
+
+        #clear_button:hover {
+            background: linear-gradient(135deg, #ff7a45, #ff9e2e) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4) !important;
+        }
+
         .dark #clear_button:hover,
+        .dark #logout_button:hover {
+            background-color: #3c4043 !important;
+            border-color: #555 !important;
+        }
+
+        /* Account button stays subtle */
         .dark #logout_button:hover {
             background-color: #3c4043 !important;
             border-color: #555 !important;
@@ -387,7 +410,21 @@ def CustomCSS() -> str:
             transition: all 0.2s ease !important;
         }
 
-        .light #clear_button:hover,
+        /* New Chat button overrides for light mode */
+        .light #clear_button {
+            background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+        }
+
+        .light #clear_button:hover {
+            background: linear-gradient(135deg, #ff7a45, #ff9e2e) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4) !important;
+        }
+
         .light #logout_button:hover {
             background-color: #f1f3f4 !important;
             border-color: #bbb !important;

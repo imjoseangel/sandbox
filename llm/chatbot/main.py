@@ -261,6 +261,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                     elem_id="clear_button",
                     size="sm",
                     icon="https://img.icons8.com/fluency/48/full-trash.png",
+                    variant="primary",
                 )
             with gr.Column(scale=5):
                 gr.Button(
@@ -269,6 +270,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                     link="/logout",
                     size="sm",
                     icon="https://img.icons8.com/fluency/48/logout-rounded-left.png",
+                    variant="secondary",
                 )
         return clear
 
