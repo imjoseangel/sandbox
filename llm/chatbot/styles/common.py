@@ -2,22 +2,86 @@ def CustomCSS() -> str:
     """Returns the custom CSS for the agent."""
 
     _CUSTOM_CSS = """
-        /* Modern minimalist background */
-        body, .gradio-container {
-            background: #fafafa !important;
+        /* Respect Gradio's native dark/light mode */
+        .dark {
+            background: #0b0f19 !important;
+            color: #f1f3f4 !important;
         }
 
-        /* Remove any theme backgrounds */
-        .gradio-container *[style*="background-image"] {
-            background-image: none !important;
+        .light {
+            background: #ffffff !important;
+            color: #1f2937 !important;
         }
 
-        /* Hide footer */
+        /* Show footer with appropriate styling */
         footer {
             display: none !important;
+            background: transparent !important;
+            border: none !important;
         }
 
-        /* Subtle imjoseangel logo watermark */
+        .dark footer {
+            color: #999 !important;
+        }
+
+        .light footer {
+            color: #666 !important;
+        }
+
+        /* Header logo section */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 35px;
+            border-radius: 12px;
+            border-left: 4px solid #0369a1;
+        }
+
+        .dark .header-logo {
+            background: #374151 !important;
+            border-left-color: #6b7280 !important;
+        }
+
+        .light .header-logo {
+            background: #f3f4f6 !important;
+            border-left-color: #d1d5db !important;
+        }
+
+        /* Header welcome section */
+        .header-welcome {
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid transparent;
+        }
+
+        .dark .header-welcome {
+            background: linear-gradient(90deg, #1e293b 0%, transparent 100%) !important;
+        }
+
+        .light .header-welcome {
+            background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+        }
+
+        .header-welcome h1 {
+            color: #0369a1 !important;
+            margin: 0 0 10px 0 !important;
+        }
+
+        .header-welcome p {
+            margin: 0 !important;
+        }
+
+        .dark .header-welcome p {
+            color: #cbd5e1 !important;
+        }
+
+        .light .header-welcome p {
+            color: #64748b !important;
+        }
+
+        /* Subtle logo watermark */
         .gradio-container::after {
             content: '';
             position: fixed;
@@ -33,26 +97,30 @@ def CustomCSS() -> str:
             z-index: 1;
         }
 
-        /* Modern chat window - no borders, clean shadows */
-        #chatbot {
+        /* Chat window - adapts to theme */
+        .dark #chatbot {
             border: none !important;
             border-radius: 16px !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
-            background-color: white !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+            background-color: #2d2d2d !important;
             overflow: hidden;
         }
 
-        /* Hide the label for the chat input */
-        #chatbot .icon-button-wrapper.top-panel {
-            display: none !important;
+        .light #chatbot {
+            border: none !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+            background-color: #f9fafb !important;
+            overflow: hidden;
         }
 
-        /* Hide Progress Text in chat */
+        /* Hide unnecessary elements */
+        #chatbot .icon-button-wrapper.top-panel,
         #chatbot .progress-text {
             display: none !important;
         }
 
-        /* Smaller text in chat */
+        /* Chat text size */
         #chatbot .message,
         #chatbot .bot,
         #chatbot .user,
@@ -64,94 +132,167 @@ def CustomCSS() -> str:
             line-height: 1.5 !important;
         }
 
-        /* User message styling - Pastel Blue theme */
-        #chatbot .message.user,
-        #chatbot .user {
-            background-color: #dbeafe !important; /* Pastel blue background */
-            color: #1e40af !important; /* Dark blue text for contrast */
+        /* User messages - Dark mode */
+        .dark #chatbot .message.user,
+        .dark #chatbot .user {
+            background-color: #1e3a8a !important;
+            color: #bfdbfe !important;
             border-radius: 18px 18px 4px 18px !important;
             padding: 12px 16px !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(219, 234, 254, 0.4) !important;
-            border: 1px solid #bfdbfe !important;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.4) !important;
+            border: 1px solid #3b82f6 !important;
         }
 
-        /* Bot message styling - Pastel Orange theme */
-        #chatbot .message.bot,
-        #chatbot .bot {
-            background-color: #fed7aa !important; /* Pastel orange background */
-            color: #c2410c !important; /* Dark orange text for contrast */
+        .dark #chatbot .message.user p,
+        .dark #chatbot .user p {
+            color: #bfdbfe !important;
+            margin: 0 !important;
+        }
+
+        /* User messages - Light mode */
+        .light #chatbot .message.user,
+        .light #chatbot .user {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+            border-radius: 18px 18px 4px 18px !important;
+            padding: 12px 16px !important;
+            margin: 8px 0 !important;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2) !important;
+            border: 1px solid #3b82f6 !important;
+        }
+
+        .light #chatbot .message.user p,
+        .light #chatbot .user p {
+            color: #1e40af !important;
+            margin: 0 !important;
+        }
+
+        /* Bot messages - Dark mode */
+        .dark #chatbot .message.bot,
+        .dark #chatbot .bot {
+            background-color: #9a3412 !important;
+            color: #fed7aa !important;
             border-radius: 18px 18px 18px 4px !important;
             padding: 12px 16px !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(254, 215, 170, 0.4) !important;
-            border: 1px solid #fdba74 !important;
+            box-shadow: 0 2px 8px rgba(154, 52, 18, 0.4) !important;
+            border: 1px solid #ea580c !important;
         }
 
-        /* Message text styling */
-        #chatbot .message.user p,
-        #chatbot .user p {
-            color: #1e40af !important; /* Dark blue text */
+        .dark #chatbot .message.bot p,
+        .dark #chatbot .bot p {
+            color: #fed7aa !important;
             margin: 0 !important;
         }
 
-        #chatbot .message.bot p,
-        #chatbot .bot p {
-            color: #c2410c !important; /* Dark orange text */
+        /* Bot messages - Light mode */
+        .light #chatbot .message.bot,
+        .light #chatbot .bot {
+            background-color: #fed7aa !important;
+            color: #9a3412 !important;
+            border-radius: 18px 18px 18px 4px !important;
+            padding: 12px 16px !important;
+            margin: 8px 0 !important;
+            box-shadow: 0 2px 8px rgba(154, 52, 18, 0.2) !important;
+            border: 1px solid #ea580c !important;
+        }
+
+        .light #chatbot .message.bot p,
+        .light #chatbot .bot p {
+            color: #9a3412 !important;
             margin: 0 !important;
         }
 
-        /* Modern input field */
-        #chat_input {
+        /* Input field - Dark mode */
+        .dark #chat_input {
             border: none !important;
             border-radius: 12px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-            background-color: white !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+            background-color: #374151 !important;
             transition: all 0.2s ease !important;
         }
 
-        #chat_input:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1) !important;
+        .dark #chat_input:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4) !important;
         }
 
-        /* Input textarea styling */
-        #chat_input textarea,
-        #chat_input .multimodal-textbox,
-        #chat_input > div {
-            background-color: white !important;
-            border: none !important;
-        }
-
-        /* Focus state */
-        #chat_input:focus-within {
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15) !important;
+        .dark #chat_input:focus-within {
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.25) !important;
             transform: translateY(-1px) !important;
         }
 
-        /* Modern clear button */
-        #clear_button {
+        .dark #chat_input textarea,
+        .dark #chat_input .multimodal-textbox,
+        .dark #chat_input > div,
+        .dark #chat_input input,
+        .dark #chat_input * {
+            background-color: #374151 !important;
+            color: #f9fafb !important;
             border: none !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-            background-color: white !important;
+        }
+
+        /* Input field - Light mode */
+        .light #chat_input {
+            border: none !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+            background-color: #ffffff !important;
             transition: all 0.2s ease !important;
         }
 
-        #clear_button:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+        .light #chat_input:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .light #chat_input:focus-within {
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.25) !important;
             transform: translateY(-1px) !important;
         }
-        /* Modern logout button */
-        #logout_button {
+
+        .light #chat_input textarea,
+        .light #chat_input .multimodal-textbox,
+        .light #chat_input > div,
+        .light #chat_input input,
+        .light #chat_input * {
+            background-color: #ffffff !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
+        }
+
+        /* Buttons - Dark mode */
+        .dark #clear_button,
+        .dark #logout_button {
             border: none !important;
             border-radius: 10px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-            background-color: white !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+            background-color: #4b5563 !important;
+            color: #f9fafb !important;
             transition: all 0.2s ease !important;
         }
 
-        #logout_button:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+        .dark #clear_button:hover,
+        .dark #logout_button:hover {
+            background-color: #6b7280 !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Buttons - Light mode */
+        .light #clear_button,
+        .light #logout_button {
+            border: none !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+            background-color: #f3f4f6 !important;
+            color: #374151 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .light #clear_button:hover,
+        .light #logout_button:hover {
+            background-color: #e5e7eb !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15) !important;
             transform: translateY(-1px) !important;
         }
     """
@@ -166,7 +307,7 @@ def FooterCSS() -> str:
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
         .imjoseangel-footer {
-            color: #666;
+            color: #999;
             font-size: 12px;
             display: block;
             position: relative;
@@ -178,8 +319,12 @@ def FooterCSS() -> str:
             -moz-osx-font-smoothing: grayscale;
         }
         .imjoseangel-footer a {
-            color: #000000;
+            color: #e5e5e5;
             text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .imjoseangel-footer a:hover {
+            color: #60a5fa;
         }
         .imjoseangel-footer .fa-heart {
             color: #E90606;

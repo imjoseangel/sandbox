@@ -237,15 +237,14 @@ class GradioReActAgentPack(BaseLlamaPack):
         with gr.Row(equal_height=True):
             with gr.Column(scale=2):
                 gr.Markdown("""
-                    <div style="display: flex; align-items: center; justify-content: center; width: 100%; background: #f3f4f6; padding: 35px; border-radius: 12px; border-left: 4px;">
+                    <div class="header-logo">
                         <img src="/gradio_api/file=assets/logo.png" style="width: auto; height: 50px; margin-top: 10px; margin-bottom: 10px;" />
                     </div>
                     """)
             with gr.Column(scale=8):
                 gr.Markdown("""
-                    <div style="background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
-                    padding: 20px; border-radius: 12px; border-left: 4px solid #0369a1;">
-                    <h1 style="color: #0369a1;">🤖 Smart Assistant</h1>
+                    <div class="header-welcome">
+                    <h1>🤖 Smart Assistant</h1>
                     <p>Welcome to your smart assistant! Get instant insights with natural language.</p>
                     </div>
                     """)
