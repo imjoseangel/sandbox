@@ -237,15 +237,18 @@ class GradioReActAgentPack(BaseLlamaPack):
         with gr.Row(equal_height=True):
             with gr.Column(scale=2):
                 gr.Markdown("""
-                    <div class="header-logo">
-                        <img src="/gradio_api/file=assets/logo.png" style="width: auto; height: 50px; margin-top: 10px; margin-bottom: 10px;" />
+                    <div class="logo-container">
+                        <div class="logo-circle">
+                            <div class="logo-shine"></div>
+                            <span class="logo-icon">✨</span>
+                        </div>
                     </div>
                     """)
             with gr.Column(scale=8):
                 gr.Markdown("""
                     <div class="header-welcome">
-                    <h1>🤖 Smart Assistant</h1>
-                    <p>Welcome to your smart assistant! Get instant insights with natural language.</p>
+                        <h1 class="header-title">Smart Assistant</h1>
+                        <p class="header-subtitle">Your intelligent conversation partner</p>
                     </div>
                     """)
 
@@ -254,7 +257,7 @@ class GradioReActAgentPack(BaseLlamaPack):
         with gr.Row():
             with gr.Column(scale=5):
                 clear = gr.ClearButton(
-                    value="Clear Chat",
+                    value="New Chat",
                     elem_id="clear_button",
                     size="sm",
                     icon="https://img.icons8.com/fluency/48/full-trash.png",
@@ -301,8 +304,9 @@ class GradioReActAgentPack(BaseLlamaPack):
                 chat_input = gr.MultimodalTextbox(
                     elem_id="chat_input",
                     interactive=True,
-                    placeholder="Type your message here... (Press Enter to send)",
-                    show_label=False
+                    placeholder="💬 Ask me anything...",
+                    show_label=False,
+                    container=False
                 )
 
             clear = self._create_controls()

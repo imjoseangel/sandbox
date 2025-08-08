@@ -39,6 +39,75 @@ def CustomCSS() -> str:
             border: 1px solid transparent;
         }
 
+        /* Logo container */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 70px;
+        }
+
+        .logo-circle {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        .logo-icon {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+
+        /* Header welcome section */
+        .header-welcome {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 70px;
+            padding-left: 20px;
+        }
+
+        .header-title {
+            margin: 0 0 4px 0;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         .dark .header-logo {
             background: #1e1e1e !important;
             border-color: #333 !important;
@@ -47,6 +116,24 @@ def CustomCSS() -> str:
         .light .header-logo {
             background: #f8f9fa !important;
             border-color: #e8eaed !important;
+        }
+
+        /* Theme-specific logo circle styles */
+        .dark .logo-circle {
+            border-color: rgba(102, 126, 234, 0.4) !important;
+        }
+
+        .light .logo-circle {
+            border-color: rgba(102, 126, 234, 0.3) !important;
+        }
+
+        /* Theme-specific header subtitle */
+        .dark .header-subtitle {
+            color: #9aa0a6 !important;
+        }
+
+        .light .header-subtitle {
+            color: #64748b !important;
         }
 
         /* Header welcome section */
@@ -64,26 +151,6 @@ def CustomCSS() -> str:
         .light .header-welcome {
             background: #f8f9fa !important;
             border-color: #e8eaed !important;
-        }
-
-        .header-welcome h1 {
-            color: #1a73e8 !important;
-            margin: 0 0 8px 0 !important;
-            font-size: 24px !important;
-            font-weight: 500 !important;
-        }
-
-        .header-welcome p {
-            margin: 0 !important;
-            font-size: 14px !important;
-        }
-
-        .dark .header-welcome p {
-            color: #9aa0a6 !important;
-        }
-
-        .light .header-welcome p {
-            color: #5f6368 !important;
         }
 
         /* Subtle logo watermark */
@@ -117,6 +184,25 @@ def CustomCSS() -> str:
             box-shadow: none !important;
             background-color: #ffffff !important;
             overflow: hidden;
+        }
+
+        /* Global rounded corners for all input fields and containers */
+        #chatbot,
+        #chat_input,
+        .gr-textbox,
+        .gr-button,
+        .gr-form,
+        .gr-box {
+            border-radius: 16px !important;
+        }
+
+        /* Ensure all gradio components have rounded corners */
+        .gradio-container .gr-textbox,
+        .gradio-container .gr-button,
+        .gradio-container .gr-form,
+        .gradio-container .gr-box,
+        .gradio-container .multimodal-textbox {
+            border-radius: 16px !important;
         }
 
         /* Hide unnecessary elements */
