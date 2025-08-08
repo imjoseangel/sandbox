@@ -254,13 +254,14 @@ class GradioReActAgentPack(BaseLlamaPack):
         with gr.Row():
             with gr.Column(scale=5):
                 clear = gr.ClearButton(
+                    value="Clear Chat",
                     elem_id="clear_button",
                     size="sm",
                     icon="https://img.icons8.com/fluency/48/full-trash.png",
                 )
             with gr.Column(scale=5):
                 gr.Button(
-                    "Logout",
+                    value="Logout",
                     elem_id="logout_button",
                     link="/logout",
                     size="sm",
@@ -290,7 +291,8 @@ class GradioReActAgentPack(BaseLlamaPack):
                     render_markdown=True,
                     autoscroll=True,
                     height=640,
-                    show_label=False
+                    show_label=False,
+                    bubble_full_width=False
                 )
                 # https://www.gradio.app/4.44.1/docs/gradio/chatinterface
                 chat_window.like(self._handle_like, None, None)
@@ -299,7 +301,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                 chat_input = gr.MultimodalTextbox(
                     elem_id="chat_input",
                     interactive=True,
-                    placeholder="Enter message...",
+                    placeholder="Type your message here... (Press Enter to send)",
                     show_label=False
                 )
 
