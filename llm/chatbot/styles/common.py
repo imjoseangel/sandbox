@@ -51,13 +51,13 @@ def CustomCSS() -> str:
 
         /* Header welcome section */
         .header-welcome {
-            padding: 20px;
+            padding: 32px;
             border-radius: 12px;
             border-left: 4px solid transparent;
         }
 
         .dark .header-welcome {
-            background: linear-gradient(90deg, #1e293b 0%, transparent 100%) !important;
+            background: linear-gradient(90deg, #1e293b 0%, #334155 100%) !important;
         }
 
         .light .header-welcome {
