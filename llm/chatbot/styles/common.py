@@ -4,13 +4,13 @@ def CustomCSS() -> str:
     _CUSTOM_CSS = """
         /* Respect Gradio's native dark/light mode */
         .dark {
-            background: #0b0f19 !important;
-            color: #f1f3f4 !important;
+            background: #0f0f0f !important;
+            color: #e8eaed !important;
         }
 
         .light {
             background: #ffffff !important;
-            color: #1f2937 !important;
+            color: #202124 !important;
         }
 
         /* Show footer with appropriate styling */
@@ -34,51 +34,56 @@ def CustomCSS() -> str:
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 35px;
+            padding: 24px;
             border-radius: 12px;
-            border-left: 4px solid #0369a1;
+            border: 1px solid transparent;
         }
 
         .dark .header-logo {
-            background: #374151 !important;
-            border-left-color: #6b7280 !important;
+            background: #1e1e1e !important;
+            border-color: #333 !important;
         }
 
         .light .header-logo {
-            background: #f3f4f6 !important;
-            border-left-color: #d1d5db !important;
+            background: #f8f9fa !important;
+            border-color: #e8eaed !important;
         }
 
         /* Header welcome section */
         .header-welcome {
-            padding: 32px;
+            padding: 24px;
             border-radius: 12px;
-            border-left: 4px solid transparent;
+            border: 1px solid transparent;
         }
 
         .dark .header-welcome {
-            background: linear-gradient(90deg, #1e293b 0%, #334155 100%) !important;
+            background: #1e1e1e !important;
+            border-color: #333 !important;
         }
 
         .light .header-welcome {
-            background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+            background: #f8f9fa !important;
+            border-color: #e8eaed !important;
         }
 
         .header-welcome h1 {
-            color: #0369a1 !important;
-            margin: 0 0 10px 0 !important;
+            color: #1a73e8 !important;
+            margin: 0 0 8px 0 !important;
+            font-size: 24px !important;
+            font-weight: 500 !important;
         }
 
         .header-welcome p {
             margin: 0 !important;
+            font-size: 14px !important;
         }
 
         .dark .header-welcome p {
-            color: #cbd5e1 !important;
+            color: #9aa0a6 !important;
         }
 
         .light .header-welcome p {
-            color: #64748b !important;
+            color: #5f6368 !important;
         }
 
         /* Subtle logo watermark */
@@ -99,18 +104,18 @@ def CustomCSS() -> str:
 
         /* Chat window - adapts to theme */
         .dark #chatbot {
-            border: none !important;
+            border: 1px solid #333 !important;
             border-radius: 16px !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-            background-color: #2d2d2d !important;
+            box-shadow: none !important;
+            background-color: #1e1e1e !important;
             overflow: hidden;
         }
 
         .light #chatbot {
-            border: none !important;
+            border: 1px solid #e8eaed !important;
             border-radius: 16px !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-            background-color: #f9fafb !important;
+            box-shadow: none !important;
+            background-color: #ffffff !important;
             overflow: hidden;
         }
 
@@ -135,91 +140,99 @@ def CustomCSS() -> str:
         /* User messages - Dark mode */
         .dark #chatbot .message.user,
         .dark #chatbot .user {
-            background-color: #1e3a8a !important;
-            color: #bfdbfe !important;
-            border-radius: 18px 18px 4px 18px !important;
+            background-color: #2f2f2f !important;
+            color: #e8eaed !important;
+            border-radius: 18px !important;
             padding: 12px 16px !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.4) !important;
-            border: 1px solid #3b82f6 !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-width: 80% !important;
+            margin-left: auto !important;
         }
 
         .dark #chatbot .message.user p,
         .dark #chatbot .user p {
-            color: #bfdbfe !important;
+            color: #e8eaed !important;
             margin: 0 !important;
         }
 
         /* User messages - Light mode */
         .light #chatbot .message.user,
         .light #chatbot .user {
-            background-color: #dbeafe !important;
-            color: #1e40af !important;
-            border-radius: 18px 18px 4px 18px !important;
+            background-color: #f1f3f4 !important;
+            color: #202124 !important;
+            border-radius: 18px !important;
             padding: 12px 16px !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2) !important;
-            border: 1px solid #3b82f6 !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-width: 80% !important;
+            margin-left: auto !important;
         }
 
         .light #chatbot .message.user p,
         .light #chatbot .user p {
-            color: #1e40af !important;
+            color: #202124 !important;
             margin: 0 !important;
         }
 
         /* Bot messages - Dark mode */
         .dark #chatbot .message.bot,
         .dark #chatbot .bot {
-            background-color: #9a3412 !important;
-            color: #fed7aa !important;
-            border-radius: 18px 18px 18px 4px !important;
-            padding: 12px 16px !important;
+            background-color: transparent !important;
+            color: #e8eaed !important;
+            border-radius: 18px !important;
+            padding: 12px 0 !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(154, 52, 18, 0.4) !important;
-            border: 1px solid #ea580c !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-width: 80% !important;
+            margin-right: auto !important;
         }
 
         .dark #chatbot .message.bot p,
         .dark #chatbot .bot p {
-            color: #fed7aa !important;
+            color: #e8eaed !important;
             margin: 0 !important;
         }
 
         /* Bot messages - Light mode */
         .light #chatbot .message.bot,
         .light #chatbot .bot {
-            background-color: #fed7aa !important;
-            color: #9a3412 !important;
-            border-radius: 18px 18px 18px 4px !important;
-            padding: 12px 16px !important;
+            background-color: transparent !important;
+            color: #202124 !important;
+            border-radius: 18px !important;
+            padding: 12px 0 !important;
             margin: 8px 0 !important;
-            box-shadow: 0 2px 8px rgba(154, 52, 18, 0.2) !important;
-            border: 1px solid #ea580c !important;
+            box-shadow: none !important;
+            border: none !important;
+            max-width: 80% !important;
+            margin-right: auto !important;
         }
 
         .light #chatbot .message.bot p,
         .light #chatbot .bot p {
-            color: #9a3412 !important;
+            color: #202124 !important;
             margin: 0 !important;
         }
 
         /* Input field - Dark mode */
         .dark #chat_input {
-            border: none !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-            background-color: #374151 !important;
+            border: 1px solid #333 !important;
+            border-radius: 24px !important;
+            box-shadow: none !important;
+            background-color: #2f2f2f !important;
             transition: all 0.2s ease !important;
         }
 
         .dark #chat_input:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4) !important;
+            border-color: #555 !important;
         }
 
         .dark #chat_input:focus-within {
-            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.25) !important;
-            transform: translateY(-1px) !important;
+            border-color: #1a73e8 !important;
+            box-shadow: 0 0 0 1px #1a73e8 !important;
         }
 
         .dark #chat_input textarea,
@@ -227,27 +240,27 @@ def CustomCSS() -> str:
         .dark #chat_input > div,
         .dark #chat_input input,
         .dark #chat_input * {
-            background-color: #374151 !important;
-            color: #f9fafb !important;
+            background-color: transparent !important;
+            color: #e8eaed !important;
             border: none !important;
         }
 
         /* Input field - Light mode */
         .light #chat_input {
-            border: none !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #dadce0 !important;
+            border-radius: 24px !important;
+            box-shadow: none !important;
             background-color: #ffffff !important;
             transition: all 0.2s ease !important;
         }
 
         .light #chat_input:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15) !important;
+            border-color: #bbb !important;
         }
 
         .light #chat_input:focus-within {
-            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.25) !important;
-            transform: translateY(-1px) !important;
+            border-color: #1a73e8 !important;
+            box-shadow: 0 0 0 1px #1a73e8 !important;
         }
 
         .light #chat_input textarea,
@@ -255,45 +268,43 @@ def CustomCSS() -> str:
         .light #chat_input > div,
         .light #chat_input input,
         .light #chat_input * {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
-            border: 1px solid #d1d5db !important;
+            background-color: transparent !important;
+            color: #202124 !important;
+            border: none !important;
         }
 
         /* Buttons - Dark mode */
         .dark #clear_button,
         .dark #logout_button {
-            border: none !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-            background-color: #4b5563 !important;
-            color: #f9fafb !important;
+            border: 1px solid #333 !important;
+            border-radius: 20px !important;
+            box-shadow: none !important;
+            background-color: #2f2f2f !important;
+            color: #e8eaed !important;
             transition: all 0.2s ease !important;
         }
 
         .dark #clear_button:hover,
         .dark #logout_button:hover {
-            background-color: #6b7280 !important;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4) !important;
-            transform: translateY(-1px) !important;
+            background-color: #3c4043 !important;
+            border-color: #555 !important;
         }
 
         /* Buttons - Light mode */
         .light #clear_button,
         .light #logout_button {
-            border: none !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
-            background-color: #f3f4f6 !important;
-            color: #374151 !important;
+            border: 1px solid #dadce0 !important;
+            border-radius: 20px !important;
+            box-shadow: none !important;
+            background-color: #f8f9fa !important;
+            color: #3c4043 !important;
             transition: all 0.2s ease !important;
         }
 
         .light #clear_button:hover,
         .light #logout_button:hover {
-            background-color: #e5e7eb !important;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15) !important;
-            transform: translateY(-1px) !important;
+            background-color: #f1f3f4 !important;
+            border-color: #bbb !important;
         }
     """
 
