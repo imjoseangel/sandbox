@@ -303,12 +303,13 @@ def CustomCSS() -> str:
             margin: 0 !important;
         }
 
-        /* Custom speech bubble colors - Simple solid design */
+        /* Custom speech bubble colors - Simple, no gradients */
         #chatbot .message.user,
         #chatbot .user {
-            background: #E3F2FD !important; /* Simple light blue */
+            background-color: #D1E9F6 !important; /* Solid soft blue */
             color: #000000 !important;
-            border: 1px solid #BBDEFB !important;
+            border: 1px solid rgba(66, 153, 225, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.08) !important;
             position: relative !important;
         }
 
@@ -323,7 +324,7 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-left: 8px solid #E3F2FD !important;
+            border-left: 8px solid #D1E9F6 !important;
             border-right: none !important;
         }
 
@@ -334,10 +335,11 @@ def CustomCSS() -> str:
 
         #chatbot .message.bot,
         #chatbot .bot {
-            background: #FFE0B2 !important; /* Simple light orange */
+            background-color: #FED7CC !important; /* Solid soft coral */
             color: #000000 !important;
             padding: 12px 16px !important;
-            border: 1px solid #FFCC80 !important;
+            border: 1px solid rgba(237, 137, 54, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(237, 137, 54, 0.08) !important;
             position: relative !important;
         }
 
@@ -352,7 +354,7 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #FFE0B2 !important;
+            border-right: 8px solid #FED7CC !important;
             border-left: none !important;
         }
 
@@ -361,11 +363,12 @@ def CustomCSS() -> str:
             color: #000000 !important;
         }
 
-        /* Simple custom classes */
+        /* Additional custom classes - simple solids */
         .user_message {
-            background: #E3F2FD !important;
+            background-color: #D1E9F6 !important;
             color: #000000 !important;
-            border: 1px solid #BBDEFB !important;
+            border: 1px solid rgba(66, 153, 225, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.08) !important;
             position: relative !important;
         }
 
@@ -378,14 +381,15 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-left: 8px solid #E3F2FD !important;
+            border-left: 8px solid #D1E9F6 !important;
             border-right: none !important;
         }
 
         .bot_message {
-            background: #FFE0B2 !important;
+            background-color: #FED7CC !important;
             color: #000000 !important;
-            border: 1px solid #FFCC80 !important;
+            border: 1px solid rgba(237, 137, 54, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(237, 137, 54, 0.08) !important;
             position: relative !important;
         }
 
@@ -398,15 +402,16 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #FFE0B2 !important;
+            border-right: 8px solid #FED7CC !important;
             border-left: none !important;
         }
 
-        /* Simple alternative color variations */
+        /* Alternative simple pastel variations (solid) */
         .user_message_mint {
-            background: #E8F5E8 !important; /* Light mint */
+            background-color: #DCFCE7 !important; /* Mint green */
             color: #000000 !important;
-            border: 1px solid #C8E6C8 !important;
+            border: 1px solid rgba(34, 197, 94, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08) !important;
             position: relative !important;
         }
 
@@ -419,14 +424,15 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-left: 8px solid #E8F5E8 !important;
+            border-left: 8px solid #DCFCE7 !important;
             border-right: none !important;
         }
 
         .bot_message_lavender {
-            background: #F3E5F5 !important; /* Light lavender */
+            background-color: #E9D5FF !important; /* Lavender */
             color: #000000 !important;
-            border: 1px solid #E1BEE7 !important;
+            border: 1px solid rgba(147, 51, 234, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.08) !important;
             position: relative !important;
         }
 
@@ -439,14 +445,15 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #F3E5F5 !important;
+            border-right: 8px solid #E9D5FF !important;
             border-left: none !important;
         }
 
         .user_message_peach {
-            background: #FFF8E1 !important; /* Light peach */
+            background-color: #FEF3C7 !important; /* Soft peach */
             color: #000000 !important;
-            border: 1px solid #FFECB3 !important;
+            border: 1px solid rgba(217, 119, 6, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.08) !important;
             position: relative !important;
         }
 
@@ -459,14 +466,15 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-left: 8px solid #FFF8E1 !important;
+            border-left: 8px solid #FEF3C7 !important;
             border-right: none !important;
         }
 
         .bot_message_sky {
-            background: #E1F5FE !important; /* Light sky */
+            background-color: #E0F2FE !important; /* Sky blue */
             color: #000000 !important;
-            border: 1px solid #B3E5FC !important;
+            border: 1px solid rgba(14, 165, 233, 0.15) !important;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08) !important;
             position: relative !important;
         }
 
@@ -479,7 +487,7 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #E1F5FE !important;
+            border-right: 8px solid #E0F2FE !important;
             border-left: none !important;
         }        /* Input field - Dark mode */
         .dark #chat_input {
