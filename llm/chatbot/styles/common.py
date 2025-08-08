@@ -303,7 +303,185 @@ def CustomCSS() -> str:
             margin: 0 !important;
         }
 
-        /* Input field - Dark mode */
+        /* Custom speech bubble colors - Simple solid design */
+        #chatbot .message.user,
+        #chatbot .user {
+            background: #E3F2FD !important; /* Simple light blue */
+            color: #000000 !important;
+            border: 1px solid #BBDEFB !important;
+            position: relative !important;
+        }
+
+        /* User speech bubble tail (right side) */
+        #chatbot .message.user::after,
+        #chatbot .user::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-left: 8px solid #E3F2FD !important;
+            border-right: none !important;
+        }
+
+        #chatbot .message.user p,
+        #chatbot .user p {
+            color: #000000 !important;
+        }
+
+        #chatbot .message.bot,
+        #chatbot .bot {
+            background: #FFE0B2 !important; /* Simple light orange */
+            color: #000000 !important;
+            padding: 12px 16px !important;
+            border: 1px solid #FFCC80 !important;
+            position: relative !important;
+        }
+
+        /* Bot speech bubble tail (left side) */
+        #chatbot .message.bot::before,
+        #chatbot .bot::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-right: 8px solid #FFE0B2 !important;
+            border-left: none !important;
+        }
+
+        #chatbot .message.bot p,
+        #chatbot .bot p {
+            color: #000000 !important;
+        }
+
+        /* Simple custom classes */
+        .user_message {
+            background: #E3F2FD !important;
+            color: #000000 !important;
+            border: 1px solid #BBDEFB !important;
+            position: relative !important;
+        }
+
+        .user_message::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-left: 8px solid #E3F2FD !important;
+            border-right: none !important;
+        }
+
+        .bot_message {
+            background: #FFE0B2 !important;
+            color: #000000 !important;
+            border: 1px solid #FFCC80 !important;
+            position: relative !important;
+        }
+
+        .bot_message::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-right: 8px solid #FFE0B2 !important;
+            border-left: none !important;
+        }
+
+        /* Simple alternative color variations */
+        .user_message_mint {
+            background: #E8F5E8 !important; /* Light mint */
+            color: #000000 !important;
+            border: 1px solid #C8E6C8 !important;
+            position: relative !important;
+        }
+
+        .user_message_mint::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-left: 8px solid #E8F5E8 !important;
+            border-right: none !important;
+        }
+
+        .bot_message_lavender {
+            background: #F3E5F5 !important; /* Light lavender */
+            color: #000000 !important;
+            border: 1px solid #E1BEE7 !important;
+            position: relative !important;
+        }
+
+        .bot_message_lavender::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-right: 8px solid #F3E5F5 !important;
+            border-left: none !important;
+        }
+
+        .user_message_peach {
+            background: #FFF8E1 !important; /* Light peach */
+            color: #000000 !important;
+            border: 1px solid #FFECB3 !important;
+            position: relative !important;
+        }
+
+        .user_message_peach::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-left: 8px solid #FFF8E1 !important;
+            border-right: none !important;
+        }
+
+        .bot_message_sky {
+            background: #E1F5FE !important; /* Light sky */
+            color: #000000 !important;
+            border: 1px solid #B3E5FC !important;
+            position: relative !important;
+        }
+
+        .bot_message_sky::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: -8px !important;
+            transform: translateY(-50%) !important;
+            width: 0 !important;
+            height: 0 !important;
+            border: 8px solid transparent !important;
+            border-right: 8px solid #E1F5FE !important;
+            border-left: none !important;
+        }        /* Input field - Dark mode */
         .dark #chat_input {
             border: 1px solid #333 !important;
             border-radius: 24px !important;
