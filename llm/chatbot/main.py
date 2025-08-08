@@ -306,7 +306,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                 chat_input = gr.MultimodalTextbox(
                     elem_id="chat_input",
                     interactive=True,
-                    placeholder="💬 Ask me anything...",
+                    placeholder="Type your message here... (Press ENTER ↲ to send)",
                     show_label=False,
                     container=False
                 )
