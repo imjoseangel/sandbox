@@ -266,10 +266,10 @@ def CustomCSS() -> str:
         /* Bot messages - Dark mode */
         .dark #chatbot .message.bot,
         .dark #chatbot .bot {
-            background-color: transparent !important;
-            color: #e8eaed !important;
+            background-color: #FFEDD5 !important;
+            color: #000000 !important;
             border-radius: 18px !important;
-            padding: 12px 0 !important;
+            padding: 12px 16px !important;
             margin: 8px 0 !important;
             box-shadow: none !important;
             border: none !important;
@@ -279,17 +279,17 @@ def CustomCSS() -> str:
 
         .dark #chatbot .message.bot p,
         .dark #chatbot .bot p {
-            color: #e8eaed !important;
+            color: #202124 !important;
             margin: 0 !important;
         }
 
         /* Bot messages - Light mode */
         .light #chatbot .message.bot,
         .light #chatbot .bot {
-            background-color: transparent !important;
-            color: #202124 !important;
+            background-color: #FFEDD5 !important;
+            color: #000000 !important;
             border-radius: 18px !important;
-            padding: 12px 0 !important;
+            padding: 12px 16px !important;
             margin: 8px 0 !important;
             box-shadow: none !important;
             border: none !important;
@@ -335,7 +335,7 @@ def CustomCSS() -> str:
 
         #chatbot .message.bot,
         #chatbot .bot {
-            background-color: #FED7CC !important; /* Solid soft coral */
+            background-color: #FFEDD5 !important; /* Pastel orange */
             color: #000000 !important;
             padding: 12px 16px !important;
             border: 1px solid rgba(237, 137, 54, 0.15) !important;
@@ -354,7 +354,7 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #FED7CC !important;
+            border-right: 8px solid #FFEDD5 !important;
             border-left: none !important;
         }
 
@@ -386,7 +386,7 @@ def CustomCSS() -> str:
         }
 
         .bot_message {
-            background-color: #FED7CC !important;
+            background-color: #FFEDD5 !important;
             color: #000000 !important;
             border: 1px solid rgba(237, 137, 54, 0.15) !important;
             box-shadow: 0 2px 8px rgba(237, 137, 54, 0.08) !important;
@@ -402,7 +402,7 @@ def CustomCSS() -> str:
             width: 0 !important;
             height: 0 !important;
             border: 8px solid transparent !important;
-            border-right: 8px solid #FED7CC !important;
+            border-right: 8px solid #FFEDD5 !important;
             border-left: none !important;
         }
 
