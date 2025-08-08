@@ -5,9 +5,8 @@ import re
 import sys
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-from llama_index.core import PromptTemplate
 from llama_index.core import Settings
-from llama_index.core.agent.workflow import ReActAgent
+from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.core.llama_pack.base import BaseLlamaPack
 from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
@@ -25,7 +24,7 @@ from llama_index.core.agent.workflow import (
 
 import gradio as gr
 
-from libs.prompts import SystemPrompt, ReactPrompt
+from libs.prompts import SystemPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
 
@@ -54,16 +53,16 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "qwen3:30b"
+MODEL = "gpt-oss:20b"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 Settings.llm = Ollama(
     model=MODEL,
     base_url=OLLAMA_HOST,
+    thinking=False,
     temperature=0.0,
     max_retries=5,
-    context_window=3024,
-    system_prompt=SystemPrompt(),
+    context_window=8096,
 )
 
 # Tools Configuration
@@ -76,14 +75,14 @@ class GradioReActAgentPack(BaseLlamaPack):
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
 
-        self.agent = ReActAgent(
+        self.agent = FunctionAgent(
             tools=list(supported_tools),
             verbose=False,
             memory=self.memory,
             max_iterations=3,
+            system_prompt=SystemPrompt(),
         )
-        self.agent.update_prompts(
-            {"react_header": PromptTemplate(ReactPrompt())})
+
         self.context: Context = Context(workflow=self.agent)
 
     def get_modules(self) -> Dict[str, Any]:
