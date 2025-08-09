@@ -153,7 +153,6 @@ class GradioReActAgentPack(BaseLlamaPack):
                 logger.info(
                     f"Document content loaded: {len(self.document_content)} characters")
 
-            # Handle text message
             user_text = user_message.get("text", "")
             if user_text:
                 history.append({"role": "user", "content": user_text})
