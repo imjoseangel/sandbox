@@ -108,12 +108,12 @@ class GradioReActAgentPack(BaseLlamaPack):
             documents = SimpleDirectoryReader(temp_dir).load_data()
             logger.info(f"Loaded {len(documents)} documents")
 
-            # Extract text content from first document only (first 1000 chars)
+            # Extract text content from first document - first 30000 chars
             content = ""
             if documents:
                 doc_text = documents[0].text.strip()
-                content = doc_text[:1000] + \
-                    "..." if len(doc_text) > 1000 else doc_text
+                content = doc_text[:30000] + \
+                    "..." if len(doc_text) > 30000 else doc_text
 
             # Clean up temp directory
             shutil.rmtree(temp_dir, ignore_errors=True)
