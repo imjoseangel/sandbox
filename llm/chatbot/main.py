@@ -108,14 +108,12 @@ class GradioReActAgentPack(BaseLlamaPack):
             documents = SimpleDirectoryReader(temp_dir).load_data()
             logger.info(f"Loaded {len(documents)} documents")
 
-            # Extract text content from all documents
-            content = f"The following document(s) have been uploaded: {', '.join(copied_files)}\n\n"
-
-            for doc in documents:
-                file_name = doc.metadata.get('file_name', 'Unknown')
-                file_type = os.path.splitext(file_name)[1].upper()
-                content += f"=== {file_type} Document: {file_name} ===\n"
-                content += doc.text.strip() + "\n\n"
+            # Extract text content from first document only (first 1000 chars)
+            content = ""
+            if documents:
+                doc_text = documents[0].text.strip()
+                content = doc_text[:1000] + \
+                    "..." if len(doc_text) > 1000 else doc_text
 
             # Clean up temp directory
             shutil.rmtree(temp_dir, ignore_errors=True)
@@ -257,11 +255,13 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         current_user_msg = chat_history[-1]["content"]
 
-        # Include document content if available
-        enhanced_msg = (
-            f"{current_user_msg}\n\n--- CONTEXT ---\n{self.document_content}"
-            if self.document_content else current_user_msg
-        )
+        # If we have document content, make the question more explicit
+        if self.document_content:
+            enhanced_msg = (
+                f"Based on the uploaded document: {current_user_msg}\n\n"
+                f"--- DOCUMENT CONTENT ---\n{self.document_content}")
+        else:
+            enhanced_msg = current_user_msg
 
         current_user_message = ChatMessage(
             role="user", content=enhanced_msg)
