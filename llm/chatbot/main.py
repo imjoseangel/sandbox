@@ -3,9 +3,11 @@ import logging
 import os
 import re
 import sys
+import tempfile
+import shutil
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-from llama_index.core import Settings
+from llama_index.core import Settings, SimpleDirectoryReader
 from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.core.llama_pack.base import BaseLlamaPack
 from llama_index.core.llms import ChatMessage
@@ -74,6 +76,7 @@ class GradioReActAgentPack(BaseLlamaPack):
     def __init__(self, supported_tools: List[FunctionTool]) -> None:
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
+        self.document_content: str = ""
 
         self.agent = FunctionAgent(
             tools=list(supported_tools),
@@ -84,6 +87,44 @@ class GradioReActAgentPack(BaseLlamaPack):
         )
 
         self.context: Context = Context(workflow=self.agent)
+
+    def _load_documents_from_files(self, file_paths: List[str]) -> str:
+        """Load documents from uploaded files and return content as text."""
+        try:
+            # Create a temporary directory for the uploaded files
+            temp_dir = tempfile.mkdtemp()
+
+            # Copy uploaded files to temp directory
+            copied_files = []
+            for file_path in file_paths:
+                if os.path.exists(file_path):
+                    filename = os.path.basename(file_path)
+                    dest_path = os.path.join(temp_dir, filename)
+                    shutil.copy2(file_path, dest_path)
+                    copied_files.append(filename)
+                    logger.info(f"Copied file {file_path} to {dest_path}")
+
+            # Load documents using SimpleDirectoryReader
+            documents = SimpleDirectoryReader(temp_dir).load_data()
+            logger.info(f"Loaded {len(documents)} documents")
+
+            # Extract text content from all documents
+            content = f"The following document(s) have been uploaded: {', '.join(copied_files)}\n\n"
+
+            for doc in documents:
+                file_name = doc.metadata.get('file_name', 'Unknown')
+                file_type = os.path.splitext(file_name)[1].upper()
+                content += f"=== {file_type} Document: {file_name} ===\n"
+                content += doc.text.strip() + "\n\n"
+
+            # Clean up temp directory
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+            return content
+
+        except (OSError, IOError, ValueError) as e:
+            logger.error(f"Error loading documents: {e}")
+            return ""
 
     def get_modules(self) -> Dict[str, Any]:
         """Get modules."""
@@ -97,10 +138,36 @@ class GradioReActAgentPack(BaseLlamaPack):
 
     def _handle_user_message(self, user_message, history):
         """Handle user submitted message and update history."""
-        user_text = user_message.get("text", "") if isinstance(
-            user_message, dict) else user_message
-        logger.info(f"User message received: {user_text}")
-        return "", [*history, {"role": "user", "content": user_text}]
+        if isinstance(user_message, dict):
+            # Handle files if present
+            files = user_message.get("files", [])
+            if files:
+                logger.info(f"Processing {len(files)} uploaded files")
+
+                # Load document content and store it
+                self.document_content = self._load_documents_from_files(files)
+
+                # Add only file information to history (not the content)
+                file_names = [os.path.basename(f) for f in files]
+                file_info = f"📁 Uploaded {len(files)} file(s): {', '.join(file_names)}"
+                history.append({"role": "user", "content": file_info})
+
+                logger.info(
+                    f"Document content loaded: {len(self.document_content)} characters")
+
+            # Handle text message
+            user_text = user_message.get("text", "")
+            if user_text:
+                history.append({"role": "user", "content": user_text})
+                logger.info(f"User text message: {user_text}")
+        else:
+            # Handle simple string message
+            user_text = user_message
+            if user_text:
+                history.append({"role": "user", "content": user_text})
+                logger.info(f"User message: {user_text}")
+
+        return "", history
 
     def _get_status_message(self, event, current_user_msg: str,
                             thinking_count: int) -> tuple[str | None, int]:
@@ -189,17 +256,25 @@ class GradioReActAgentPack(BaseLlamaPack):
         self._rebuild_memory()
 
         current_user_msg = chat_history[-1]["content"]
+
+        # Include document content if available
+        enhanced_msg = (
+            f"{current_user_msg}\n\n--- CONTEXT ---\n{self.document_content}"
+            if self.document_content else current_user_msg
+        )
+
         current_user_message = ChatMessage(
-            role="user", content=current_user_msg)
+            role="user", content=enhanced_msg)
 
         try:
             handler = self.agent.run(
-                user_msg=current_user_msg,
+                user_msg=enhanced_msg,
                 memory=self.memory,
                 ctx=self.context
             )
 
-            async for update in self._stream_agent_events(handler, chat_history, current_user_msg):
+            async for update in self._stream_agent_events(handler, chat_history,
+                                                          current_user_msg):
                 yield update
 
             response = await handler
@@ -211,10 +286,11 @@ class GradioReActAgentPack(BaseLlamaPack):
             logger.error(f"Error during agent execution: {e}")
             response_content = f"❌ **Error**: {str(e)}"
 
-        # Update conversation history
+        # Update conversation history with ChatMessage objects
         if not any(msg.content == current_user_message.content and
                    msg.role == "user" for msg in self.conversation_history):
             self.conversation_history.append(current_user_message)
+            self.memory.put(current_user_message)
 
         assistant_message = ChatMessage(
             role="assistant", content=response_content)
@@ -227,6 +303,10 @@ class GradioReActAgentPack(BaseLlamaPack):
         """Reset the agent's chat history. And clear all dialogue boxes."""
         self.memory.reset()
         self.conversation_history.clear()
+
+        # Clear document content
+        self.document_content = ""
+
         # Reset the context state by creating a new instance of the state class.
         state = await self.context.store.get_state()
         await self.context.store.set_state(state.__class__())
