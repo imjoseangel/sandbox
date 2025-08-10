@@ -96,28 +96,27 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         self.context: Context = Context(workflow=self.agent)
 
-    def _load_documents_from_files(self, file_paths: List[str]) -> bool:
-        """Load documents into PDF tool for vector search."""
+    def _load_document_from_file(self, file_path: str) -> bool:
+        """Load single PDF document into PDF tool for vector search."""
         try:
-            # Filter for PDF files only
-            pdf_files = [f for f in file_paths if f.lower().endswith('.pdf')]
-
-            if not pdf_files:
-                logger.warning("No PDF files found in uploaded files")
+            # Check if it's a PDF
+            if not file_path.lower().endswith('.pdf'):
+                logger.warning(f"Uploaded file is not a PDF: {file_path}")
                 return False
 
-            # Update the PDF tool with new documents
-            self.pdf_tool.update_documents(pdf_files)
+            logger.info(f"Loading PDF: {file_path}")
+
+            # Update the PDF tool with the document
+            self.pdf_tool.update_document(file_path)
 
             # Ensure indexes are built
             time.sleep(0.1)
 
-            logger.info(
-                f"Loaded {len(pdf_files)} PDF documents into vector index")
+            logger.info(f"Loaded PDF document into vector index: {file_path}")
             return True
 
         except (OSError, IOError, ValueError) as e:
-            logger.error(f"Error loading PDF documents: {e}")
+            logger.error(f"Error loading PDF document: {e}")
             return False
 
     def get_modules(self) -> Dict[str, Any]:
@@ -138,23 +137,21 @@ class GradioReActAgentPack(BaseLlamaPack):
             if files:
                 logger.info(f"Processing {len(files)} uploaded files")
 
-                # Load PDF documents into the tool
-                success = self._load_documents_from_files(files)
+                # Load the first (and likely only) PDF document
+                first_file = files[0] if files else None
+                success = self._load_document_from_file(first_file) if first_file else False
 
                 # Add file information to history
                 if success:
-                    pdf_count = len(
-                        [f for f in files if f.lower().endswith('.pdf')])
-                    file_info = (
-                        f"📁 Uploaded {pdf_count} PDF file(s) - ready for search and analysis")
+                    file_info = "📁 Uploaded PDF file - ready for search and analysis"
                     logger.info(
-                        f"PDF documents loaded successfully. Vector index: "
+                        f"PDF document loaded successfully. Vector index: "
                         f"{self.pdf_tool.vector_index is not None}")
                 else:
-                    file_info = "⚠️ No PDF files found or error loading documents"
+                    file_info = "⚠️ No PDF file found or error loading document"
 
                 history.append({"role": "user", "content": file_info})
-                logger.info(f"PDF documents processing result: {success}")
+                logger.info(f"PDF document processing result: {success}")
 
             user_text = user_message.get("text", "")
             if user_text:
@@ -260,7 +257,7 @@ class GradioReActAgentPack(BaseLlamaPack):
             role="user", content=current_user_msg)
 
         # Debug: Check PDF tool state and chat history before agent execution
-        logger.info(f"PDF tool state before agent run: docs={len(self.pdf_tool.documents)}, "
+        logger.info(f"PDF tool state before agent run: document={self.pdf_tool.document is not None}, "
                     f"vector_index={self.pdf_tool.vector_index is not None}, "
                     f"summary_index={self.pdf_tool.summary_index is not None}")
         logger.info(
@@ -304,8 +301,8 @@ class GradioReActAgentPack(BaseLlamaPack):
         self.memory.reset()
         self.conversation_history.clear()
 
-        # Clear PDF tool documents
-        self.pdf_tool.update_documents([])
+        # Clear PDF tool document
+        self.pdf_tool.update_document("")
 
         # Reset the context state by creating a new instance of the state class.
         state = await self.context.store.get_state()
