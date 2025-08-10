@@ -1,4 +1,6 @@
+import logging
 from typing import List, Optional
+
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, SummaryIndex
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.tools import FunctionTool
@@ -16,6 +18,13 @@ class PDFTool(BaseToolSpec):
 
         if self.file_path:
             self._load_document()
+
+        # --- Start Logging Configuration ---
+        self.logger = logging.getLogger(__name__)
+        self.formatter = logging.Formatter(
+            "%(asctime)s | %(levelname)-8s | %(name)s:%(funcName)s:%(lineno)d - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
     def _load_document(self):
         """Load the PDF document and create indexes."""
@@ -64,11 +73,12 @@ class PDFTool(BaseToolSpec):
         Returns:
             Relevant information from the document
         """
-        import logging
-        logger = logging.getLogger(__name__)
+        logger = self.logger
+
         logger.info(f"🔍 search_document called with query: '{query}'")
         logger.info(
-            f"📊 PDF tool state: document={self.document is not None}, vector_index={self.vector_index is not None}")
+            f"📊 PDF tool state: document={self.document is not None}, "
+            f"vector_index={self.vector_index is not None}")
 
         if not self.vector_index:
             result = "No document is currently loaded. Please upload a PDF file first."
@@ -87,11 +97,13 @@ class PDFTool(BaseToolSpec):
         Returns:
             A comprehensive summary of the uploaded document
         """
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"📋 summarize_document called")
+
+        logger = self.logger
+
+        logger.info("📋 summarize_document called")
         logger.info(
-            f"📊 PDF tool state: document={self.document is not None}, summary_index={self.summary_index is not None}")
+            f"📊 PDF tool state: document={self.document is not None}, "
+            f"summary_index={self.summary_index is not None}")
 
         if not self.summary_index:
             result = "No document is currently loaded. Please upload a PDF file first."
