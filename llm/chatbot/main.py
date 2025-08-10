@@ -3,11 +3,10 @@ import logging
 import os
 import re
 import sys
-import tempfile
-import shutil
+import time
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-from llama_index.core import Settings, SimpleDirectoryReader
+from llama_index.core import Settings
 from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.core.llama_pack.base import BaseLlamaPack
 from llama_index.core.llms import ChatMessage
@@ -76,7 +75,8 @@ Settings.embed_model = OllamaEmbedding(
 )
 
 # Tools Configuration
-SUPPORTED_TOOLS = MathTool().to_tool_list()
+pdf_tool = PDFTool()
+SUPPORTED_TOOLS = MathTool().to_tool_list() + pdf_tool.to_tool_list()
 
 
 class GradioReActAgentPack(BaseLlamaPack):
@@ -84,7 +84,7 @@ class GradioReActAgentPack(BaseLlamaPack):
     def __init__(self, supported_tools: List[FunctionTool]) -> None:
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
-        self.document_content: str = ""
+        self.pdf_tool = pdf_tool
 
         self.agent = FunctionAgent(
             tools=list(supported_tools),
@@ -96,41 +96,29 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         self.context: Context = Context(workflow=self.agent)
 
-    def _load_documents_from_files(self, file_paths: List[str]) -> str:
-        """Load documents from uploaded files and return content as text."""
+    def _load_documents_from_files(self, file_paths: List[str]) -> bool:
+        """Load documents into PDF tool for vector search."""
         try:
-            # Create a temporary directory for the uploaded files
-            temp_dir = tempfile.mkdtemp()
+            # Filter for PDF files only
+            pdf_files = [f for f in file_paths if f.lower().endswith('.pdf')]
 
-            # Copy uploaded files to temp directory
-            copied_files = []
-            for file_path in file_paths:
-                if os.path.exists(file_path):
-                    filename = os.path.basename(file_path)
-                    dest_path = os.path.join(temp_dir, filename)
-                    shutil.copy2(file_path, dest_path)
-                    copied_files.append(filename)
-                    logger.info(f"Copied file {file_path} to {dest_path}")
+            if not pdf_files:
+                logger.warning("No PDF files found in uploaded files")
+                return False
 
-            # Load documents using SimpleDirectoryReader
-            documents = SimpleDirectoryReader(temp_dir).load_data()
-            logger.info(f"Loaded {len(documents)} documents")
+            # Update the PDF tool with new documents
+            self.pdf_tool.update_documents(pdf_files)
 
-            # Extract text content from first document - first 30000 chars
-            content = ""
-            if documents:
-                doc_text = documents[0].text.strip()
-                content = doc_text[:30000] + \
-                    "..." if len(doc_text) > 30000 else doc_text
+            # Ensure indexes are built
+            time.sleep(0.1)
 
-            # Clean up temp directory
-            shutil.rmtree(temp_dir, ignore_errors=True)
-
-            return content
+            logger.info(
+                f"Loaded {len(pdf_files)} PDF documents into vector index")
+            return True
 
         except (OSError, IOError, ValueError) as e:
-            logger.error(f"Error loading documents: {e}")
-            return ""
+            logger.error(f"Error loading PDF documents: {e}")
+            return False
 
     def get_modules(self) -> Dict[str, Any]:
         """Get modules."""
@@ -150,16 +138,23 @@ class GradioReActAgentPack(BaseLlamaPack):
             if files:
                 logger.info(f"Processing {len(files)} uploaded files")
 
-                # Load document content and store it
-                self.document_content = self._load_documents_from_files(files)
+                # Load PDF documents into the tool
+                success = self._load_documents_from_files(files)
 
-                # Add only file information to history (not the content)
-                file_names = [os.path.basename(f) for f in files]
-                file_info = f"📁 Uploaded {len(files)} file(s): {', '.join(file_names)}"
+                # Add file information to history
+                if success:
+                    pdf_count = len(
+                        [f for f in files if f.lower().endswith('.pdf')])
+                    file_info = (
+                        f"📁 Uploaded {pdf_count} PDF file(s) - ready for search and analysis")
+                    logger.info(
+                        f"PDF documents loaded successfully. Vector index: "
+                        f"{self.pdf_tool.vector_index is not None}")
+                else:
+                    file_info = "⚠️ No PDF files found or error loading documents"
+
                 history.append({"role": "user", "content": file_info})
-
-                logger.info(
-                    f"Document content loaded: {len(self.document_content)} characters")
+                logger.info(f"PDF documents processing result: {success}")
 
             user_text = user_message.get("text", "")
             if user_text:
@@ -261,21 +256,19 @@ class GradioReActAgentPack(BaseLlamaPack):
         self._rebuild_memory()
 
         current_user_msg = chat_history[-1]["content"]
-
-        # If we have document content, make the question more explicit
-        if self.document_content:
-            enhanced_msg = (
-                f"Based on the uploaded document: {current_user_msg}\n\n"
-                f"--- DOCUMENT CONTENT ---\n{self.document_content}")
-        else:
-            enhanced_msg = current_user_msg
-
         current_user_message = ChatMessage(
-            role="user", content=enhanced_msg)
+            role="user", content=current_user_msg)
+
+        # Debug: Check PDF tool state and chat history before agent execution
+        logger.info(f"PDF tool state before agent run: docs={len(self.pdf_tool.documents)}, "
+                    f"vector_index={self.pdf_tool.vector_index is not None}, "
+                    f"summary_index={self.pdf_tool.summary_index is not None}")
+        logger.info(
+            f"Chat history length: {len(chat_history)}, last message: '{current_user_msg}'")
 
         try:
             handler = self.agent.run(
-                user_msg=enhanced_msg,
+                user_msg=current_user_msg,
                 memory=self.memory,
                 ctx=self.context
             )
@@ -307,12 +300,12 @@ class GradioReActAgentPack(BaseLlamaPack):
         yield self._create_history_update(chat_history, response_content)
 
     async def _reset_chat(self) -> Tuple[str, List]:
-        """Reset the agent's chat history. And clear all dialogue boxes."""
+        """Reset the agent's chat history and clear all dialogue boxes."""
         self.memory.reset()
         self.conversation_history.clear()
 
-        # Clear document content
-        self.document_content = ""
+        # Clear PDF tool documents
+        self.pdf_tool.update_documents([])
 
         # Reset the context state by creating a new instance of the state class.
         state = await self.context.store.get_state()
@@ -408,7 +401,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                 self._handle_user_message,
                 [chat_input, chat_window],
                 [chat_input, chat_window],
-                queue=False,
+                queue=True,
             ).then(
                 self._generate_response,
                 chat_window,

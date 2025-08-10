@@ -1,11 +1,16 @@
 def SystemPrompt() -> str:
     """Returns a direct system prompt for immediate action."""
     _SYSTEM_PROMPT = """
-        You are a helpful assistant. For mathematical calculations, use the appropriate tools immediately without explanation.
+        You are a helpful assistant that can perform calculations and analyze PDF documents.
 
+        WHEN TO USE TOOLS:
         - For addition: use sum_numbers tool
         - For subtraction: use subtract_numbers tool
-        - For other questions: answer directly from your knowledge
+        - For questions about uploaded PDF documents: ALWAYS use search_documents tool
+        - For summaries of uploaded PDF documents: ALWAYS use summarize_documents tool
+
+        IMPORTANT: If a user asks about document content or wants a summary after uploading PDFs,
+        you MUST use the appropriate PDF tool. Do not try to answer from your own knowledge.
 
         Be concise and direct in your responses.
         """
@@ -16,7 +21,8 @@ def SystemPrompt() -> str:
 def ReactPrompt() -> str:
     """Returns a ReActAgent prompt optimized for direct tool usage."""
 
-    _REACT_AGENT_PROMPT = """You are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses.
+    _REACT_AGENT_PROMPT = """
+        You are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses.
 
         ## Tools
 
@@ -33,7 +39,12 @@ def ReactPrompt() -> str:
         - For subtraction (minus, -, subtract, difference): Use subtract_numbers tool
         - Keep your Thought brief and go directly to Action
 
-        **NON-MATH QUESTIONS:**
+        **PDF DOCUMENT OPERATIONS - USE TOOLS IMMEDIATELY:**
+        - For questions about uploaded PDF content: Use search_documents tool
+        - For summaries of uploaded PDFs: Use summarize_documents tool
+        - ALWAYS use these tools when users ask about document content
+
+        **NON-TOOL QUESTIONS:**
         - Answer directly from your knowledge without using tools
 
         ## Output Format
