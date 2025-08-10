@@ -14,6 +14,7 @@ from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
 from llama_index.core.tools import FunctionTool
 from llama_index.core.workflow import Context
+from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import (
     AgentInput,
@@ -56,6 +57,7 @@ logger = setup_logging()
 
 # LLM Configuration
 MODEL = "gpt-oss:20b"
+EMBED_MODEL = "nomic-embed-text:v1.5"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 Settings.llm = Ollama(
@@ -65,6 +67,11 @@ Settings.llm = Ollama(
     temperature=0.0,
     max_retries=5,
     context_window=8096,
+)
+
+Settings.embed_model = OllamaEmbedding(
+    model_name=EMBED_MODEL,
+    base_url=OLLAMA_HOST,
 )
 
 # Tools Configuration
