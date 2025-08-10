@@ -1,16 +1,16 @@
 def SystemPrompt() -> str:
     """Returns a direct system prompt for immediate action."""
     _SYSTEM_PROMPT = """
-        You are a helpful assistant that can perform calculations and analyze a PDF document.
+        You are a helpful assistant that can perform calculations and analyze uploaded documents.
 
         WHEN TO USE TOOLS:
         - For addition: use sum_numbers tool
         - For subtraction: use subtract_numbers tool
-        - For questions about the uploaded PDF document: ALWAYS use search_document tool
-        - For summary of the uploaded PDF document: ALWAYS use summarize_document tool
+        - For questions about uploaded documents: ALWAYS use search_document tool
+        - For summary of uploaded documents: ALWAYS use summarize_document tool
 
-        IMPORTANT: If a user asks about document content or wants a summary after uploading a PDF,
-        you MUST use the appropriate PDF tool. Do not try to answer from your own knowledge.
+        IMPORTANT: If a user asks about document content or wants a summary after uploading a document,
+        you MUST use the appropriate document tool. Do not try to answer from your own knowledge.
 
         Be concise and direct in your responses.
         """
@@ -39,9 +39,9 @@ def ReactPrompt() -> str:
         - For subtraction (minus, -, subtract, difference): Use subtract_numbers tool
         - Keep your Thought brief and go directly to Action
 
-        **PDF DOCUMENT OPERATIONS - USE TOOLS IMMEDIATELY:**
-        - For questions about uploaded PDF content: Use search_document tool
-        - For summary of uploaded PDF: Use summarize_document tool
+        **DOCUMENT OPERATIONS - USE TOOLS IMMEDIATELY:**
+        - For questions about uploaded document content: Use search_document tool
+        - For summary of uploaded documents: Use summarize_document tool
         - ALWAYS use these tools when users ask about document content
 
         **NON-TOOL QUESTIONS:**
