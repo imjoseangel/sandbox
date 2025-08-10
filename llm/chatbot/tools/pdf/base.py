@@ -7,8 +7,9 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.tools.tool_spec.base import BaseToolSpec
 
 
-class PDFTool(BaseToolSpec):
-    """PDFTool for single PDF document operations with vector search."""
+class DocumentTool(BaseToolSpec):
+    """DocumentTool for single document operations with vector search.
+    Supports PDF, TXT, DOCX, MD, and other text-based document formats."""
 
     def __init__(self, file_path: Optional[str] = None):
         self.file_path = file_path
@@ -23,11 +24,11 @@ class PDFTool(BaseToolSpec):
         self.logger = logging.getLogger(__name__)
 
     def _load_document(self):
-        """Load the PDF document and create indexes."""
+        """Load the document and create indexes. Supports PDF, TXT, DOCX, MD, and other text
+        formats."""
         if not self.file_path:
             return
 
-        # Load single document
         documents = SimpleDirectoryReader(
             input_files=[self.file_path]).load_data()
         if not documents:
@@ -61,7 +62,7 @@ class PDFTool(BaseToolSpec):
     spec_functions = ["search_document", "summarize_document"]
 
     def search_document(self, query: str) -> str:
-        """Search the uploaded PDF document for specific information.
+        """Search the uploaded document for specific information.
 
         Args:
             query: The question or topic to search for in the document
@@ -73,11 +74,11 @@ class PDFTool(BaseToolSpec):
 
         logger.info(f"🔍 search_document called with query: '{query}'")
         logger.info(
-            f"📊 PDF tool state: document={self.document is not None}, "
+            f"📊 Document tool state: document={self.document is not None}, "
             f"vector_index={self.vector_index is not None}")
 
         if not self.vector_index:
-            result = "No document is currently loaded. Please upload a PDF file first."
+            result = "No document is currently loaded. Please upload a document file first."
             logger.info(f"❌ No vector index available, returning: {result}")
             return result
 
@@ -88,7 +89,7 @@ class PDFTool(BaseToolSpec):
         return result
 
     def summarize_document(self) -> str:
-        """Generate a summary of the uploaded PDF document.
+        """Generate a summary of the uploaded document.
 
         Returns:
             A comprehensive summary of the uploaded document
@@ -98,11 +99,11 @@ class PDFTool(BaseToolSpec):
 
         logger.info("📋 summarize_document called")
         logger.info(
-            f"📊 PDF tool state: document={self.document is not None}, "
+            f"📊 Document tool state: document={self.document is not None}, "
             f"summary_index={self.summary_index is not None}")
 
         if not self.summary_index:
-            result = "No document is currently loaded. Please upload a PDF file first."
+            result = "No document is currently loaded. Please upload a document file first."
             logger.info(f"❌ No summary index available, returning: {result}")
             return result
 
@@ -120,14 +121,14 @@ class PDFTool(BaseToolSpec):
         spec_functions=None,
         func_to_metadata_mapping=None,
     ) -> List[FunctionTool]:
-        """Convert PDF functions to FunctionTool list."""
+        """Convert document functions to FunctionTool list."""
         search_tool = FunctionTool.from_defaults(
             fn=self.search_document,
             name="search_document",
             description=(
-                "ALWAYS use this tool when the user asks questions about the uploaded PDF document, "
-                "asks for information from the document, or wants to find specific content in the PDF. "
-                "This tool searches the uploaded PDF file using vector similarity."
+                "ALWAYS use this tool when the user asks questions about the uploaded document, "
+                "asks for information from the document, or wants to find specific content. "
+                "This tool searches uploaded documents (PDF, TXT, DOCX, MD, etc.) using vector similarity."
             ),
             return_direct=True,
         )
@@ -137,8 +138,8 @@ class PDFTool(BaseToolSpec):
             name="summarize_document",
             description=(
                 "ALWAYS use this tool when the user asks for a summary, overview, or general "
-                "information about the uploaded PDF document. This tool generates a comprehensive "
-                "summary from the uploaded PDF."
+                "information about the uploaded document. This tool generates a comprehensive "
+                "summary from uploaded documents (PDF, TXT, DOCX, MD, etc.)."
             ),
             return_direct=True,
         )
