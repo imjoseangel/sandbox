@@ -29,7 +29,7 @@ import gradio as gr
 from libs.prompts import SystemPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
-from tools.pdf.base import PDFTool
+from tools.pdf.base import DocumentTool
 
 
 def setup_logging():
@@ -75,8 +75,8 @@ Settings.embed_model = OllamaEmbedding(
 )
 
 # Tools Configuration
-pdf_tool = PDFTool()
-SUPPORTED_TOOLS = MathTool().to_tool_list() + pdf_tool.to_tool_list()
+document_tool = DocumentTool()
+SUPPORTED_TOOLS = MathTool().to_tool_list() + document_tool.to_tool_list()
 
 
 class GradioReActAgentPack(BaseLlamaPack):
@@ -84,7 +84,7 @@ class GradioReActAgentPack(BaseLlamaPack):
     def __init__(self, supported_tools: List[FunctionTool]) -> None:
         self.memory = Memory.from_defaults(token_limit=32768)
         self.conversation_history: List[ChatMessage] = []
-        self.pdf_tool = pdf_tool
+        self.document_tool = document_tool
 
         self.agent = FunctionAgent(
             tools=list(supported_tools),
@@ -97,26 +97,21 @@ class GradioReActAgentPack(BaseLlamaPack):
         self.context: Context = Context(workflow=self.agent)
 
     def _load_document_from_file(self, file_path: str) -> bool:
-        """Load single PDF document into PDF tool for vector search."""
+        """Load single document into document tool for vector search."""
         try:
-            # Check if it's a PDF
-            if not file_path.lower().endswith('.pdf'):
-                logger.warning(f"Uploaded file is not a PDF: {file_path}")
-                return False
+            logger.info(f"Loading document: {file_path}")
 
-            logger.info(f"Loading PDF: {file_path}")
-
-            # Update the PDF tool with the document
-            self.pdf_tool.update_document(file_path)
+            # Update the document tool with the document
+            self.document_tool.update_document(file_path)
 
             # Ensure indexes are built
             time.sleep(0.1)
 
-            logger.info(f"Loaded PDF document into vector index: {file_path}")
+            logger.info(f"Loaded document into vector index: {file_path}")
             return True
 
         except (OSError, IOError, ValueError) as e:
-            logger.error(f"Error loading PDF document: {e}")
+            logger.error(f"Error loading document: {e}")
             return False
 
     def get_modules(self) -> Dict[str, Any]:
@@ -137,22 +132,22 @@ class GradioReActAgentPack(BaseLlamaPack):
             if files:
                 logger.info(f"Processing {len(files)} uploaded files")
 
-                # Load the first (and likely only) PDF document
+                # Load the first (and likely only) document
                 first_file = files[0] if files else None
                 success = self._load_document_from_file(
                     first_file) if first_file else False
 
                 # Add file information to history
                 if success:
-                    file_info = "📁 Uploaded PDF file - ready for search and analysis"
+                    file_info = "📁 Uploaded document file - ready for search and analysis"
                     logger.info(
-                        f"PDF document loaded successfully. Vector index: "
-                        f"{self.pdf_tool.vector_index is not None}")
+                        f"Document loaded successfully. Vector index: "
+                        f"{self.document_tool.vector_index is not None}")
                 else:
-                    file_info = "⚠️ No PDF file found or error loading document"
+                    file_info = "⚠️ No document file found or error loading document"
 
                 history.append({"role": "user", "content": file_info})
-                logger.info(f"PDF document processing result: {success}")
+                logger.info(f"Document processing result: {success}")
 
             user_text = user_message.get("text", "")
             if user_text:
@@ -257,11 +252,11 @@ class GradioReActAgentPack(BaseLlamaPack):
         current_user_message = ChatMessage(
             role="user", content=current_user_msg)
 
-        # Debug: Check PDF tool state and chat history before agent execution
-        logger.info(f"PDF tool state before agent run: "
-                    f"document={self.pdf_tool.document is not None}, "
-                    f"vector_index={self.pdf_tool.vector_index is not None}, "
-                    f"summary_index={self.pdf_tool.summary_index is not None}")
+        # Debug: Check document tool state and chat history before agent execution
+        logger.info(f"Document tool state before agent run: "
+                    f"document={self.document_tool.document is not None}, "
+                    f"vector_index={self.document_tool.vector_index is not None}, "
+                    f"summary_index={self.document_tool.summary_index is not None}")
         logger.info(
             f"Chat history length: {len(chat_history)}, last message: '{current_user_msg}'")
 
@@ -303,8 +298,8 @@ class GradioReActAgentPack(BaseLlamaPack):
         self.memory.reset()
         self.conversation_history.clear()
 
-        # Clear PDF tool document
-        self.pdf_tool.update_document("")
+        # Clear document tool document
+        self.document_tool.update_document("")
 
         # Reset the context state by creating a new instance of the state class.
         state = await self.context.store.get_state()
