@@ -6,10 +6,11 @@ from main import pdf_tool, SUPPORTED_TOOLS, GradioReActAgentPack
 import tempfile
 import os
 
+
 def test_single_document():
     """Test single document upload and processing"""
     print("🧪 Testing Simplified Single Document PDF Tool")
-    
+
     # Create a simple PDF for testing
     with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
         # Create a minimal PDF with some content
@@ -50,50 +51,53 @@ startxref
 
     try:
         print(f"📄 Created test PDF: {test_pdf_path}")
-        
+
         # Test 1: Initial state
         print("\n1️⃣ Testing initial state:")
         print(f"   Document loaded: {pdf_tool.document is not None}")
         print(f"   Vector index: {pdf_tool.vector_index is not None}")
-        
+
         # Test 2: Load document
         print("\n2️⃣ Loading document:")
         pdf_tool.update_document(test_pdf_path)
         print(f"   Document loaded: {pdf_tool.document is not None}")
         print(f"   Vector index: {pdf_tool.vector_index is not None}")
         print(f"   Summary index: {pdf_tool.summary_index is not None}")
-        
+
         # Test 3: Search functionality
         print("\n3️⃣ Testing search:")
-        search_result = pdf_tool.search_document("What is this document about?")
+        search_result = pdf_tool.search_document(
+            "What is this document about?")
         print(f"   Search result: {search_result[:100]}...")
-        
+
         # Test 4: Summary functionality
         print("\n4️⃣ Testing summary:")
         summary_result = pdf_tool.summarize_document()
         print(f"   Summary result: {summary_result[:100]}...")
-        
+
         # Test 5: Clear document
         print("\n5️⃣ Testing clear:")
         pdf_tool.update_document("")
         print(f"   Document cleared: {pdf_tool.document is None}")
         print(f"   Vector index cleared: {pdf_tool.vector_index is None}")
-        
+
         # Test 6: Agent integration
         print("\n6️⃣ Testing agent integration:")
         agent_pack = GradioReActAgentPack(supported_tools=SUPPORTED_TOOLS)
         success = agent_pack._load_documents_from_files([test_pdf_path])
         print(f"   Agent load success: {success}")
-        print(f"   Agent PDF tool state: document={agent_pack.pdf_tool.document is not None}")
-        
+        print(
+            f"   Agent PDF tool state: document={agent_pack.pdf_tool.document is not None}")
+
         print("\n🎉 All tests completed successfully!")
-        
+
     finally:
         # Cleanup
         try:
             os.unlink(test_pdf_path)
         except:
             pass
+
 
 if __name__ == "__main__":
     test_single_document()

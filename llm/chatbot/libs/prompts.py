@@ -5,17 +5,19 @@ def SystemPrompt() -> str:
 
         WHEN TO USE TOOLS:
         - For addition: use sum_numbers tool
-        - For subtraction: use subtract_numbers tool  
+        - For subtraction: use subtract_numbers tool
         - For questions about the uploaded PDF document: ALWAYS use search_document tool
         - For summary of the uploaded PDF document: ALWAYS use summarize_document tool
 
-        IMPORTANT: If a user asks about document content or wants a summary after uploading a PDF, 
+        IMPORTANT: If a user asks about document content or wants a summary after uploading a PDF,
         you MUST use the appropriate PDF tool. Do not try to answer from your own knowledge.
 
         Be concise and direct in your responses.
         """
 
     return _SYSTEM_PROMPT
+
+
 def ReactPrompt() -> str:
     """Returns a ReActAgent prompt optimized for direct tool usage."""
 

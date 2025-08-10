@@ -139,7 +139,8 @@ class GradioReActAgentPack(BaseLlamaPack):
 
                 # Load the first (and likely only) PDF document
                 first_file = files[0] if files else None
-                success = self._load_document_from_file(first_file) if first_file else False
+                success = self._load_document_from_file(
+                    first_file) if first_file else False
 
                 # Add file information to history
                 if success:
@@ -257,7 +258,8 @@ class GradioReActAgentPack(BaseLlamaPack):
             role="user", content=current_user_msg)
 
         # Debug: Check PDF tool state and chat history before agent execution
-        logger.info(f"PDF tool state before agent run: document={self.pdf_tool.document is not None}, "
+        logger.info(f"PDF tool state before agent run: "
+                    f"document={self.pdf_tool.document is not None}, "
                     f"vector_index={self.pdf_tool.vector_index is not None}, "
                     f"summary_index={self.pdf_tool.summary_index is not None}")
         logger.info(

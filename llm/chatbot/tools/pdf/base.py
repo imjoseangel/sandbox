@@ -13,7 +13,7 @@ class PDFTool(BaseToolSpec):
         self.document = None
         self.vector_index = None
         self.summary_index = None
-        
+
         if self.file_path:
             self._load_document()
 
@@ -21,21 +21,22 @@ class PDFTool(BaseToolSpec):
         """Load the PDF document and create indexes."""
         if not self.file_path:
             return
-            
+
         # Load single document
-        documents = SimpleDirectoryReader(input_files=[self.file_path]).load_data()
+        documents = SimpleDirectoryReader(
+            input_files=[self.file_path]).load_data()
         if not documents:
             return
-            
+
         self.document = documents[0]
-        
+
         # Create nodes from document
         splitter = SentenceSplitter(chunk_size=512, chunk_overlap=64)
         nodes = splitter.get_nodes_from_documents([self.document])
-        
+
         # Create vector index for searching
         self.vector_index = VectorStoreIndex(nodes=nodes)
-        
+
         # Create summary index from first few nodes
         summary_nodes = nodes[:5]  # Use first 5 nodes for summary
         self.summary_index = SummaryIndex(summary_nodes)
@@ -56,18 +57,19 @@ class PDFTool(BaseToolSpec):
 
     def search_document(self, query: str) -> str:
         """Search the uploaded PDF document for specific information.
-        
+
         Args:
             query: The question or topic to search for in the document
-            
+
         Returns:
             Relevant information from the document
         """
         import logging
         logger = logging.getLogger(__name__)
         logger.info(f"🔍 search_document called with query: '{query}'")
-        logger.info(f"📊 PDF tool state: document={self.document is not None}, vector_index={self.vector_index is not None}")
-        
+        logger.info(
+            f"📊 PDF tool state: document={self.document is not None}, vector_index={self.vector_index is not None}")
+
         if not self.vector_index:
             result = "No document is currently loaded. Please upload a PDF file first."
             logger.info(f"❌ No vector index available, returning: {result}")
@@ -81,15 +83,16 @@ class PDFTool(BaseToolSpec):
 
     def summarize_document(self) -> str:
         """Generate a summary of the uploaded PDF document.
-        
+
         Returns:
             A comprehensive summary of the uploaded document
         """
         import logging
         logger = logging.getLogger(__name__)
         logger.info(f"📋 summarize_document called")
-        logger.info(f"📊 PDF tool state: document={self.document is not None}, summary_index={self.summary_index is not None}")
-        
+        logger.info(
+            f"📊 PDF tool state: document={self.document is not None}, summary_index={self.summary_index is not None}")
+
         if not self.summary_index:
             result = "No document is currently loaded. Please upload a PDF file first."
             logger.info(f"❌ No summary index available, returning: {result}")
@@ -120,10 +123,10 @@ class PDFTool(BaseToolSpec):
             ),
             return_direct=True,
         )
-        
+
         summary_tool = FunctionTool.from_defaults(
             fn=self.summarize_document,
-            name="summarize_document", 
+            name="summarize_document",
             description=(
                 "ALWAYS use this tool when the user asks for a summary, overview, or general "
                 "information about the uploaded PDF document. This tool generates a comprehensive "
@@ -131,5 +134,5 @@ class PDFTool(BaseToolSpec):
             ),
             return_direct=True,
         )
-        
+
         return [search_tool, summary_tool]
