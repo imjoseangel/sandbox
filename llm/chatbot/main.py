@@ -13,7 +13,7 @@ from llama_index.core.llama_pack.base import BaseLlamaPack
 from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
 from llama_index.core.tools import FunctionTool
-from llama_index.core.workflow import Context
+from llama_index.core.workflow import Context, WorkflowRuntimeError
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import (
@@ -57,7 +57,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "gpt-oss:20b"
+MODEL = "qwen3:14b"
 EMBED_MODEL = "nomic-embed-text:v1.5"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
@@ -285,10 +285,16 @@ class GradioReActAgentPack(BaseLlamaPack):
                                                           current_user_msg):
                 yield update
 
-            response = await handler
-            response_content = response.response.content if isinstance(
-                response.response, ChatMessage) else str(response.response)
-            response_content = self._clean_response_content(response_content)
+            try:
+                agent_response = await handler
+                response_content = agent_response.response.content if isinstance(
+                    agent_response.response, ChatMessage) else str(agent_response.response)
+                response_content = self._clean_response_content(
+                    response_content)
+            except (AttributeError, TypeError, asyncio.TimeoutError,
+                    WorkflowRuntimeError) as e:
+                logger.error(f"Error during agent execution: {e}")
+                response_content = f"❌ **Error**: {str(e)}"
 
         except (ValueError, RuntimeError, ConnectionError, TimeoutError) as e:
             logger.error(f"Error during agent execution: {e}")
