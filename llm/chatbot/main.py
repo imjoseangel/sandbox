@@ -5,6 +5,7 @@ import re
 import sys
 import time
 from typing import Any, AsyncGenerator, Dict, List, Tuple
+import urllib3
 
 from llama_index.core import Settings
 from llama_index.core.agent.workflow import FunctionAgent
@@ -59,6 +60,19 @@ logger = setup_logging()
 MODEL = "gpt-oss:20b"
 EMBED_MODEL = "nomic-embed-text:v1.5"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+
+try:
+    timeout = urllib3.Timeout(connect=2.0, read=7.0)
+    http = urllib3.PoolManager(timeout=timeout)
+    response = http.request("GET", f"{OLLAMA_HOST}")
+    if response.status == 200:
+        logger.info("Connected to Ollama API successfully.")
+    else:
+        logger.error(
+            f"Failed to connect to Ollama API: {response.status}")
+except urllib3.exceptions.HTTPError as e:
+    logger.error(f"Error connecting to Ollama API: {e}")
+    sys.exit(1)
 
 Settings.llm = Ollama(
     model=MODEL,
