@@ -57,7 +57,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "qwen3:14b"
+MODEL = "qwen3:8b"
 EMBED_MODEL = "nomic-embed-text:v1.5"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
