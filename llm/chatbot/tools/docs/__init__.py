@@ -1,5 +1,5 @@
 import logging
-from tools.pdf.base import DocumentTool
+from tools.docs.base import DocumentTool
 
 __version__ = "1.0.0"
 __author__ = "Jose Angel Munoz"

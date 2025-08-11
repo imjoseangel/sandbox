@@ -128,7 +128,8 @@ class DocumentTool(BaseToolSpec):
             description=(
                 "ALWAYS use this tool when the user asks questions about the uploaded document, "
                 "asks for information from the document, or wants to find specific content. "
-                "This tool searches uploaded documents (PDF, TXT, DOCX, MD, etc.) using vector similarity."
+                "This tool searches uploaded documents (PDF, TXT, DOCX, MD, etc.), "
+                "using vector similarity."
             ),
             return_direct=True,
         )

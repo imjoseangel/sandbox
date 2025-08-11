@@ -29,7 +29,7 @@ import gradio as gr
 from libs.prompts import SystemPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
-from tools.pdf.base import DocumentTool
+from tools.docs.base import DocumentTool
 
 
 def setup_logging():
