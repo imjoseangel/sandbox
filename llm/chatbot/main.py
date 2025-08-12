@@ -266,7 +266,6 @@ class GradioReActAgentPack(BaseLlamaPack):
         current_user_message = ChatMessage(
             role="user", content=current_user_msg)
 
-        # Debug: Check document tool state and chat history before agent execution
         logger.info(f"Document tool state before agent run: "
                     f"document={self.document_tool.document is not None}, "
                     f"vector_index={self.document_tool.vector_index is not None}, "
