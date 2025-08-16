@@ -241,13 +241,15 @@ class GradioReActAgentPack(BaseLlamaPack):
             self.memory.put(msg)
 
     def _clean_response_content(self, response_content: str | None) -> str:
-        """Clean response content from unwanted prefixes."""
-        return re.sub(
-            r"^[\s\n\r]*(assistant:|user:)[\s\n\r]*",
-            "",
-            response_content or "",
-            flags=re.IGNORECASE
-        )
+        """Clean response content from unwanted prefixes and thinking tags."""
+        if not response_content:
+            return ""
+
+        # Remove assistant:/user: prefixes and <think>...</think> blocks
+        content = re.sub(r"^\s*(assistant:|user:)\s*", "", response_content.strip(), flags=re.IGNORECASE)
+        content = re.sub(r"<think>.*?</think>\s*", "", content, flags=re.DOTALL).strip()
+
+        return content or "Sorry, I couldn't generate a response. Please try rephrasing."
 
     def _create_history_update(self, chat_history: List[Dict[str, str]],
                                response_content: str) -> List[Dict[str, str]]:
