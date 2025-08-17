@@ -122,7 +122,8 @@ class GradioReActAgentPack(BaseLlamaPack):
 
                 # Add file information to history
                 if success:
-                    file_info = "📁 Uploaded document file - ready for search and analysis"
+                    filename = os.path.basename(first_file) if first_file else "Unknown file"
+                    file_info = f"📁 Uploaded document **{filename}** - ready for search and analysis"
                     logger.info(
                         f"Document loaded successfully. Vector index: "
                         f"{self.document_tool.vector_index is not None}")
