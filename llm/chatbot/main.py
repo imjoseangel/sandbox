@@ -80,7 +80,7 @@ Settings.llm = Ollama(
     thinking=False,
     temperature=0.0,
     max_retries=5,
-    context_window=4096,
+    context_window=8096,
 )
 
 Settings.embed_model = OllamaEmbedding(
