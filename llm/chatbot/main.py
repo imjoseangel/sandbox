@@ -24,7 +24,7 @@ from llama_index.core.agent.workflow import (
 
 import gradio as gr
 
-from libs.llms import OpenAI_Setup
+from libs.llms import Ollama_Setup
 from libs.prompts import SystemPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
@@ -55,7 +55,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-OpenAI_Setup()
+Ollama_Setup()
 
 # Tools Configuration
 document_tool = DocumentTool()
@@ -79,7 +79,7 @@ class GradioReActAgentPack(BaseLlamaPack):
 
         self.context: Context = Context(workflow=self.agent)
 
-    def _load_document_from_file(self, file_path: str) -> Tuple[bool, str]:
+    def _load_document_from_file(self, file_path: str) -> bool:
         """Load single document into document tool for vector search."""
         try:
             logger.info(f"Loading document: {file_path}")
@@ -91,12 +91,11 @@ class GradioReActAgentPack(BaseLlamaPack):
             time.sleep(0.1)
 
             logger.info(f"Loaded document into vector index: {file_path}")
-            return True, ""
+            return True
 
-        except (OSError, IOError, ValueError, Exception) as e:
-            error_msg = f"Error loading document: {e}"
-            logger.error(error_msg)
-            return False, error_msg
+        except (OSError, IOError, ValueError) as e:
+            logger.error(f"Error loading document: {e}")
+            return False
 
     def get_modules(self) -> Dict[str, Any]:
         """Get modules."""
@@ -123,8 +122,8 @@ class GradioReActAgentPack(BaseLlamaPack):
 
                 # Load the first (and likely only) document
                 first_file = files[0] if files else None
-                success, error_msg = self._load_document_from_file(
-                    first_file) if first_file else (False, "No file provided")
+                success = self._load_document_from_file(
+                    first_file) if first_file else False
 
                 # Add file information to history
                 if success:
@@ -134,7 +133,7 @@ class GradioReActAgentPack(BaseLlamaPack):
                         f"Document loaded successfully. Vector index: "
                         f"{self.document_tool.vector_index is not None}")
                 else:
-                    file_info = f"❌ {error_msg}" if error_msg else "⚠️ No document file found or error loading document"
+                    file_info = "⚠️ No document file found or error loading document"
 
                 history.append({"role": "user", "content": file_info})
                 logger.info(f"Document processing result: {success}")
