@@ -212,7 +212,11 @@ class GradioReActAgentPack(BaseLlamaPack):
                 event, current_user_msg, thinking_count)
 
             if isinstance(event, AgentOutput):
-                response_content += event.response.content or ""
+                raw_response_content = event.response.content or ""
+                logger.debug(f"Raw AgentOutput content: {raw_response_content[:200]}...")
+                processed_response_content = self._clean_response_content(raw_response_content)
+                logger.debug(f"Cleaned AgentOutput content: {processed_response_content[:200]}...")
+                response_content = processed_response_content
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + [
@@ -240,13 +244,25 @@ class GradioReActAgentPack(BaseLlamaPack):
             self.memory.put(msg)
 
     def _clean_response_content(self, response_content: str | None) -> str:
-        """Clean response content from unwanted prefixes."""
-        return re.sub(
+        """Clean response content from unwanted prefixes and thinking tags."""
+        if not response_content:
+            return ""
+
+        content = response_content
+
+        # Remove <think>...</think> tags completely (for LMStudio)
+        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL)
+
+        # Remove assistant:/user: prefixes (for Ollama compatibility)
+        content = re.sub(
             r"^[\s\n\r]*(assistant:|user:)[\s\n\r]*",
             "",
-            response_content or "",
+            content,
             flags=re.IGNORECASE
         )
+
+        # Clean up extra whitespace and newlines
+        return content.strip()
 
     def _create_history_update(self, chat_history: List[Dict[str, str]],
                                response_content: str) -> List[Dict[str, str]]:

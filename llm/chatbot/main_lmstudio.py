@@ -212,12 +212,11 @@ class GradioReActAgentPack(BaseLlamaPack):
                 event, current_user_msg, thinking_count)
 
             if isinstance(event, AgentOutput):
-                # Clean the content as it comes in
-                new_content = event.response.content or ""
-                logger.debug(f"Raw AgentOutput content: {new_content[:200]}...")
-                cleaned_new_content = self._clean_response_content(new_content)
-                logger.debug(f"Cleaned AgentOutput content: {cleaned_new_content[:200]}...")
-                response_content = cleaned_new_content
+                raw_response_content = event.response.content or ""
+                logger.debug(f"Raw AgentOutput content: {raw_response_content[:200]}...")
+                processed_response_content = self._clean_response_content(raw_response_content)
+                logger.debug(f"Cleaned AgentOutput content: {processed_response_content[:200]}...")
+                response_content = processed_response_content
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + [
