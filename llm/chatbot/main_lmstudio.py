@@ -57,7 +57,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "google/gemma-3n-e4b"
+MODEL = "qwen/qwen3-8b"
 EMBED_MODEL = "text-embedding-nomic-embed-text-v1.5"
 LMSTUDIO_HOST = os.getenv("LMSTUDIO_HOST", "http://127.0.0.1:1234/v1")
 
@@ -77,16 +77,15 @@ except urllib3.exceptions.HTTPError as e:
 Settings.llm = OpenAI(
     model_name=MODEL,
     api_base=LMSTUDIO_HOST,
-    api_key="dummy",
-    temperature=0.0,
-    max_tokens=8192,
     thinking=False,
+    temperature=0.0,
+    max_retries=5,
+    context_window=8096,
 )
 
 Settings.embed_model = OpenAIEmbedding(
     model_name=EMBED_MODEL,
     api_base=LMSTUDIO_HOST,
-    api_key="dummy",
 )
 
 # Tools Configuration
@@ -213,7 +212,12 @@ class GradioReActAgentPack(BaseLlamaPack):
                 event, current_user_msg, thinking_count)
 
             if isinstance(event, AgentOutput):
-                response_content += event.response.content or ""
+                # Clean the content as it comes in
+                new_content = event.response.content or ""
+                logger.debug(f"Raw AgentOutput content: {new_content[:200]}...")
+                cleaned_new_content = self._clean_response_content(new_content)
+                logger.debug(f"Cleaned AgentOutput content: {cleaned_new_content[:200]}...")
+                response_content = cleaned_new_content
 
             if status_message and status_message != last_status:
                 status_history = chat_history[:-1] + [
@@ -245,11 +249,21 @@ class GradioReActAgentPack(BaseLlamaPack):
         if not response_content:
             return ""
 
-        # Remove assistant:/user: prefixes and <think>...</think> blocks
-        content = re.sub(r"^\s*(assistant:|user:)\s*", "", response_content.strip(), flags=re.IGNORECASE)
-        content = re.sub(r"<think>.*?</think>\s*", "", content, flags=re.DOTALL).strip()
+        content = response_content
 
-        return content or "Sorry, I couldn't generate a response. Please try rephrasing."
+        # Remove <think>...</think> tags completely (for LMStudio)
+        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL)
+
+        # Remove assistant:/user: prefixes (for Ollama compatibility)
+        content = re.sub(
+            r"^[\s\n\r]*(assistant:|user:)[\s\n\r]*",
+            "",
+            content,
+            flags=re.IGNORECASE
+        )
+
+        # Clean up extra whitespace and newlines
+        return content.strip()
 
     def _create_history_update(self, chat_history: List[Dict[str, str]],
                                response_content: str) -> List[Dict[str, str]]:
