@@ -3,6 +3,8 @@ import logging
 from libs.prompts import (ReactPrompt, SubQuestionPrompt,
                           QAPrompt, SynthesisPrompt, SystemPrompt)
 
+from libs.llms import Ollama_Setup, OpenAI_Setup
+
 __version__ = "1.0.0"
 __author__ = "Jose Angel Munoz"
 __email__ = "josea.munoz@gmail.com"
@@ -15,6 +17,9 @@ __all__ = [
     "QAPrompt",
     "SynthesisPrompt",
 ]
+
+__ollama__ = Ollama_Setup
+__openai__ = OpenAI_Setup
 
 # Optional: Add convenience imports for commonly used types
 

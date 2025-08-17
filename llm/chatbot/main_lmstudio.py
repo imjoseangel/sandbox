@@ -5,7 +5,6 @@ import re
 import sys
 import time
 from typing import Any, AsyncGenerator, Dict, List, Tuple
-import urllib3
 
 from llama_index.core import Settings
 from llama_index.core.agent.workflow import FunctionAgent
@@ -14,8 +13,6 @@ from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
 from llama_index.core.tools import FunctionTool
 from llama_index.core.workflow import Context, WorkflowRuntimeError
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.llms.openai import OpenAI
 from llama_index.core.agent.workflow import (
     AgentInput,
     AgentOutput,
@@ -28,6 +25,7 @@ from llama_index.core.agent.workflow import (
 import gradio as gr
 
 from libs.prompts import SystemPrompt
+from libs.llms import OpenAI_Setup
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
 from tools.docs.base import DocumentTool
@@ -57,36 +55,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "qwen/qwen3-8b"
-EMBED_MODEL = "text-embedding-nomic-embed-text-v1.5"
-LMSTUDIO_HOST = os.getenv("LMSTUDIO_HOST", "http://127.0.0.1:1234/v1")
-
-try:
-    timeout = urllib3.Timeout(connect=2.0, read=7.0)
-    http = urllib3.PoolManager(timeout=timeout)
-    response = http.request("GET", f"{LMSTUDIO_HOST}")
-    if response.status == 200:
-        logger.info("Connected to LMStudio API successfully.")
-    else:
-        logger.error(
-            f"Failed to connect to LMStudio API: {response.status}")
-except urllib3.exceptions.HTTPError as e:
-    logger.error(f"Error connecting to LMStudio API: {e}")
-    sys.exit(1)
-
-Settings.llm = OpenAI(
-    model_name=MODEL,
-    api_base=LMSTUDIO_HOST,
-    thinking=False,
-    temperature=0.0,
-    max_retries=5,
-    context_window=8096,
-)
-
-Settings.embed_model = OpenAIEmbedding(
-    model_name=EMBED_MODEL,
-    api_base=LMSTUDIO_HOST,
-)
+OpenAI_Setup()
 
 # Tools Configuration
 document_tool = DocumentTool()

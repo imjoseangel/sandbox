@@ -5,7 +5,6 @@ import re
 import sys
 import time
 from typing import Any, AsyncGenerator, Dict, List, Tuple
-import urllib3
 
 from llama_index.core import Settings
 from llama_index.core.agent.workflow import FunctionAgent
@@ -14,8 +13,6 @@ from llama_index.core.llms import ChatMessage
 from llama_index.core.memory import Memory
 from llama_index.core.tools import FunctionTool
 from llama_index.core.workflow import Context, WorkflowRuntimeError
-from llama_index.embeddings.ollama import OllamaEmbedding
-from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import (
     AgentInput,
     AgentOutput,
@@ -27,6 +24,7 @@ from llama_index.core.agent.workflow import (
 
 import gradio as gr
 
+from libs.llms import Ollama_Setup
 from libs.prompts import SystemPrompt
 from styles.common import CustomCSS, FooterCSS, AuthHTML
 from tools.math.base import MathTool
@@ -57,36 +55,7 @@ def setup_logging():
 logger = setup_logging()
 
 # LLM Configuration
-MODEL = "qwen3:8b"
-EMBED_MODEL = "nomic-embed-text:v1.5"
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-
-try:
-    timeout = urllib3.Timeout(connect=2.0, read=7.0)
-    http = urllib3.PoolManager(timeout=timeout)
-    response = http.request("GET", f"{OLLAMA_HOST}")
-    if response.status == 200:
-        logger.info("Connected to Ollama API successfully.")
-    else:
-        logger.error(
-            f"Failed to connect to Ollama API: {response.status}")
-except urllib3.exceptions.HTTPError as e:
-    logger.error(f"Error connecting to Ollama API: {e}")
-    sys.exit(1)
-
-Settings.llm = Ollama(
-    model=MODEL,
-    base_url=OLLAMA_HOST,
-    thinking=False,
-    temperature=0.0,
-    max_retries=5,
-    context_window=8096,
-)
-
-Settings.embed_model = OllamaEmbedding(
-    model_name=EMBED_MODEL,
-    base_url=OLLAMA_HOST,
-)
+Ollama_Setup()
 
 # Tools Configuration
 document_tool = DocumentTool()
