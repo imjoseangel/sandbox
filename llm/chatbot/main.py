@@ -115,6 +115,11 @@ class GradioReActAgentPack(BaseLlamaPack):
             if files:
                 logger.info(f"Processing {len(files)} uploaded files")
 
+                # Clear conversation memory when new document is uploaded
+                self.memory.reset()
+                self.conversation_history.clear()
+                logger.info("Cleared conversation history for new document")
+
                 # Load the first (and likely only) document
                 first_file = files[0] if files else None
                 success = self._load_document_from_file(
