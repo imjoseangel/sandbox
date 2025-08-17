@@ -12,8 +12,10 @@ from llama_index.llms.ollama import Ollama
 logger = logging.getLogger(__name__)
 
 # LLM Configuration
-MODEL = "qwen3:8b"
-EMBED_MODEL = "nomic-embed-text:v1.5"
+OLLAMA_MODEL = "qwen3:8b"
+OPENAI_MODEL = "google/gemma-3n-e4b"
+OLLAMA_EMBED_MODEL = "nomic-embed-text:v1.5"
+OPENAI_EMBED_MODEL = "text-embedding-nomic-embed-text-v1.5"
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 LMSTUDIO_HOST = os.getenv("LMSTUDIO_HOST", "http://127.0.0.1:1234/v1")
 
@@ -41,7 +43,7 @@ def Ollama_Setup():
     test_conn("OLLAMA")
 
     Settings.llm = Ollama(
-        model=MODEL,
+        model=OLLAMA_MODEL,
         base_url=OLLAMA_HOST,
         thinking=False,
         temperature=0.0,
@@ -50,7 +52,7 @@ def Ollama_Setup():
     )
 
     Settings.embed_model = OllamaEmbedding(
-        model_name=EMBED_MODEL,
+        model_name=OLLAMA_EMBED_MODEL,
         base_url=OLLAMA_HOST,
     )
 
@@ -59,7 +61,7 @@ def OpenAI_Setup():
     test_conn("LMSTUDIO")
 
     Settings.llm = OpenAI(
-        model_name=MODEL,
+        model_name=OPENAI_MODEL,
         api_base=LMSTUDIO_HOST,
         thinking=False,
         temperature=0.0,
@@ -68,6 +70,6 @@ def OpenAI_Setup():
     )
 
     Settings.embed_model = OpenAIEmbedding(
-        model_name=EMBED_MODEL,
+        model_name=OPENAI_EMBED_MODEL,
         api_base=LMSTUDIO_HOST,
     )
