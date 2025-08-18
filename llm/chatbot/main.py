@@ -23,6 +23,7 @@ from llama_index.core.agent.workflow import (
 )
 
 import gradio as gr
+from openai import NotFoundError
 
 from libs.llms import OpenAI_Setup
 from libs.prompts import SystemPrompt
@@ -93,7 +94,7 @@ class GradioReActAgentPack(BaseLlamaPack):
             logger.info(f"Loaded document into vector index: {file_path}")
             return True, ""
 
-        except (OSError, IOError, ValueError, Exception) as e:
+        except (OSError, IOError, ValueError, NotFoundError) as e:
             error_msg = f"Error loading document: {e}"
             logger.error(error_msg)
             return False, error_msg
