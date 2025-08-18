@@ -128,13 +128,14 @@ class GradioReActAgentPack(BaseLlamaPack):
 
                 # Add file information to history
                 if success:
-                    filename = os.path.basename(first_file) if first_file else "Unknown file"
-                    file_info = f"📁 Uploaded document **{filename}** - ready for search and analysis"
+                    filename = os.path.basename(
+                        first_file) if first_file else "Unknown file"
+                    file_info = f"📁 Uploaded document **{filename}**"
                     logger.info(
                         f"Document loaded successfully. Vector index: "
                         f"{self.document_tool.vector_index is not None}")
                 else:
-                    file_info = f"❌ {error_msg}" if error_msg else "⚠️ No document file found or error loading document"
+                    file_info = f"❌ {error_msg}" if error_msg else "⚠️ Error loading document"
 
                 history.append({"role": "user", "content": file_info})
                 logger.info(f"Document processing result: {success}")
@@ -189,9 +190,12 @@ class GradioReActAgentPack(BaseLlamaPack):
 
             if isinstance(event, AgentOutput):
                 raw_response_content = event.response.content or ""
-                logger.debug(f"Raw AgentOutput content: {raw_response_content[:200]}...")
-                processed_response_content = self._clean_response_content(raw_response_content)
-                logger.debug(f"Cleaned AgentOutput content: {processed_response_content[:200]}...")
+                logger.debug(
+                    f"Raw AgentOutput content: {raw_response_content[:200]}...")
+                processed_response_content = self._clean_response_content(
+                    raw_response_content)
+                logger.debug(
+                    f"Cleaned AgentOutput content: {processed_response_content[:200]}...")
                 response_content = processed_response_content
 
             if status_message and status_message != last_status:
