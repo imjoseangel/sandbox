@@ -13,11 +13,13 @@ logger = logging.getLogger(__name__)
 
 # LLM Configuration
 OLLAMA_MODEL = "qwen3:8b"
-OPENAI_MODEL = "google/gemma-3n-e4b"
+OPENAI_MODEL = "openai/gpt-oss-20b:free"
 OLLAMA_EMBED_MODEL = "nomic-embed-text:v1.5"
 OPENAI_EMBED_MODEL = "text-embedding-nomic-embed-text-v1.5"
+
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-LMSTUDIO_HOST = os.getenv("LMSTUDIO_HOST", "http://127.0.0.1:1234/v1")
+OPENAI_HOST = os.getenv("OPENAI_HOST", "http://127.0.0.1:1234/v1")
+
 
 def test_conn(conn_type):
     host_url = globals()[f"{conn_type.upper()}_HOST"]
@@ -27,16 +29,19 @@ def test_conn(conn_type):
         http = urllib3.PoolManager(timeout=timeout)
         response = http.request("GET", host_url)
 
-        logger.debug(f"Testing connection to {conn_type.capitalize()} API at {host_url}")
+        logger.debug(
+            f"Testing connection to {conn_type.capitalize()} API at {host_url}")
 
         if response.status == 200:
-            logger.info(f"Connected to {conn_type.capitalize()} API successfully.")
+            logger.info(
+                f"Connected to {conn_type.capitalize()} API successfully.")
         else:
             logger.error(
                 f"Failed to connect to {conn_type.capitalize()} API: {response.status}")
     except urllib3.exceptions.HTTPError as e:
         logger.error(f"Error connecting to {conn_type.capitalize()} API: {e}")
         sys.exit(1)
+
 
 def Ollama_Setup():
 
@@ -56,13 +61,14 @@ def Ollama_Setup():
         base_url=OLLAMA_HOST,
     )
 
+
 def OpenAI_Setup():
 
-    test_conn("LMSTUDIO")
+    test_conn("OPENAI")
 
     Settings.llm = OpenAI(
         model_name=OPENAI_MODEL,
-        api_base=LMSTUDIO_HOST,
+        api_base=OPENAI_HOST,
         thinking=False,
         temperature=0.0,
         max_retries=5,
@@ -71,5 +77,5 @@ def OpenAI_Setup():
 
     Settings.embed_model = OpenAIEmbedding(
         model_name=OPENAI_EMBED_MODEL,
-        api_base=LMSTUDIO_HOST,
+        api_base=OPENAI_HOST,
     )
