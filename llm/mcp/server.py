@@ -77,5 +77,6 @@ async def test_server_locally():
 
 if __name__ == "__main__":
     asyncio.run(test_server_locally())
-    mcp.run(transport="sse", port=8080, host="0.0.0.0", log_level="debug")
+    mcp.run(transport="sse", port=8080, host="0.0.0.0", log_level="DEBUG",
+            on_duplicate_tools="warn")
     # https://apidog.com/blog/fastmcp/
