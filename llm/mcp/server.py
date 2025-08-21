@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 import asyncio
 from fastmcp import FastMCP, Client
-
-mcp = FastMCP(name="Demo 🚀")
+from fastmcp.server.auth.providers.jwt import JWTVerifier
 
 APP_CONFIG = {"theme": "dark", "version": "1.1",
               "feature_flags": ["new_dashboard"]}
@@ -12,6 +11,27 @@ USER_PROFILES = {
     101: {"name": "Alice", "status": "active"},
     102: {"name": "Bob", "status": "inactive"},
 }
+
+# Use a static public key for token verification
+PUBLIC_KEY_PEM = """
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArlL+Ll5ELidy1Q0cbgso
+fApCyYF42r7a1y4PwTntjo9DT4LP6ixuoiLPPPTQP7HD3S531kfOskVczsFOkNkD
+7wpTGWlPGvfmyJldqyRJg6T0SftcjznUOHpXZQu3U/kXKbRa8R2EdukKVBJcSdiG
+cyPDkbkNUNJvEGyD/n+SgLRpsvDgLLdh7n25VeMM+q2BtVvpx4qLXrCXfahFG7Cd
+elz7wJCNpKFlhfnzjPwoAKCQjyHVaZ1Ex9c2w0kRHT3qdn4fk8q4Rskobk08nZhj
+Ep3gwUVCsjHfkbfC9Uo9hiJWbDgXgZOZFewmKagpKa9fANFDvpLQEYwCHi/qZvRx
+ZwIDAQAB
+-----END PUBLIC KEY-----
+"""
+
+verifier = JWTVerifier(
+    public_key=PUBLIC_KEY_PEM,
+    issuer="https://auth.example.com",
+    audience="mcp-production-api"
+)
+
+mcp = FastMCP(name="Demo 🚀", auth=verifier)
 
 
 @mcp.tool()
@@ -77,6 +97,5 @@ async def test_server_locally():
 
 if __name__ == "__main__":
     asyncio.run(test_server_locally())
-    mcp.run(transport="sse", port=8080, host="0.0.0.0", log_level="DEBUG",
-            on_duplicate_tools="warn")
+    mcp.run(transport="sse", port=8080, host="0.0.0.0", log_level="DEBUG")
     # https://apidog.com/blog/fastmcp/
