@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import asyncio
+import os
+
 from fastmcp import FastMCP, Client
 from fastmcp.server.auth.providers.jwt import JWTVerifier
+
+# Configuration - replace with your Okta values
+OKTA_DOMAIN = os.getenv("OKTA_DOMAIN", "https://dev-12345.okta.com")
+OKTA_ISSUER = os.getenv("OKTA_ISSUER", f"{OKTA_DOMAIN}/oauth2/default")
+OKTA_AUDIENCE = os.getenv("OKTA_AUDIENCE", "api://default")
+OKTA_JWKS_URI = f"{OKTA_ISSUER}/v1/keys"
 
 APP_CONFIG = {"theme": "dark", "version": "1.1",
               "feature_flags": ["new_dashboard"]}
@@ -12,23 +20,11 @@ USER_PROFILES = {
     102: {"name": "Bob", "status": "inactive"},
 }
 
-# Use a static public key for token verification
-PUBLIC_KEY_PEM = """
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArlL+Ll5ELidy1Q0cbgso
-fApCyYF42r7a1y4PwTntjo9DT4LP6ixuoiLPPPTQP7HD3S531kfOskVczsFOkNkD
-7wpTGWlPGvfmyJldqyRJg6T0SftcjznUOHpXZQu3U/kXKbRa8R2EdukKVBJcSdiG
-cyPDkbkNUNJvEGyD/n+SgLRpsvDgLLdh7n25VeMM+q2BtVvpx4qLXrCXfahFG7Cd
-elz7wJCNpKFlhfnzjPwoAKCQjyHVaZ1Ex9c2w0kRHT3qdn4fk8q4Rskobk08nZhj
-Ep3gwUVCsjHfkbfC9Uo9hiJWbDgXgZOZFewmKagpKa9fANFDvpLQEYwCHi/qZvRx
-ZwIDAQAB
------END PUBLIC KEY-----
-"""
-
+# Use Okta's JWKS endpoint for dynamic key verification
 verifier = JWTVerifier(
-    public_key=PUBLIC_KEY_PEM,
-    issuer="https://auth.example.com",
-    audience="mcp-production-api"
+    jwks_uri=OKTA_JWKS_URI,
+    issuer=OKTA_ISSUER,
+    audience=OKTA_AUDIENCE
 )
 
 mcp = FastMCP(name="Demo 🚀", auth=verifier)
