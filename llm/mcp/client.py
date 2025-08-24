@@ -2,7 +2,10 @@ import asyncio
 import base64
 import binascii
 import json
+import os
 import traceback
+
+import requests
 
 from fastmcp import Client
 
@@ -30,11 +33,41 @@ def decode_jwt_payload(token):
         return None
 
 
+def get_okta_access_token(okta_domain, client_id, client_secret, scope="api.read"):
+    """Obtain an access token from Okta using client credentials flow."""
+    token_url = f"{okta_domain}/oauth2/default/v1/token"
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    data = {
+        "grant_type": "client_credentials",
+        "scope": scope
+    }
+    auth = (client_id, client_secret)
+    response = requests.post(token_url, headers=headers,
+                             data=data, auth=auth, timeout=10)
+    if response.status_code != 200:
+        print("Failed to get Okta token:")
+        print("Status:", response.status_code)
+        print("Response:", response.text)
+        response.raise_for_status()
+    return response.json()["access_token"]
+
+
 async def interact_with_server():
     print("--- Creating Client ---")
 
     # JWT token for authentication
-    jwt_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTc1NTgxMzE5NSwiZXhwIjoxNzU1ODE0OTk1LCJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20iLCJhdWQiOiJtY3AtcHJvZHVjdGlvbi1hcGkifQ.T5h_BuRU94Qw0uE1kboh4qpM6O4DpeYiF4VfG8nKdZfUvQESQDqqToF_GC7Xwtk4loCoNzme9cIuGeFdo2d3svmystw2nkNdoxlFfFrolgTTQHRf_gSBEiLM2Mxj1tqGhJZCvBCGUKZ_Gm7IAFMSWBoGF_NCjRO2BW25HB4Dc7Uc5dvsHmj4xv3PwbO0Wy_kXdDFM5-QzJnSGOTYylbhbfkhz8POZBhPYPVl1zrOotqqSLvOJv-qr61WsQLdohNaUh0RzgoJBaXF-5rha3JA_9Byw82W6D1nOnEcE1CJ5b8P-mHZD5ayok1Fq9xkjhYX9r5yEmKQebNb2w0musbzPA"
+    # jwt_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTc1NTgxMzE5NSwiZXhwIjoxNzU1ODE0OTk1LCJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20iLCJhdWQiOiJtY3AtcHJvZHVjdGlvbi1hcGkifQ.T5h_BuRU94Qw0uE1kboh4qpM6O4DpeYiF4VfG8nKdZfUvQESQDqqToF_GC7Xwtk4loCoNzme9cIuGeFdo2d3svmystw2nkNdoxlFfFrolgTTQHRf_gSBEiLM2Mxj1tqGhJZCvBCGUKZ_Gm7IAFMSWBoGF_NCjRO2BW25HB4Dc7Uc5dvsHmj4xv3PwbO0Wy_kXdDFM5-QzJnSGOTYylbhbfkhz8POZBhPYPVl1zrOotqqSLvOJv-qr61WsQLdohNaUh0RzgoJBaXF-5rha3JA_9Byw82W6D1nOnEcE1CJ5b8P-mHZD5ayok1Fq9xkjhYX9r5yEmKQebNb2w0musbzPA"
+
+    # Okta configuration
+    okta_domain = os.getenv("OKTA_DOMAIN", "https://dev-12345.okta.com")
+    okta_client_id = os.getenv("OKTA_CLIENT_ID", "client_id")
+    okta_client_secret = os.getenv("OKTA_CLIENT_SECRET", "client_secret")
+    # Use a valid scope from your Okta authorization server
+    okta_scope = os.getenv("OKTA_SCOPE", "api.read")
+
+    # Obtain JWT token from Okta
+    jwt_token = get_okta_access_token(
+        okta_domain, okta_client_id, okta_client_secret, okta_scope)
 
     # Debug: Decode and display JWT payload
     payload = decode_jwt_payload(jwt_token)
