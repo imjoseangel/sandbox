@@ -14,8 +14,8 @@ import seaborn as sns
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-LATITUDE = 40.646212
-LONGITUDE = -3.224389
+LATITUDE = 40.4167
+LONGITUDE = -3.7033
 TIMEZONE = 'Europe/Madrid'
 
 ROOF_BEARING = 40.0  # Updated to 40° NE based on new measurements
