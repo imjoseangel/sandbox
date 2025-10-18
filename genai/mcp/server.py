@@ -20,6 +20,16 @@ USER_PROFILES = {
     102: {"name": "Bob", "status": "inactive"},
 }
 
+with open("public_key.pem", "r", encoding="utf-8") as f:
+    public_key_pem = f.read()
+
+jwt_verifier = JWTVerifier(
+    public_key=public_key_pem,
+    issuer="https://auth.example.com",
+    audience="mcp-production-api",
+    algorithm="RS256"
+)
+
 # Use Okta's JWKS endpoint for dynamic key verification
 verifier = JWTVerifier(
     jwks_uri=OKTA_JWKS_URI,
