@@ -1,0 +1,43 @@
+# Core FastAPI
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Azure AD / OAuth2
+msal==1.31.1
+python-jose[cryptography]==3.3.0
+cryptography==44.0.0
+PyJWT==2.10.1
+
+# HTTP Client
+httpx==0.28.1
+aiohttp==3.11.10
+
+# Session Management
+itsdangerous==2.2.0
+python-multipart==0.0.20
+
+# Redis (optional, for production)
+redis==5.2.1
+hiredis==3.0.0
+
+# Security
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.1
+
+# Middleware
+starlette==0.41.3
+
+# Utilities
+email-validator==2.2.0
+python-json-logger==3.2.1
+
+# Development
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-cov==6.0.0
+httpx==0.28.1
+black==24.10.0
+ruff==0.8.4
+mypy==1.13.0

@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "fastapi-azure-sso"
+version = "1.0.0"
+description = "Production-ready FastAPI Azure AD/Entra ID SSO Authentication"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.5"
+uvicorn = { extras = ["standard"], version = "^0.32.1" }
+pydantic = "^2.10.3"
+pydantic-settings = "^2.6.1"
+msal = "^1.31.1"
+python-jose = { extras = ["cryptography"], version = "^3.3.0" }
+cryptography = "^44.0.0"
+PyJWT = "^2.10.1"
+httpx = "^0.28.1"
+aiohttp = "^3.11.10"
+itsdangerous = "^2.2.0"
+python-multipart = "^0.0.20"
+redis = "^5.2.1"
+hiredis = "^3.0.0"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+python-dotenv = "^1.0.1"
+starlette = "^0.41.3"
+email-validator = "^2.2.0"
+python-json-logger = "^3.2.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^6.0.0"
+black = "^24.10.0"
+ruff = "^0.8.4"
+mypy = "^1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]

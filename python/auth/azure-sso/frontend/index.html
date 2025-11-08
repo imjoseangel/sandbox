@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure AD SSO Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .auth-section {
+            margin-bottom: 30px;
+        }
+
+        .button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            background: #005a9e;
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .button.logout {
+            background: #d32f2f;
+        }
+
+        .button.logout:hover {
+            background: #b71c1c;
+        }
+
+        .user-info {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            margin-left: 8px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #c62828;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 Azure AD SSO Demo</h1>
+        <p class="subtitle">FastAPI Azure AD/Entra ID Integration</p>
+
+        <div class="auth-section">
+            <div id="login-section">
+                <button class="button" onclick="login()">
+                    Sign in with Microsoft
+                </button>
+            </div>
+
+            <div id="user-section" style="display: none;">
+                <button class="button" onclick="getUserInfo()">Get User Info</button>
+                <button class="button" onclick="callProtectedAPI()">Call Protected API</button>
+                <button class="button logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="message"></div>
+
+        <div id="user-info" style="display: none;" class="user-info">
+            <h3>User Information</h3>
+            <div id="user-details"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+        let accessToken = null;
+
+        // Check URL for access token (from callback redirect)
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('access_token');
+
+            if (token) {
+                accessToken = token;
+                localStorage.setItem('access_token', token);
+                showMessage('Successfully authenticated!', 'success');
+                toggleAuthSections(true);
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+                // Automatically get user info
+                getUserInfo();
+            } else {
+                // Check for stored token
+                const storedToken = localStorage.getItem('access_token');
+                if (storedToken) {
+                    accessToken = storedToken;
+                    toggleAuthSections(true);
+                    getUserInfo();
+                }
+            }
+        };
+
+        function login() {
+            // Redirect to backend login endpoint
+            window.location.href = `${API_BASE_URL}/auth/login`;
+        }
+
+        async function getUserInfo() {
+            if (!accessToken) {
+                showMessage('Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    displayUserInfo(user);
+                } else if (response.status === 401) {
+                    showMessage('Session expired. Please login again.', 'error');
+                    logout();
+                } else {
+                    showMessage('Failed to get user info', 'error');
+                }
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function callProtectedAPI() {
+            if (!accessToken) {
+                showMessage('Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/protected`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showMessage(`Protected API Response: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else if (response.status === 401) {
+                    showMessage('Session expired. Please login again.', 'error');
+                    logout();
+                } else {
+                    showMessage('Access denied to protected resource', 'error');
+                }
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function logout() {
+            accessToken = null;
+            localStorage.removeItem('access_token');
+            toggleAuthSections(false);
+            document.getElementById('user-info').style.display = 'none';
+            showMessage('Logged out successfully', 'success');
+
+            // Optionally redirect to Azure AD logout
+            // window.location.href = `${API_BASE_URL}/auth/logout`;
+        }
+
+        function displayUserInfo(user) {
+            const userDetails = document.getElementById('user-details');
+            userDetails.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">${user.name || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">${user.email || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">${user.id}</span>
+                </div>
+                ${user.roles && user.roles.length > 0 ? `
+                <div class="info-item">
+                    <span class="info-label">Roles:</span>
+                    <span class="info-value">${user.roles.join(', ')}</span>
+                </div>
+                ` : ''}
+                <pre>${JSON.stringify(user, null, 2)}</pre>
+            `;
+            document.getElementById('user-info').style.display = 'block';
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function toggleAuthSections(isAuthenticated) {
+            document.getElementById('login-section').style.display = isAuthenticated ? 'none' : 'block';
+            document.getElementById('user-section').style.display = isAuthenticated ? 'block' : 'none';
+        }
+    </script>
+</body>
+
+</html>
