@@ -17,12 +17,14 @@ if custom_redirect or settings.frontend_redirect_uri:
 ## Solution
 
 Made `frontend_redirect_uri` **optional** so you can:
+
 - **Set it**: Redirect to frontend (for production with a React/Vue/etc. frontend)
 - **Leave it empty**: Return JSON response directly (for API testing/development)
 
 ### Changes Made
 
 1. **`/src/config.py`**: Made `frontend_redirect_uri` optional
+
    ```python
    frontend_redirect_uri: Optional[str] = Field(
        default=None,
@@ -31,6 +33,7 @@ Made `frontend_redirect_uri` **optional** so you can:
    ```
 
 2. **`.env`**: Commented out the frontend redirect
+
    ```env
    # FRONTEND_REDIRECT_URI=http://localhost:3000/auth/callback  # Leave empty for JSON response
    FRONTEND_REDIRECT_URI=
@@ -78,7 +81,8 @@ FRONTEND_REDIRECT_URI=http://localhost:3000/auth/callback
 ```
 
 **Result**: After OAuth login, redirects to:
-```
+
+```txt
 http://localhost:3000/auth/callback?access_token=eyJ0eXAiOiJKV1Q...
 ```
 
@@ -102,6 +106,7 @@ GET /api/v1/auth/login?redirect_uri=http://custom-app.com/callback
 ### Recommended Production Approaches
 
 1. **Use HTTP-only cookies**:
+
    ```python
    response.set_cookie(
        "access_token",
@@ -125,12 +130,14 @@ GET /api/v1/auth/login?redirect_uri=http://custom-app.com/callback
 ## Testing Steps
 
 1. **Restart your server**:
+
    ```bash
    # Stop current server (Ctrl+C)
    uvicorn src.main:app --reload
    ```
 
 2. **Initiate login**:
+
    ```bash
    open http://localhost:8000/api/v1/auth/login
    ```
@@ -140,6 +147,7 @@ GET /api/v1/auth/login?redirect_uri=http://custom-app.com/callback
 4. **Get JSON response** with user info and tokens
 
 5. **Test the `/me` endpoint**:
+
    ```bash
    curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
         http://localhost:8000/api/v1/auth/me
