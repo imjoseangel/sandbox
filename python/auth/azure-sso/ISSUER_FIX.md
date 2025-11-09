@@ -6,7 +6,7 @@ Getting "Invalid token issuer" error during OAuth2 callback, even though authent
 
 ### Root Cause
 
-**Authority vs Issuer Mismatch**
+#### Authority vs Issuer Mismatch
 
 When using `AZURE_AUTHORITY=common` (multi-tenant mode), there's a mismatch between:
 
@@ -14,7 +14,8 @@ When using `AZURE_AUTHORITY=common` (multi-tenant mode), there's a mismatch betw
 - **Token Issuer**: Azure AD issues tokens with tenant-specific issuer like `https://login.microsoftonline.com/{tenant-id}/v2.0`
 
 The JWT validation was expecting:
-```
+
+```txt
 Expected: https://login.microsoftonline.com/common/v2.0
 Actual:   https://login.microsoftonline.com/b6674be2-2860-4fc4-8ef9-451cb064dd70/v2.0
 ```
@@ -41,6 +42,7 @@ if actual_issuer not in expected_issuers:
 ## Changes Made
 
 ### `/src/auth.py`
+
 - ✅ Added logging import
 - ✅ Added debug logging for issuer comparison
 - ✅ Implemented multi-issuer validation for "common" authority
@@ -59,11 +61,13 @@ AZURE_AUTHORITY=b6674be2-2860-4fc4-8ef9-451cb064dd70
 ```
 
 **Pros:**
+
 - Simpler validation
 - More secure (restricts to specific tenant)
 - No issuer mismatch
 
 **Cons:**
+
 - Only works for single-tenant scenarios
 - Can't authenticate users from other tenants
 
@@ -72,21 +76,25 @@ AZURE_AUTHORITY=b6674be2-2860-4fc4-8ef9-451cb064dd70
 Use the implemented solution to accept both issuers.
 
 **Pros:**
+
 - Supports multi-tenant scenarios
 - Users from any tenant can authenticate
 - Flexible
 
 **Cons:**
+
 - Slightly more complex validation logic
 
 ## Configuration Examples
 
 ### Single-Tenant App
+
 ```env
 AZURE_AUTHORITY=b6674be2-2860-4fc4-8ef9-451cb064dd70
 ```
 
 ### Multi-Tenant App (Any Organization)
+
 ```env
 AZURE_AUTHORITY=common
 # or
@@ -94,6 +102,7 @@ AZURE_AUTHORITY=organizations
 ```
 
 ### Consumer Accounts (Microsoft personal accounts)
+
 ```env
 AZURE_AUTHORITY=consumers
 ```
@@ -121,7 +130,7 @@ After the fix, the OAuth flow should complete successfully:
 
 You'll see these logs during token validation:
 
-```
+```txt
 DEBUG: Token validation - Expected issuer: https://login.microsoftonline.com/common/v2.0
 DEBUG: Token validation - Actual issuer: https://login.microsoftonline.com/b6674be2-2860-4fc4-8ef9-451cb064dd70/v2.0
 DEBUG: Multi-tenant mode - Also accepting: https://login.microsoftonline.com/b6674be2-2860-4fc4-8ef9-451cb064dd70/v2.0

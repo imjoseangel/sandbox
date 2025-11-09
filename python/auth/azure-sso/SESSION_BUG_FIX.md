@@ -16,6 +16,7 @@ class InMemorySessionStore:
 ```
 
 **Why this failed:**
+
 1. `/login` endpoint: Creates `SessionManager(settings)` → new `InMemorySessionStore` → stores session in instance A
 2. `/callback` endpoint: Creates new `SessionManager(settings)` → new `InMemorySessionStore` → looks in instance B (empty!)
 3. Session not found → "Invalid or expired state parameter" error
@@ -41,12 +42,14 @@ Now all instances share the same storage dictionary, making sessions persist acr
 ## Changes Made
 
 ### 1. `/src/session.py`
+
 - ✅ Fixed `InMemorySessionStore` to use class-level `_shared_store`
 - ✅ Added logging to track session storage/retrieval
 - ✅ Added info log showing which storage backend is active
 - ✅ Fixed session timestamp (was `timedelta(seconds=0)`, now uses `time.time()`)
 
 ### 2. `/src/routes.py`
+
 - ✅ Enhanced error message with actionable guidance
 - ✅ Added logging for session creation and retrieval
 - ✅ Added `await session_manager.close()` after login redirect
@@ -62,7 +65,8 @@ python test_session_fix.py
 ```
 
 Expected output:
-```
+
+```txt
 ✓ Created session with state: i0eNOW5yx0wAW84M...
 ✓ Successfully retrieved session from different SessionManager instance
   - code_verifier: test_verifier
@@ -74,12 +78,14 @@ Expected output:
 ## Testing the OAuth Flow
 
 1. **Start your server**:
+
    ```bash
    uvicorn src.main:app --reload
    ```
 
 2. **Initiate login**:
-   ```
+
+   ```txt
    http://localhost:8000/auth/login
    ```
 
@@ -90,7 +96,8 @@ Expected output:
 ## Monitoring
 
 Check logs for session activity:
-```
+
+```log
 INFO: Using in-memory session storage (not recommended for production)
 INFO: Created login session with state: gPR52gl2...
 DEBUG: Stored session session:gPR52gl2... in memory. Total sessions: 1
@@ -109,6 +116,7 @@ REDIS_URL=redis://localhost:6379/0
 ```
 
 This ensures:
+
 - ✅ Sessions persist across server restarts
 - ✅ Horizontal scaling support (multiple server instances)
 - ✅ Proper expiration handling

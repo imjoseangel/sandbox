@@ -28,12 +28,14 @@ This error occurs during the OAuth2 callback phase when the state parameter from
 ### Quick Fixes
 
 #### 1. Increase Session Timeout (Development)
+
 ```bash
 # In your .env file
 SESSION_MAX_AGE=7200  # 2 hours
 ```
 
 #### 2. Enable Redis (Production)
+
 ```bash
 # In your .env file
 REDIS_ENABLED=true
@@ -41,6 +43,7 @@ REDIS_URL=redis://localhost:6379/0
 ```
 
 Start Redis:
+
 ```bash
 # Using Docker
 docker run -d -p 6379:6379 redis:alpine
@@ -51,6 +54,7 @@ sudo apt-get install redis-server  # Ubuntu
 ```
 
 #### 3. Check Session Status (Debug Endpoint)
+
 ```bash
 # Test if a session exists
 curl "http://localhost:8000/auth/session/check?state=YOUR_STATE_VALUE"
@@ -68,7 +72,8 @@ The code has been updated with:
 ### Debugging Steps
 
 1. **Check logs** for session creation and retrieval:
-   ```
+
+   ```log
    INFO: Created login session with state: abc12345...
    WARNING: Session not found for state: abc12345...
    ```
@@ -80,6 +85,7 @@ The code has been updated with:
 3. **Test the flow quickly** - Complete OAuth flow within a few minutes
 
 4. **Check environment variables**:
+
    ```bash
    echo $SESSION_MAX_AGE
    echo $REDIS_ENABLED
