@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from fastapi import HTTPException, status
 
 from .config import Settings
-from .models import AuthTokens
+from ..schemas.models import AuthTokens
 
 
 class AzureOAuth2Client:

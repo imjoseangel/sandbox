@@ -8,7 +8,6 @@ import logging
 import secrets
 import time
 from typing import Optional, Dict, Any
-from datetime import timedelta
 
 try:
     import redis.asyncio as aioredis

@@ -19,7 +19,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers
 from fastapi import HTTPException, status
 
 from .config import Settings
-from .models import TokenData, UserInfo, PKCEChallenge
+from ..schemas.models import TokenData, UserInfo, PKCEChallenge
 
 logger = logging.getLogger(__name__)
 

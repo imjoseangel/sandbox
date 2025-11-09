@@ -8,7 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from .auth import AzureADAuth
 from .config import get_settings, Settings
-from .models import TokenData, UserInfo
+from ..schemas.models import UserInfo
 
 
 security = HTTPBearer()

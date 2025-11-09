@@ -6,20 +6,20 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 
-from .auth import AzureADAuth
-from .config import get_settings, Settings
-from .dependencies import get_current_user, get_azure_auth
-from .models import (
+from ..core.auth import AzureADAuth
+from ..core.config import get_settings, Settings
+from ..core.dependencies import get_current_user, get_azure_auth
+from ..schemas.models import (
     UserInfo,
     AuthResponse,
     AuthTokens,
     TokenRefreshRequest,
 )
-from .oauth2_client import AzureOAuth2Client
-from .session import SessionManager
+from ..core.oauth2_client import AzureOAuth2Client
+from ..core.session import SessionManager
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(prefix="/auth")
 
 
 @router.get("/login", summary="Initiate Azure AD login")
