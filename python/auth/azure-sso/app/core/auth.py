@@ -38,7 +38,9 @@ class AzureADAuth:
         Generate PKCE code verifier and challenge.
         Used for enhanced security in authorization code flow.
         """
-        code_verifier = base64.urlsafe_b64encode(os.urandom(32)).rstrip(b"=").decode("utf-8")
+        code_verifier = (
+            base64.urlsafe_b64encode(os.urandom(32)).rstrip(b"=").decode("utf-8")
+        )
         code_challenge = (
             base64.urlsafe_b64encode(
                 hashlib.sha256(code_verifier.encode("utf-8")).digest()
@@ -75,7 +77,7 @@ class AzureADAuth:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail=f"Failed to retrieve JWKS from Azure AD: {str(e)}",
-            )
+            ) from e
 
     def _find_rsa_key(self, jwks: dict, unverified_header: dict) -> Optional[dict]:
         """Find the matching RSA key from JWKS based on the token header."""
@@ -100,9 +102,7 @@ class AzureADAuth:
     @staticmethod
     def _decode_value(val: str) -> int:
         """Decode base64url-encoded value to integer."""
-        decoded = base64.urlsafe_b64decode(
-            AzureADAuth._ensure_bytes(val) + b"=="
-        )
+        decoded = base64.urlsafe_b64decode(AzureADAuth._ensure_bytes(val) + b"==")
         return int.from_bytes(decoded, "big")
 
     @staticmethod
@@ -151,7 +151,7 @@ class AzureADAuth:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token format: {str(e)}",
                 headers={"WWW-Authenticate": "Bearer"},
-            )
+            ) from e
 
         # Get JWKS and find matching key
         jwks = self._get_jwks()
@@ -183,7 +183,9 @@ class AzureADAuth:
                 # Also accept tenant-specific issuer
                 tenant_specific_issuer = f"https://login.microsoftonline.com/{self.settings.azure_tenant_id}/v2.0"
                 expected_issuers.append(tenant_specific_issuer)
-                logger.debug(f"Multi-tenant mode - Also accepting: {tenant_specific_issuer}")
+                logger.debug(
+                    f"Multi-tenant mode - Also accepting: {tenant_specific_issuer}"
+                )
 
             # Validate issuer manually if using common authority
             if actual_issuer not in expected_issuers:
@@ -198,31 +200,33 @@ class AzureADAuth:
                 options={"verify_exp": verify_exp, "verify_iss": False},
             )
             return TokenData(**payload)
-        except jwt.ExpiredSignatureError:
+        except jwt.ExpiredSignatureError as exc:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token has expired",
                 headers={"WWW-Authenticate": "Bearer"},
-            )
-        except jwt.InvalidAudienceError:
+            ) from exc
+        except jwt.InvalidAudienceError as exc:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token audience",
                 headers={"WWW-Authenticate": "Bearer"},
+            ) from exc
+        except jwt.InvalidIssuerError as exc:
+            logger.error(
+                f"Issuer mismatch - Expected: {self.settings.issuer}, Got: {actual_issuer}"
             )
-        except jwt.InvalidIssuerError:
-            logger.error(f"Issuer mismatch - Expected: {self.settings.issuer}, Got: {actual_issuer}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token issuer. Expected: {self.settings.issuer}, Got: {actual_issuer}",
                 headers={"WWW-Authenticate": "Bearer"},
-            )
+            ) from exc
         except jwt.InvalidTokenError as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token: {str(e)}",
                 headers={"WWW-Authenticate": "Bearer"},
-            )
+            ) from e
 
     def extract_user_info(self, token_data: TokenData) -> UserInfo:
         """
@@ -273,6 +277,7 @@ class AzureADAuth:
             "client_id": self.settings.azure_client_id,
             "response_type": response_type,
             "redirect_uri": redirect_uri,
+            "response_mode": response_mode,
             "scope": " ".join(self.settings.azure_scopes),
         }
 
@@ -301,5 +306,7 @@ class AzureADAuth:
         """
         logout_endpoint = f"{self.settings.authority_url}/oauth2/v2.0/logout"
         if post_logout_redirect_uri:
-            return f"{logout_endpoint}?post_logout_redirect_uri={post_logout_redirect_uri}"
+            return (
+                f"{logout_endpoint}?post_logout_redirect_uri={post_logout_redirect_uri}"
+            )
         return logout_endpoint

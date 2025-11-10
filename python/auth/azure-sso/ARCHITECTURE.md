@@ -6,56 +6,56 @@
 
 This implementation follows a **server-side OAuth2 Authorization Code Flow with PKCE** pattern, ensuring maximum security for both web and SPA applications.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Browser)                             │
-└───────────────┬─────────────────────────────────────────────────────┘
+```txt
+┌───────────────────────────────────────────────────────────────────┐
+│                         CLIENT (Browser)                          │
+└───────────────┬───────────────────────────────────────────────────┘
                 │
                 │ 1. GET /auth/login
                 ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│                      FASTAPI BACKEND                                  │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  2. Generate PKCE Challenge                                  │    │
-│  │  3. Store session (state, code_verifier, nonce)             │    │
-│  │  4. Build Azure AD authorization URL                        │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-└───────────────┬───────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│                      FASTAPI BACKEND                              │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  2. Generate PKCE Challenge                                 │  │
+│  │  3. Store session (state, code_verifier, nonce)             │  │
+│  │  4. Build Azure AD authorization URL                        │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└───────────────┬───────────────────────────────────────────────────┘
                 │
                 │ 5. Redirect to Azure AD
                 ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│                   AZURE AD / ENTRA ID                                 │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  6. User authenticates (username/password, MFA, etc.)       │    │
-│  │  7. User consents to requested scopes                       │    │
-│  │  8. Generate authorization code                             │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-└───────────────┬───────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│                   AZURE AD / ENTRA ID                             │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  6. User authenticates (username/password, MFA, etc.)       │  │
+│  │  7. User consents to requested scopes                       │  │
+│  │  8. Generate authorization code                             │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└───────────────┬───────────────────────────────────────────────────┘
                 │
                 │ 9. Redirect to callback with code
                 ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│                      FASTAPI BACKEND                                  │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  10. Validate state (CSRF protection)                       │    │
-│  │  11. Retrieve code_verifier from session                    │    │
-│  │  12. Exchange code + verifier for tokens                    │    │
-│  │  13. Validate ID token (JWT signature, issuer, audience)    │    │
-│  │  14. Extract user information                               │    │
-│  │  15. Clean up session                                        │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-└───────────────┬───────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│                      FASTAPI BACKEND                              │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  10. Validate state (CSRF protection)                       │  │
+│  │  11. Retrieve code_verifier from session                    │  │
+│  │  12. Exchange code + verifier for tokens                    │  │
+│  │  13. Validate ID token (JWT signature, issuer, audience)    │  │
+│  │  14. Extract user information                               │  │
+│  │  15. Clean up session                                       │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└───────────────┬───────────────────────────────────────────────────┘
                 │
                 │ 16. Return tokens to client
                 ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Browser)                              │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  17. Store access token (sessionStorage recommended)        │    │
-│  │  18. Include token in Authorization header for API calls    │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-└───────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│                         CLIENT (Browser)                          │
+│  ┌─────────────────────────────────────────────────────────────┐  │
+│  │  17. Store access token (sessionStorage recommended)        │  │
+│  │  18. Include token in Authorization header for API calls    │  │
+│  └─────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
 ## 🔐 Security Components
@@ -65,6 +65,7 @@ This implementation follows a **server-side OAuth2 Authorization Code Flow with 
 **Purpose**: Prevent authorization code interception attacks
 
 **How it works**:
+
 1. **Code Verifier**: Random 43-128 character string
 2. **Code Challenge**: SHA256 hash of code verifier (Base64URL encoded)
 3. **Flow**:
@@ -73,6 +74,7 @@ This implementation follows a **server-side OAuth2 Authorization Code Flow with 
    - Azure AD validates: SHA256(code_verifier) == code_challenge
 
 **Implementation**:
+
 ```python
 # Generation (src/auth.py)
 code_verifier = base64.urlsafe_b64encode(os.urandom(32))
@@ -86,12 +88,14 @@ code_challenge = base64.urlsafe_b64encode(
 **Purpose**: Prevent Cross-Site Request Forgery attacks
 
 **How it works**:
+
 1. Generate random state before redirect
 2. Store in server-side session
 3. Validate state in callback matches stored value
 4. Delete session after validation
 
 **Implementation**:
+
 ```python
 # Generation
 state = secrets.token_urlsafe(32)
@@ -110,6 +114,7 @@ if not session_data:
 **Purpose**: Verify token authenticity and integrity
 
 **Validation steps**:
+
 1. **Signature verification**: Using Azure AD public key (JWKS)
 2. **Issuer validation**: Matches expected Azure AD tenant
 3. **Audience validation**: Matches application client ID
@@ -117,6 +122,7 @@ if not session_data:
 5. **Algorithm check**: Only RS256 allowed
 
 **Implementation**:
+
 ```python
 # Get public key from JWKS
 jwks = get_jwks()
@@ -139,6 +145,7 @@ payload = jwt.decode(
 **Production**: Redis storage (scalable, persistent)
 
 **Session data includes**:
+
 - State parameter
 - PKCE code verifier
 - Nonce (for ID token validation)
@@ -152,12 +159,14 @@ payload = jwt.decode(
 **Purpose**: Centralized configuration management
 
 **Key features**:
+
 - Environment-based settings
 - Type validation with Pydantic
 - Derived properties (URLs, endpoints)
 - Secret management
 
 **Best practices**:
+
 ```python
 # ✅ Use environment variables
 settings = get_settings()
@@ -174,6 +183,7 @@ auth_url = settings.authorize_endpoint  # Auto-constructed
 **Purpose**: Core Azure AD integration logic
 
 **Responsibilities**:
+
 - PKCE generation
 - Token validation (JWT)
 - JWKS caching (24 hours)
@@ -181,6 +191,7 @@ auth_url = settings.authorize_endpoint  # Auto-constructed
 - User info extraction
 
 **Key methods**:
+
 - `generate_pkce_challenge()`: Create PKCE pair
 - `validate_token()`: Verify JWT
 - `build_authorization_url()`: Construct login URL
@@ -191,12 +202,14 @@ auth_url = settings.authorize_endpoint  # Auto-constructed
 **Purpose**: Handle token exchange with Azure AD
 
 **Responsibilities**:
+
 - Exchange authorization code for tokens
 - Refresh access tokens
 - Call Microsoft Graph API
 - Error handling
 
 **Flow**:
+
 ```python
 # Code exchange
 tokens = await oauth_client.exchange_code_for_tokens(
@@ -218,12 +231,14 @@ new_tokens = await oauth_client.refresh_access_token(
 **Key dependencies**:
 
 1. **`get_current_user`**: Require valid authentication
+
    ```python
    async def protected_route(user: UserInfo = Depends(get_current_user)):
        return {"user_id": user.id}
    ```
 
 2. **`require_roles`**: Require specific roles
+
    ```python
    @app.get("/admin")
    async def admin_route(user: UserInfo = Depends(require_roles("Admin"))):
@@ -231,6 +246,7 @@ new_tokens = await oauth_client.refresh_access_token(
    ```
 
 3. **`require_groups`**: Require group membership
+
    ```python
    @app.get("/finance")
    async def finance_route(user: UserInfo = Depends(require_groups("Finance"))):
@@ -238,6 +254,7 @@ new_tokens = await oauth_client.refresh_access_token(
    ```
 
 4. **`require_tenant`**: Multi-tenant isolation
+
    ```python
    @app.get("/tenant-data")
    async def tenant_route(user: UserInfo = Depends(require_tenant("tenant-1"))):
@@ -303,12 +320,14 @@ sequenceDiagram
 ### Why Server-Side Flow?
 
 **Advantages**:
+
 - ✅ Client secret protected (not exposed to browser)
 - ✅ Better security for token storage
 - ✅ Easier to implement refresh logic
 - ✅ Centralized session management
 
 **vs. Client-Side (SPA) Flow**:
+
 - ❌ Can't use client secret safely
 - ❌ Tokens stored in browser (more vulnerable)
 - ❌ Complex PKCE implementation
@@ -316,6 +335,7 @@ sequenceDiagram
 ### Why PKCE Even with Client Secret?
 
 **Defense in depth**:
+
 - Protects against authorization code interception
 - Required for public clients (mobile, SPA)
 - Recommended by OAuth 2.0 Security Best Practices
@@ -324,12 +344,14 @@ sequenceDiagram
 ### Why Redis for Sessions?
 
 **Benefits**:
+
 - ✅ Horizontal scaling (multiple API instances)
 - ✅ Persistent storage (survives restarts)
 - ✅ Automatic expiration (TTL)
 - ✅ High performance
 
 **Alternatives**:
+
 - In-memory: Development only
 - Database: Slower, needs cleanup job
 - Distributed cache: Redis is simpler

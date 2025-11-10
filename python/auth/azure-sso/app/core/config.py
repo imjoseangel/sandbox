@@ -5,7 +5,7 @@ Supports environment variables, .env files, and Azure Key Vault.
 
 from functools import lru_cache
 from typing import Optional
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,7 +22,9 @@ class Settings(BaseSettings):
     # Azure AD Configuration
     azure_tenant_id: str = Field(..., description="Azure AD Tenant ID")
     azure_client_id: str = Field(..., description="Azure AD Application Client ID")
-    azure_client_secret: str = Field(..., description="Azure AD Application Client Secret")
+    azure_client_secret: str = Field(
+        ..., description="Azure AD Application Client Secret"
+    )
     azure_authority: str = Field(
         default="common",
         description="Azure AD authority (common, organizations, consumers, or tenant ID)",
@@ -35,7 +37,10 @@ class Settings(BaseSettings):
     # Application Configuration
     app_name: str = Field(default="FastAPI Azure SSO", description="Application name")
     app_version: str = Field(default="1.0.0", description="Application version")
-    environment: str = Field(default="development", description="Environment (development, staging, production)")
+    environment: str = Field(
+        default="development",
+        description="Environment (development, staging, production)",
+    )
     debug: bool = Field(default=False, description="Debug mode")
     secret_key: str = Field(..., description="Application secret key for encryption")
 
@@ -61,8 +66,12 @@ class Settings(BaseSettings):
     )
 
     # Token Configuration
-    access_token_expire_minutes: int = Field(default=60, description="Access token expiration in minutes")
-    refresh_token_expire_days: int = Field(default=7, description="Refresh token expiration in days")
+    access_token_expire_minutes: int = Field(
+        default=60, description="Access token expiration in minutes"
+    )
+    refresh_token_expire_days: int = Field(
+        default=7, description="Refresh token expiration in days"
+    )
 
     # Session Configuration
     session_secret_key: str = Field(
@@ -71,7 +80,9 @@ class Settings(BaseSettings):
     session_max_age: int = Field(default=3600, description="Session max age in seconds")
 
     # Redis Configuration
-    redis_enabled: bool = Field(default=False, description="Enable Redis for session storage")
+    redis_enabled: bool = Field(
+        default=False, description="Enable Redis for session storage"
+    )
     redis_host: str = Field(default="localhost", description="Redis host")
     redis_port: int = Field(default=6379, description="Redis port")
     redis_db: int = Field(default=0, description="Redis database number")
@@ -89,12 +100,14 @@ class Settings(BaseSettings):
         default=None, description="Azure Key Vault URL"
     )
 
-    @validator("cors_origins")
+    @field_validator("cors_origins")
+    @classmethod
     def parse_cors_origins(cls, v: str) -> list[str]:
         """Parse comma-separated CORS origins into a list."""
         return [origin.strip() for origin in v.split(",") if origin.strip()]
 
-    @validator("azure_scopes")
+    @field_validator("azure_scopes")
+    @classmethod
     def parse_scopes(cls, v: str) -> list[str]:
         """Parse space-separated scopes into a list."""
         return [scope.strip() for scope in v.split() if scope.strip()]
@@ -144,4 +157,4 @@ def get_settings() -> Settings:
     Get cached settings instance.
     Uses lru_cache to ensure settings are loaded only once.
     """
-    return Settings()
+    return Settings()  # type: ignore[call-arg]

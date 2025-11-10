@@ -2,8 +2,8 @@
 OAuth2 client for Azure AD token exchange.
 """
 
-import httpx
 from typing import Optional, Dict, Any
+import httpx
 from fastapi import HTTPException, status
 
 from .config import Settings
@@ -63,12 +63,12 @@ class AzureOAuth2Client:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Token exchange failed: {error_detail}",
-            )
+            ) from e
         except httpx.RequestError as e:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail=f"Failed to connect to Azure AD: {str(e)}",
-            )
+            ) from e
 
     async def refresh_access_token(self, refresh_token: str) -> AuthTokens:
         """
@@ -106,12 +106,12 @@ class AzureOAuth2Client:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Token refresh failed: {error_detail}",
-            )
+            ) from e
         except httpx.RequestError as e:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail=f"Failed to connect to Azure AD: {str(e)}",
-            )
+            ) from e
 
     async def get_user_info(self, access_token: str) -> Dict[str, Any]:
         """
@@ -139,12 +139,12 @@ class AzureOAuth2Client:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to get user info: {error_detail}",
-            )
+            ) from e
         except httpx.RequestError as e:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail=f"Failed to connect to Microsoft Graph: {str(e)}",
-            )
+            ) from e
 
     @staticmethod
     def _parse_error_response(response: httpx.Response) -> str:
@@ -152,7 +152,9 @@ class AzureOAuth2Client:
         try:
             error_data = response.json()
             error = error_data.get("error", "unknown_error")
-            error_description = error_data.get("error_description", "No description provided")
+            error_description = error_data.get(
+                "error_description", "No description provided"
+            )
             return f"{error}: {error_description}"
-        except Exception:
+        except (ValueError, KeyError):
             return response.text or "Unknown error"

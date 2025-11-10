@@ -28,8 +28,6 @@ class UserInfo(BaseModel):
     id: str = Field(..., description="User unique identifier")
     email: Optional[EmailStr] = Field(None, description="User email")
     name: Optional[str] = Field(None, description="User display name")
-    given_name: Optional[str] = Field(None, description="User first name")
-    family_name: Optional[str] = Field(None, description="User last name")
     preferred_username: Optional[str] = Field(None, description="Preferred username")
     roles: list[str] = Field(default_factory=list, description="User roles")
     groups: list[str] = Field(default_factory=list, description="User groups")
@@ -60,8 +58,12 @@ class AuthResponse(BaseModel):
 class LoginRequest(BaseModel):
     """Login request model."""
 
-    redirect_uri: Optional[str] = Field(None, description="Custom redirect URI after login")
-    state: Optional[str] = Field(None, description="State parameter for CSRF protection")
+    redirect_uri: Optional[str] = Field(
+        None, description="Custom redirect URI after login"
+    )
+    state: Optional[str] = Field(
+        None, description="State parameter for CSRF protection"
+    )
     nonce: Optional[str] = Field(None, description="Nonce for ID token validation")
 
 
@@ -71,7 +73,9 @@ class CallbackRequest(BaseModel):
     code: str = Field(..., description="Authorization code")
     state: Optional[str] = Field(None, description="State parameter")
     session_state: Optional[str] = Field(None, description="Session state")
-    error: Optional[str] = Field(None, description="Error code if authentication failed")
+    error: Optional[str] = Field(
+        None, description="Error code if authentication failed"
+    )
     error_description: Optional[str] = Field(None, description="Error description")
 
 

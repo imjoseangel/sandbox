@@ -11,6 +11,7 @@ from typing import Optional, Dict, Any
 
 try:
     import redis.asyncio as aioredis
+
     REDIS_AVAILABLE = True
 except ImportError:
     REDIS_AVAILABLE = False
@@ -18,6 +19,7 @@ except ImportError:
 from .config import Settings
 
 logger = logging.getLogger(__name__)
+
 
 class SessionStore:
     """Abstract base for session storage."""
@@ -48,12 +50,16 @@ class InMemorySessionStore(SessionStore):
     async def set(self, key: str, value: Dict[str, Any], expire: int) -> None:
         """Store value in memory (expiration not implemented)."""
         InMemorySessionStore._shared_store[key] = value
-        logger.debug(f"Stored session {key} in memory. Total sessions: {len(InMemorySessionStore._shared_store)}")
+        logger.debug(
+            f"Stored session {key} in memory. Total sessions: {len(InMemorySessionStore._shared_store)}"
+        )
 
     async def get(self, key: str) -> Optional[Dict[str, Any]]:
         """Get value from memory."""
         result = InMemorySessionStore._shared_store.get(key)
-        logger.debug(f"Retrieved session {key}: {'Found' if result else 'Not found'}. Total sessions: {len(InMemorySessionStore._shared_store)}")
+        logger.debug(
+            f"Retrieved session {key}: {'Found' if result else 'Not found'}. Total sessions: {len(InMemorySessionStore._shared_store)}"
+        )
         return result
 
     async def delete(self, key: str) -> None:
@@ -66,7 +72,9 @@ class RedisSessionStore(SessionStore):
 
     def __init__(self, redis_url: str):
         if not REDIS_AVAILABLE:
-            raise ImportError("Redis not available. Install with: pip install redis[hiredis]")
+            raise ImportError(
+                "Redis not available. Install with: pip install redis[hiredis]"
+            )
         self.redis_url = redis_url
         self._redis: Optional[aioredis.Redis] = None
 
@@ -109,12 +117,15 @@ class SessionManager:
 
     def __init__(self, settings: Settings):
         self.settings = settings
+        self.store: SessionStore
         if settings.redis_enabled and settings.redis_url:
             self.store = RedisSessionStore(settings.redis_url)
             logger.info("Using Redis session storage")
         else:
             self.store = InMemorySessionStore()
-            logger.info("Using in-memory session storage (not recommended for production)")
+            logger.info(
+                "Using in-memory session storage (not recommended for production)"
+            )
 
     def generate_state(self) -> str:
         """Generate a random state for CSRF protection."""
@@ -140,7 +151,7 @@ class SessionManager:
             nonce: Nonce for ID token validation
             redirect_uri: Original redirect URI
         """
-        session_data = {
+        session_data: Dict[str, Any] = {
             "created_at": int(time.time()),
         }
         if code_verifier:
