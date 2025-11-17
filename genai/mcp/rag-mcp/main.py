@@ -87,7 +87,7 @@ class RAGMCPRetriever:
         self,
         query: str,
         top_k: int = 5,
-        similarity_threshold: float = 0.3
+        similarity_threshold: float = 0.2
     ) -> List[tuple[MCPTool, float]]:
         """
         Retrieve the most relevant tools for a query.
