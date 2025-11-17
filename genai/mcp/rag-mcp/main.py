@@ -18,7 +18,6 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-
 @dataclass
 class MCPTool:
     """Represents an MCP tool with its metadata."""
@@ -64,7 +63,6 @@ class RAGMCPRetriever:
         if not self.tools:
             raise ValueError("No tools available to index")
 
-        # Create rich text representations combining name, description, and examples
         tool_texts = []
         for tool in self.tools:
             text_parts = [
@@ -105,16 +103,10 @@ class RAGMCPRetriever:
         if not self.index_built:
             self.build_index()
 
-        # Encode query
         query_embedding = self.model.encode([query])
-
-        # Calculate similarities
         similarities = cosine_similarity(query_embedding, self.tool_embeddings)[0]
-
-        # Get top-k indices
         top_indices = np.argsort(similarities)[::-1][:top_k]
 
-        # Filter by threshold and return results
         results = []
         for idx in top_indices:
             score = similarities[idx]
@@ -263,22 +255,18 @@ def main():
     print("Based on arXiv:2505.03275")
     print("=" * 70)
 
-    # Initialize retriever
     print("\n[1] Initializing RAG-MCP Retriever...")
     retriever = RAGMCPRetriever()
 
-    # Add example tools
     print("[2] Adding MCP tools...")
     tools = create_example_tools()
     retriever.add_tools(tools)
 
-    # Build index
     print("[3] Building semantic index...")
     retriever.build_index()
 
     print(f"\nRetriever Stats: {retriever.get_stats()}")
 
-    # Example queries
     queries = [
         "I need to find information about climate change",
         "Help me write data to a file",
@@ -296,7 +284,6 @@ def main():
         print(f"Query {i}: {query}")
         print(f"{'─' * 70}")
 
-        # Retrieve relevant tools
         results = retriever.retrieve(query, top_k=3)
 
         print(f"\nTop-{len(results)} Retrieved Tools (with relevance scores):")
@@ -304,7 +291,6 @@ def main():
             print(f"  {rank}. {tool.name:<20} | Relevance: {score:.4f}")
             print(f"     {tool.description}")
 
-        # Show prompt reduction benefit
         full_prompt_size = sum(
             len(f"{t.name} {t.description} {json.dumps(t.parameters)}")
             for t in tools
@@ -319,7 +305,6 @@ def main():
         print(f"     Full prompt: ~{full_prompt_size} chars")
         print(f"     RAG-MCP:     ~{rag_prompt_size} chars")
 
-    # Example: Generate optimized prompt for LLM
     print("\n" + "=" * 70)
     print("EXAMPLE: Optimized Prompt for LLM")
     print("=" * 70)
