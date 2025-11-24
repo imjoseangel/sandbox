@@ -207,17 +207,17 @@ class RAGToolRetriever:
 
 Based on the enhanced server with 10 tools:
 
-| Metric | Traditional MCP | RAG-MCP (top-k=2) | Improvement |
-|--------|----------------|-------------------|-------------|
-| Tools per query | 10 | 2 | 80% reduction |
-| Estimated tokens | ~500 | ~100 | 80% reduction |
-| Context bloat | High | Low | Significant |
-| Scalability | O(n) | O(k) | Constant |
+| Metric           | Traditional MCP | RAG-MCP (top-k=2) | Improvement   |
+|------------------|-----------------|-------------------|---------------|
+| Tools per query  | 10              | 2                 | 80% reduction |
+| Estimated tokens | ~500            | ~100              | 80% reduction |
+| Context bloat    | High            | Low               | Significant   |
+| Scalability      | O(n)            | O(k)              | Constant      |
 
 ## Use Cases
 
 1. **Large Tool Catalogs**: When you have 50+ tools and want to reduce context
-2. **Cost Optimization**: Reduce API costs for high-volume applications  
+2. **Cost Optimization**: Reduce API costs for high-volume applications
 3. **Improved Accuracy**: Focus LLM attention on relevant tools only
 4. **Multi-domain Tools**: Semantically separate tools by domain/category
 
