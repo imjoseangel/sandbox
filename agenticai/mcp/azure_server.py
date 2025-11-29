@@ -3,10 +3,11 @@ from fastmcp.server.auth.providers.azure import AzureProvider
 
 # The AzureProvider handles Azure's token format and validation
 auth_provider = AzureProvider(
-    client_id="xxx",
-    client_secret="xxx",
-    tenant_id="xxx",
+    client_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    client_secret="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    tenant_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     base_url="http://localhost:8000",
+    required_scopes=['access_as_user']
 )
 
 mcp = FastMCP(name="Azure Secured App", auth=auth_provider)
