@@ -22,9 +22,9 @@ async def get_user_info() -> dict:
     token = get_access_token()
     # The AzureProvider stores user data in token claims
     return {
-        "azure_id": token.claims.get("sub"),
-        "email": token.claims.get("email"),
-        "name": token.claims.get("name"),
-        "job_title": token.claims.get("job_title"),
-        "office_location": token.claims.get("office_location")
+        "azure_id": token.claims.get("sub") or "N/A",
+        "email": token.claims.get("email") or "N/A",
+        "name": token.claims.get("name") or "Unknown User",
+        "job_title": token.claims.get("job_title") or "N/A",
+        "office_location": token.claims.get("office_location") or "N/A"
     }
