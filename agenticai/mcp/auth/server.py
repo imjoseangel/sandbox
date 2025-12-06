@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 from fastmcp import FastMCP
 from fastmcp.server.auth.providers.jwt import JWTVerifier
+from fastmcp.server.dependencies import get_access_token
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -16,38 +17,51 @@ AZURE_TENANT_ID = "b6674be2-2860-4fc4-8ef9-451cb064dd70"
 verifier = JWTVerifier(
     jwks_uri=f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/discovery/v2.0/keys",
     issuer=f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/v2.0",
-    audience="7bc9819e-b92f-4207-9c65-108f41814e6f",
 )
 
 mcp = FastMCP(name="Protected API", auth=verifier)
 
+# ==================== SIMPLE ROLE CHECK ====================
+def check_role(*roles: str) -> bool:
+    """Check if token has any of the required roles"""
+    token = get_access_token()
+    token_roles = token.claims.get("roles", [])
+    return any(r in token_roles for r in roles)
+
+
+# ==================== TOOLS ====================
 @mcp.tool
 def protected_tool(data: str) -> str:
-    """
-    Protected tool requiring M2M authentication.
+    """Tool requiring 'Writers' role"""
+    if not check_role("Writers"):
+        return {"success": False, "error": "Access denied"}
 
-    FastMCP automatically validates the bearer token before this function executes.
-    Token claims are available through the context if needed.
-    """
-    logger.info(f"🔧 protected_tool called with data: {data}")
-    logger.info(f"✅ Token validation passed - authorized access granted")
-    result = f"Processed: {data}"
-    logger.info(f"📤 Returning: ✅ {result}")
-    return f"✅ {result}"
+    logger.info(f"✅ protected_tool executed with data: {data}")
+    return f"Processed: {data}"
+
 
 @mcp.tool
 def secure_query(query: str) -> dict[str, Any]:
-    """
-    Protected query tool with M2M authentication.
+    """Query tool requiring 'Writers' role"""
+    if not check_role("Writers"):
+        return {"success": False, "error": "Access denied"}
 
-    FastMCP ensures only requests with valid tokens reach this tool.
-    """
-    logger.info(f"🔍 secure_query called with query: {query}")
-    result = f"Query result for: {query}"
+    logger.info(f"✅ secure_query executed: {query}")
     return {
         "success": True,
-        "data": result,
+        "data": f"Result for: {query}",
         "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+
+@mcp.tool
+def get_token_info() -> dict[str, Any]:
+    """Debug: See what's in your token (no role check)"""
+    token = get_access_token()
+    return {
+        "client_id": token.client_id,
+        "roles": token.claims.get("roles", []),
+        "expires_at": token.expires_at,
     }
 
 
