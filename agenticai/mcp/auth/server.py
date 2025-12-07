@@ -11,7 +11,7 @@ from fastmcp.server.dependencies import get_access_token
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-AZURE_TENANT_ID = "b6674be2-2860-4fc4-8ef9-451cb064dd70"
+AZURE_TENANT_ID = "3752e0b7-fa39-4c87-91cf-f46f66dff538"
 
 # Configure JWT verification against your identity provider
 verifier = JWTVerifier(
