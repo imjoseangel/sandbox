@@ -135,7 +135,7 @@ class RequestAuthContext:
     def client_id(self) -> str | None:
         if self.token is None:
             return None
-        return self.token.claims.get("client_id")
+        return self.token.client_id
 
     @property
     def is_gateway(self) -> bool:
