@@ -185,59 +185,13 @@ def secure_query(query: str) -> dict[str, Any]:
     }
 
 @mcp.tool
-def list_available_tools() -> dict[str, Any]:
-    """
-    List all available tools and their requirements
-
-    Available to all users (gateway, authenticated, and unauthenticated).
-    Shows which tools the current user can execute.
-    """
-    token = get_token_with_fallback()
-
-    if not token:
-        client_type = "anonymous"
-        client_id = "anonymous"
-    else:
-        client_id = token.claims.get("client_id")
-        client_type = "gateway" if client_id == "gateway" else "authenticated"
-
-    can_execute = is_authenticated() and not is_gateway()
-
+def get_token_info() -> dict[str, Any]:
+    """Debug: See what's in your token (no role check)"""
+    token = get_access_token()
     return {
-        "client_type": client_type,
-        "current_user": client_id,
-        "can_execute_tools": can_execute,
-        "available_tools": [
-            {
-                "name": "protected_tool",
-                "description": "Protected tool - processes data",
-                "executable_by": "users with Writers role (JWT token only)",
-                "access_level": "read-write"
-            },
-            {
-                "name": "secure_query",
-                "description": "Secure query - executes database queries",
-                "executable_by": "users with Writers role (JWT token only)",
-                "access_level": "read-write"
-            },
-            {
-                "name": "get_token_info",
-                "description": "Get current token information",
-                "executable_by": "everyone (gateway, authenticated, unauthenticated)",
-                "access_level": "read-only"
-            },
-            {
-                "name": "list_available_tools",
-                "description": "List all available tools and their requirements",
-                "executable_by": "everyone (gateway, authenticated, unauthenticated)",
-                "access_level": "read-only"
-            }
-        ],
-        "restrictions": {
-            "gateway": "Read-only access only. Cannot execute data-modifying tools.",
-            "authenticated": "Can execute tools based on JWT roles (e.g., Writers)",
-            "unauthenticated": "Can only discover and list tools"
-        }
+        "client_id": token.client_id,
+        "roles": token.claims.get("roles", []),
+        "expires_at": token.expires_at,
     }
 
 # ==================== MAIN ====================
