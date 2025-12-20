@@ -31,14 +31,14 @@ def get_token() -> str:
         "scope": f"api://{CLIENT_ID}/.default",
     }
 
-    logger.info(f"🔐 Getting token...")
+    logger.info("🔐 Getting token...")
     try:
         r = requests.post(url, data=data, timeout=10)
         if r.status_code != 200:
             logger.error(f"❌ {r.json().get('error_description')}")
             return None
         token = r.json()["access_token"]
-        logger.info(f"✅ Token obtained")
+        logger.info("✅ Token obtained")
         return token
     except Exception as e:
         logger.error(f"❌ {e}")
@@ -50,7 +50,7 @@ async def main():
     if not token:
         return
 
-    logger.info(f"📞 Calling tools...")
+    logger.info("📞 Calling tools...")
     auth = BearerAuth(token)
 
     try:
