@@ -53,10 +53,12 @@ def manage_synthetic_users(
     for operation in operations:
         if operation == "count":
             # Return total count across all batches
-            total = sum(b.count for b in batches)
+            total = sum(batch.count for batch in batches)
             results["count"] = {
                 "total_users": total,
-                "breakdown": [{"locale": b.locale, "count": b.count} for b in batches],
+                "breakdown": [
+                    {"locale": batch.locale, "count": batch.count} for batch in batches
+                ],
             }
 
         elif operation == "validate":
@@ -75,7 +77,7 @@ def manage_synthetic_users(
 
             results["validate"] = {
                 "results": validation_results,
-                "all_valid": all(r["valid"] for r in validation_results),
+                "all_valid": all(result["valid"] for result in validation_results),
             }
 
         elif operation == "preview":
