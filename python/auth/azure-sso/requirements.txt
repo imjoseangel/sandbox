@@ -7,7 +7,7 @@ pydantic-settings==2.6.1
 # Azure AD / OAuth2
 msal==1.31.1
 python-jose[cryptography]==3.3.0
-cryptography==44.0.0
+cryptography==46.0.5
 PyJWT==2.10.1
 
 # HTTP Client
