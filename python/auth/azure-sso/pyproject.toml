@@ -19,7 +19,7 @@ PyJWT = "^2.10.1"
 httpx = "^0.28.1"
 aiohttp = "^3.11.10"
 itsdangerous = "^2.2.0"
-python-multipart = "^0.0.22"
+python-multipart = ">=0.0.22,<0.0.28"
 redis = "^5.2.1"
 hiredis = "^3.0.0"
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
