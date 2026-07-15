@@ -24,7 +24,7 @@ hiredis==3.0.0
 
 # Security
 passlib[bcrypt]==1.7.4
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 
 # Middleware
 starlette==0.41.3
