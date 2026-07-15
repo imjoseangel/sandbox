@@ -6,13 +6,13 @@ pydantic-settings==2.6.1
 
 # Azure AD / OAuth2
 msal==1.31.1
-python-jose[cryptography]==3.4.0
-cryptography==46.0.5
+python-jose[cryptography]==3.3.0
+cryptography==46.0.7
 PyJWT==2.12.0
 
 # HTTP Client
 httpx==0.28.1
-aiohttp==3.13.3
+aiohttp==3.14.0
 
 # Session Management
 itsdangerous==2.2.0
@@ -24,7 +24,7 @@ hiredis==3.0.0
 
 # Security
 passlib[bcrypt]==1.7.4
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 
 # Middleware
 starlette==0.41.3
