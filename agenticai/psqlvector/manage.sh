@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PostgreSQL Full-Text Search Manager
-# Usage: ./manage.sh [setup|verify|test|test-quick|test-full]
+# Usage: ./manage.sh [setup|verify|test-quick|test]
 
 set -e
 
