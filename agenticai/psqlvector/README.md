@@ -12,7 +12,7 @@ pg_isready
 ### 2. Run Setup
 ```bash
 cd psqlvector
-./setup.sh
+./manage.sh setup
 ```
 
 This will:
@@ -23,21 +23,26 @@ This will:
 - Create search function with advanced filtering
 - Insert **1,000,000 sample articles** and 1,000 authors (⚠️ Warning: takes 5-15 minutes depending on hardware)
 
-### 3. Run Tests
+### 3. Verify & Test
 
-**Full test suite (all 20 tests):**
+**Verify setup works:**
 ```bash
-./test.sh
+./manage.sh verify
 ```
 
-**Quick tests (core functionality, ~10 seconds):**
+**Quick tests (6 tests, ~10 seconds):**
 ```bash
-./quick_test_fast.sh
+./manage.sh test-quick
 ```
 
-**Full quick tests (slower, uses search function):**
+**Full test suite (20 tests, 5-10 minutes):**
 ```bash
-./quick_test.sh
+./manage.sh test
+```
+
+**Help:**
+```bash
+./manage.sh help
 ```
 
 ## Files Overview
@@ -53,9 +58,7 @@ This will:
 - `08_test_queries.sql` - 20 comprehensive test queries
 
 ### Scripts
-- `setup.sh` - Initialize database and schema
-- `test.sh` - Run all 20 test queries
-- `quick_test.sh` - Run core functionality tests
+- `manage.sh` - All-in-one manager with commands: setup, verify, test, test-quick
 
 ## Test Categories
 
@@ -212,7 +215,7 @@ sudo systemctl start postgresql
 ### "database "psqlvector_db" does not exist"
 Run setup first:
 ```bash
-./setup.sh
+./manage.sh setup
 ```
 
 ## References
