@@ -48,7 +48,7 @@ show_help() {
 
 # Check PostgreSQL
 check_postgres() {
-    if ! pg_isready -h localhost -U $DB_USER > /dev/null 2>&1; then
+    if ! pg_isready -h localhost -U "$DB_USER" > /dev/null 2>&1; then
         echo -e "${RED}Error: PostgreSQL not running or not accessible${NC}"
         exit 1
     fi
@@ -62,10 +62,10 @@ setup_db() {
     check_postgres
 
     echo -e "${YELLOW}Dropping existing database (if exists)...${NC}"
-    psql -U $DB_USER -h localhost -c "DROP DATABASE IF EXISTS $DB_NAME;" 2>/dev/null || true
+    psql -U "$DB_USER" -h localhost -c "DROP DATABASE IF EXISTS $DB_NAME;" 2>/dev/null || true
 
     echo -e "${YELLOW}Creating database...${NC}"
-    psql -U $DB_USER -h localhost -c "CREATE DATABASE $DB_NAME;"
+    psql -U "$DB_USER" -h localhost -c "CREATE DATABASE $DB_NAME;"
 
     # Run SQL files in order
     SQL_FILES=(
@@ -80,7 +80,7 @@ setup_db() {
     for file in "${SQL_FILES[@]}"; do
         if [ -f "$file" ]; then
             echo -e "${YELLOW}Loading $file...${NC}"
-            psql -U $DB_USER -h localhost -d $DB_NAME -f "$file" > /dev/null 2>&1
+            psql -U "$DB_USER" -h localhost -d "$DB_NAME" -f "$file" > /dev/null 2>&1
             echo -e "${GREEN}✓ $file${NC}"
         else
             echo -e "${RED}✗ $file not found${NC}"
@@ -89,7 +89,7 @@ setup_db() {
     done
 
     echo -e "${YELLOW}Inserting sample data (1M articles)...${NC}"
-    psql -U $DB_USER -h localhost -d $DB_NAME -f "07_sample_data.sql" > /dev/null 2>&1
+    psql -U "$DB_USER" -h localhost -d "$DB_NAME" -f "07_sample_data.sql" > /dev/null 2>&1
     echo -e "${GREEN}✓ Sample data inserted${NC}"
 
     echo ""
@@ -106,23 +106,23 @@ verify_db() {
     check_postgres
 
     # Check if database exists
-    if ! psql -U $DB_USER -lqt | cut -d \| -f 1 | grep -qw $DB_NAME; then
+    if ! psql -U "$DB_USER" -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
         echo -e "${RED}Database not found${NC}"
         exit 1
     fi
     echo -e "${GREEN}✓ Database exists${NC}"
 
     # Check row counts
-    AUTHOR_COUNT=$(psql -U $DB_USER -d $DB_NAME -tAc "SELECT COUNT(*) FROM authors;" 2>/dev/null)
-    ARTICLE_COUNT=$(psql -U $DB_USER -d $DB_NAME -tAc "SELECT COUNT(*) FROM articles;" 2>/dev/null)
-    TAG_COUNT=$(psql -U $DB_USER -d $DB_NAME -tAc "SELECT COUNT(*) FROM tags;" 2>/dev/null)
+    AUTHOR_COUNT=$(psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT COUNT(*) FROM authors;" 2>/dev/null)
+    ARTICLE_COUNT=$(psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT COUNT(*) FROM articles;" 2>/dev/null)
+    TAG_COUNT=$(psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT COUNT(*) FROM tags;" 2>/dev/null)
 
     echo -e "${GREEN}✓ Authors: $AUTHOR_COUNT${NC}"
     echo -e "${GREEN}✓ Articles: $ARTICLE_COUNT${NC}"
     echo -e "${GREEN}✓ Tags: $TAG_COUNT${NC}"
 
     # Test basic search
-    RESULTS=$(psql -U $DB_USER -d $DB_NAME -tAc "SELECT COUNT(*) FROM articles WHERE search_vector @@ to_tsquery('english', 'article');" 2>/dev/null)
+    RESULTS=$(psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT COUNT(*) FROM articles WHERE search_vector @@ to_tsquery('english', 'article');" 2>/dev/null)
     if [ "$RESULTS" -gt 0 ]; then
         echo -e "${GREEN}✓ Search works ($RESULTS results)${NC}"
     else
@@ -145,27 +145,27 @@ run_tests() {
         echo ""
         # Basic search
         echo "✓ Test 1: Basic search"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 1;"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 1;"
 
         # Ranked search
         echo "✓ Test 2: Ranked search"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT id, title FROM articles WHERE search_vector @@ to_tsquery('english', 'article') ORDER BY random() LIMIT 1;"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT id, title FROM articles WHERE search_vector @@ to_tsquery('english', 'article') ORDER BY random() LIMIT 1;"
 
         # AND operator
         echo "✓ Test 3: AND operator"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article & content');"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article & content');"
 
         # OR operator
         echo "✓ Test 4: OR operator"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article | title');"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article | title');"
 
         # Highlights
         echo "✓ Test 5: Highlights"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT ts_headline('english', 'This is an article', to_tsquery('english', 'article'), 'StartSel=<mark>, StopSel=</mark>');"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT ts_headline('english', 'This is an article', to_tsquery('english', 'article'), 'StartSel=<mark>, StopSel=</mark>');"
 
         # Statistics
         echo "✓ Test 6: Statistics"
-        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as articles, COUNT(DISTINCT author_id) as authors FROM articles;"
+        psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT COUNT(*) as articles, COUNT(DISTINCT author_id) as authors FROM articles;"
 
         echo ""
         echo -e "${GREEN}Quick test complete!${NC}"
@@ -173,7 +173,7 @@ run_tests() {
         # Full comprehensive tests
         echo -e "${BLUE}Comprehensive Test Suite (20 tests, 5-10 min)${NC}"
         echo ""
-        psql -U $DB_USER -d $DB_NAME -f 08_test_queries.sql
+        psql -U "$DB_USER" -d "$DB_NAME" -f "08_test_queries.sql"
     fi
 }
 
