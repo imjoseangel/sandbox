@@ -5,36 +5,43 @@ All commands below have been verified to work with the database setup.
 ## Quick Test Commands
 
 ### 1. Simple Search
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT id, title FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 5;"
 ```
 
 ### 2. Ranked Search
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT id, title, ts_rank(search_vector, to_tsquery('english', 'article')) as rank FROM articles WHERE search_vector @@ to_tsquery('english', 'article') ORDER BY rank DESC LIMIT 5;"
 ```
 
 ### 3. Highlights
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT id, ts_headline('english', content, to_tsquery('english', 'article'), 'StartSel=<mark>, StopSel=</mark>, MaxWords=15, MinWords=1') as highlight FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 3;"
 ```
 
 ### 4. Statistics
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT COUNT(*) as total_articles, COUNT(DISTINCT author_id) as unique_authors FROM articles;"
 ```
 
 ### 5. Search with OR operator
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article | content');"
 ```
 
 ### 6. Search with AND operator
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article & content');"
 ```
 
 ### 7. Search with NOT operator
+
 ```bash
 psql -U postgres -d psqlvector_db -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article & !title');"
 ```
@@ -42,8 +49,9 @@ psql -U postgres -d psqlvector_db -c "SELECT COUNT(*) as matches FROM articles W
 ## Important Keywords in Data
 
 The sample data contains these searchable keywords:
+
 - `article` - In all article titles
-- `title` - In all article titles  
+- `title` - In all article titles
 - `subtitle` - In all article subtitles
 - `content` - In all article content
 - `lorem` - In content (from Lorem ipsum)
@@ -67,30 +75,30 @@ SELECT COUNT(*) FROM tags;
 SELECT id, title FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 5;
 
 -- Ranked search
-SELECT id, title, ts_rank(search_vector, to_tsquery('english', 'article')) as rank 
-FROM articles 
+SELECT id, title, ts_rank(search_vector, to_tsquery('english', 'article')) as rank
+FROM articles
 WHERE search_vector @@ to_tsquery('english', 'article')
-ORDER BY rank DESC 
+ORDER BY rank DESC
 LIMIT 5;
 
 -- With highlights
 SELECT id, title,
-  ts_headline('english', content, to_tsquery('english', 'article'), 
+  ts_headline('english', content, to_tsquery('english', 'article'),
     'StartSel=<mark>, StopSel=</mark>, MaxWords=30, MinWords=1') as snippet
-FROM articles 
+FROM articles
 WHERE search_vector @@ to_tsquery('english', 'article')
 LIMIT 3;
 
 -- Combined search
-SELECT COUNT(*) as total_matches FROM articles 
+SELECT COUNT(*) as total_matches FROM articles
 WHERE search_vector @@ to_tsquery('english', 'article & content');
 
 -- Or search
-SELECT COUNT(*) as total_matches FROM articles 
+SELECT COUNT(*) as total_matches FROM articles
 WHERE search_vector @@ to_tsquery('english', 'article | title');
 
 -- Negation search
-SELECT COUNT(*) as total_matches FROM articles 
+SELECT COUNT(*) as total_matches FROM articles
 WHERE search_vector @@ to_tsquery('english', 'article & !title');
 
 -- Check author stats
@@ -108,6 +116,7 @@ LIMIT 10;
 ## Batch Test Command
 
 Run all at once:
+
 ```bash
 psql -U postgres -d psqlvector_db << 'EOF'
 SELECT 'Testing Full-Text Search' as test;
@@ -129,6 +138,7 @@ EOF
 ## Available Keywords for Testing
 
 Try these in your own queries:
+
 ```sql
 -- Single word
 to_tsquery('english', 'article')
