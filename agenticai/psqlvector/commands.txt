@@ -3,7 +3,7 @@ POSTGRESQL FULL-TEXT SEARCH - COMPLETE COMMAND REFERENCE
 =================================================================
 
 INITIAL SETUP:
-cd ~/Downloads/psqlvector
+cd psqlvector
 
 ONE-COMMAND COMPLETE SETUP:
 ./setup.sh

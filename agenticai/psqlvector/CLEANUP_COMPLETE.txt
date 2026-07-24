@@ -95,7 +95,7 @@ READY TO USE
 ================================================================================
 
 Command:
-  cd ~/Downloads/psqlvector && ./setup.sh
+  cd psqlvector && ./setup.sh
 
 Time: 5-15 minutes (mostly data insertion)
 

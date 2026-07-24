@@ -59,7 +59,7 @@ FINAL_SETUP.md        → This file
 
 ### Run Setup (5-15 minutes)
 ```bash
-cd ~/Downloads/psqlvector
+cd psqlvector
 ./setup.sh
 ```
 
@@ -258,7 +258,7 @@ All optimized with GIN indexes ✓
 
 1. **Run setup:**
    ```bash
-   cd ~/Downloads/psqlvector && ./setup.sh
+   cd psqlvector && ./setup.sh
    ```
 
 2. **Verify (30 sec):**

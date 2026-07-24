@@ -173,7 +173,7 @@ All of these work and return results:
 
 ### Fastest Test
 ```bash
-cd ~/Downloads/psqlvector
+cd psqlvector
 ./quick_test_fast.sh
 ```
 Takes < 10 seconds, shows all basic features.

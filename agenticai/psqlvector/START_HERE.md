@@ -7,7 +7,7 @@
 ## Quick Start (30 seconds)
 
 ```bash
-cd ~/Downloads/psqlvector
+cd psqlvector
 
 # Verify everything works
 ./verify_setup.sh

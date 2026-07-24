@@ -11,7 +11,7 @@ pg_isready
 
 ### 2. Run Setup
 ```bash
-cd ~/Downloads/psqlvector
+cd psqlvector
 ./setup.sh
 ```
 

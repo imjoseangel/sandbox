@@ -39,7 +39,7 @@ QUICK START
 ================================================================================
 
 1. Verify setup works:
-   $ cd ~/Downloads/psqlvector
+   $ cd psqlvector
    $ ./verify_setup.sh
 
 2. Try a search:
@@ -184,5 +184,5 @@ READY TO USE! 🚀
 Everything is installed, configured, tested, and verified.
 
 Next command:
-  $ cd ~/Downloads/psqlvector && ./verify_setup.sh
+  $ cd psqlvector && ./verify_setup.sh
 

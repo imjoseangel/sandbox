@@ -91,7 +91,7 @@ File: `08_test_queries.sql`
 ## How to Use
 
 ```bash
-cd ~/Downloads/psqlvector
+cd psqlvector
 ./setup.sh        # Creates DB, 1M articles (5-15 min)
 ./quick_test.sh   # Test basic functionality
 ./test.sh         # Run all 20 tests

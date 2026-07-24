@@ -8,7 +8,7 @@ You need to finish the setup.
 SIMPLE: One command
 ───────────────────
 
-  cd ~/Downloads/psqlvector
+  cd psqlvector
   ./setup.sh
 
 This will:
@@ -70,7 +70,7 @@ Solution: Run setup.sh to complete the load
 COMMAND TO RUN
 ================================================================================
 
-  cd ~/Downloads/psqlvector && ./setup.sh
+  cd psqlvector && ./setup.sh
 
 That's it! The script handles everything.
 

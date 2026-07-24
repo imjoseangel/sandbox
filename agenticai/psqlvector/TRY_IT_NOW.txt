@@ -11,7 +11,7 @@
 QUICKEST TEST (< 10 seconds):
 ═════════════════════════════════════════════════════════════════════════════
 
-  $ cd ~/Downloads/psqlvector
+  $ cd psqlvector
   $ ./quick_test_fast.sh
 
 Expected output:
