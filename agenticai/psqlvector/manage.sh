@@ -2,6 +2,7 @@
 
 # PostgreSQL Full-Text Search Manager
 # Usage: ./manage.sh [setup|verify|test-quick|test]
+# Optional: DB_NAME=customdb ./manage.sh setup
 
 set -e
 
@@ -12,14 +13,15 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-DB_NAME="psqlvector_db"
-DB_USER="postgres"
+# Configuration (can be overridden by environment)
+DB_NAME="${DB_NAME:-psqlvector_db}"
+DB_USER="${DB_USER:-postgres}"
 
 # Show help
 show_help() {
     echo -e "${BLUE}PostgreSQL Full-Text Search Manager${NC}"
     echo ""
-    echo "Usage: ./manage.sh [command] [options]"
+    echo "Usage: ./manage.sh [command]"
     echo ""
     echo "Commands:"
     echo "  setup              Setup database (creates, initializes, inserts data)"
@@ -27,11 +29,20 @@ show_help() {
     echo "  test-quick         Run quick verification (6 tests, < 10 sec)"
     echo "  test               Run comprehensive suite (20 tests, 5-10 min)"
     echo ""
+    echo "Configuration (optional environment variables):"
+    echo "  DB_NAME            Database name (default: psqlvector_db)"
+    echo "  DB_USER            Database user (default: postgres)"
+    echo ""
     echo "Examples:"
     echo "  ./manage.sh setup"
     echo "  ./manage.sh verify"
     echo "  ./manage.sh test-quick"
-    echo "  ./manage.sh test"
+    echo "  DB_NAME=mydb ./manage.sh setup"
+    echo "  DB_NAME=mydb DB_USER=myuser ./manage.sh test"
+    echo ""
+    echo "Current settings:"
+    echo "  DB_NAME: $DB_NAME"
+    echo "  DB_USER: $DB_USER"
     echo ""
 }
 
