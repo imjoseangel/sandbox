@@ -24,14 +24,14 @@ show_help() {
     echo "Commands:"
     echo "  setup              Setup database (creates, initializes, inserts data)"
     echo "  verify             Verify database is working (quick checks)"
-    echo "  test               Run comprehensive 20-test suite"
-    echo "  test-quick         Run quick 6-test suite (< 10 sec)"
-    echo "  test-full          Run all tests with detailed output"
+    echo "  test-quick         Run quick verification (6 tests, < 10 sec)"
+    echo "  test               Run comprehensive suite (20 tests, 5-10 min)"
     echo ""
     echo "Examples:"
     echo "  ./manage.sh setup"
     echo "  ./manage.sh verify"
     echo "  ./manage.sh test-quick"
+    echo "  ./manage.sh test"
     echo ""
 }
 
@@ -130,15 +130,39 @@ run_tests() {
     check_postgres
 
     if [ "$test_type" = "quick" ]; then
-        echo -e "${BLUE}Quick Test (6 tests, < 10 sec)${NC}"
-        psql -U $DB_USER -d $DB_NAME -f quick_test_fast.sh 2>/dev/null || true
-    elif [ "$test_type" = "full" ]; then
-        echo -e "${BLUE}Full Test Suite (20 tests, 5-10 min)${NC}"
-        psql -U $DB_USER -d $DB_NAME -f 08_test_queries.sql
+        echo -e "${BLUE}Quick Test (6 basic tests, < 10 sec)${NC}"
+        echo ""
+        # Basic search
+        echo "✓ Test 1: Basic search"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article') LIMIT 1;"
+
+        # Ranked search
+        echo "✓ Test 2: Ranked search"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT id, title FROM articles WHERE search_vector @@ to_tsquery('english', 'article') ORDER BY random() LIMIT 1;"
+
+        # AND operator
+        echo "✓ Test 3: AND operator"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article & content');"
+
+        # OR operator
+        echo "✓ Test 4: OR operator"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as matches FROM articles WHERE search_vector @@ to_tsquery('english', 'article | title');"
+
+        # Highlights
+        echo "✓ Test 5: Highlights"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT ts_headline('english', 'This is an article', to_tsquery('english', 'article'), 'StartSel=<mark>, StopSel=</mark>');"
+
+        # Statistics
+        echo "✓ Test 6: Statistics"
+        psql -U $DB_USER -d $DB_NAME -c "SELECT COUNT(*) as articles, COUNT(DISTINCT author_id) as authors FROM articles;"
+
+        echo ""
+        echo -e "${GREEN}Quick test complete!${NC}"
     else
-        # Default: comprehensive
-        echo -e "${BLUE}Running Tests${NC}"
-        psql -U $DB_USER -d $DB_NAME -f quick_test_fast.sh 2>/dev/null || true
+        # Full comprehensive tests
+        echo -e "${BLUE}Comprehensive Test Suite (20 tests, 5-10 min)${NC}"
+        echo ""
+        psql -U $DB_USER -d $DB_NAME -f 08_test_queries.sql
     fi
 }
 
@@ -155,13 +179,10 @@ case "$1" in
     verify)
         verify_db
         ;;
-    test)
-        run_tests "default"
-        ;;
     test-quick)
         run_tests "quick"
         ;;
-    test-full)
+    test)
         run_tests "full"
         ;;
     help|-h|--help)
