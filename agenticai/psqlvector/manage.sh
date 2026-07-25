@@ -75,6 +75,7 @@ setup_db() {
         "04_indexes.sql"
         "05_triggers.sql"
         "06_search_function.sql"
+        "07_advanced_features.sql"
     )
 
     for file in "${SQL_FILES[@]}"; do
@@ -89,7 +90,7 @@ setup_db() {
     done
 
     echo -e "${YELLOW}Inserting sample data (1M articles)...${NC}"
-    psql -U "$DB_USER" -h localhost -d "$DB_NAME" -f "07_sample_data.sql" > /dev/null 2>&1
+    psql -U "$DB_USER" -h localhost -d "$DB_NAME" -f "08_sample_data.sql" > /dev/null 2>&1
     echo -e "${GREEN}✓ Sample data inserted${NC}"
 
     echo ""
@@ -173,7 +174,7 @@ run_tests() {
         # Full comprehensive tests
         echo -e "${BLUE}Comprehensive Test Suite (20 tests, 5-10 min)${NC}"
         echo ""
-        psql -U "$DB_USER" -d "$DB_NAME" -f "08_test_queries.sql"
+        psql -U "$DB_USER" -d "$DB_NAME" -f "09_test_queries.sql"
     fi
 }
 

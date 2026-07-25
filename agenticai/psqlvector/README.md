@@ -1,6 +1,6 @@
 # PostgreSQL Full-Text Search Setup & Tests
 
-Complete setup for testing PostgreSQL Full-Text Search based on the Medium article by Inia Kunhuda.
+Complete setup for PostgreSQL Full-Text Search implementation with 1M test articles.
 
 ## Quick Start
 
@@ -220,6 +220,5 @@ Run setup first:
 
 ## References
 
-- Original article: https://iniakunhuda.medium.com/postgresql-full-text-search-a-powerful-alternative-to-elasticsearch-for-small-to-medium-d9524e001fe0
 - PostgreSQL FTS docs: https://www.postgresql.org/docs/current/textsearch.html
 - PostgreSQL trigram docs: https://www.postgresql.org/docs/current/pgtrgm.html

@@ -192,3 +192,63 @@ FROM tags t
 LEFT JOIN article_tags at ON t.id = at.tag_id
 GROUP BY t.id, t.name
 ORDER BY usage_count DESC;
+
+-- ============================================
+-- ADVANCED FEATURES TESTS
+-- ============================================
+
+-- 21. Phrase search (exact word sequences)
+\echo '\n=== Test 21: Phrase search ==='
+SELECT * FROM search_articles_phrase('article content', page_size => 5);
+
+-- 22. Sequence search (words in order with <-> operator)
+\echo '\n=== Test 22: Sequence search ==='
+SELECT * FROM search_articles_sequence('article', 'content', distance => 2);
+
+-- 23. Unaccent search (handles accents/diacritics)
+\echo '\n=== Test 23: Unaccent search ==='
+SELECT * FROM search_articles_unaccented('article', page_size => 5);
+
+-- 24. Custom weighted search
+\echo '\n=== Test 24: Custom weighted search ==='
+SELECT * FROM search_articles_custom_weights(
+    'article',
+    title_weight => 20.0,
+    subtitle_weight => 10.0,
+    content_weight => 1.0,
+    page_size => 5
+);
+
+-- 25. Autocomplete suggestions
+\echo '\n=== Test 25: Autocomplete suggestions ==='
+SELECT * FROM search_articles_autocomplete('Article', limit_count => 5);
+
+-- 26. Similar articles (trigram similarity)
+\echo '\n=== Test 26: Find similar articles ==='
+SELECT * FROM find_similar_articles(
+    article_id => 1,
+    similarity_threshold => 0.1,
+    limit_count => 5
+);
+
+-- 27. Popular articles materialized view
+\echo '\n=== Test 27: Popular articles view ==='
+SELECT id, title, author_name, relevance_score
+FROM popular_articles_search
+LIMIT 5;
+
+-- 28. Search statistics
+\echo '\n=== Test 28: Search statistics ==='
+SELECT * FROM search_stats();
+
+-- 29. Analyze article search vector composition
+\echo '\n=== Test 29: Analyze search vector composition ==='
+SELECT * FROM analyze_article_search_vector(article_id => 1);
+
+-- 30. Trigram similarity on tags (fuzzy matching)
+\echo '\n=== Test 30: Fuzzy tag matching ==='
+SELECT name, similarity(name, 'artical') as sim
+FROM tags
+WHERE name % 'artical'
+ORDER BY sim DESC
+LIMIT 5;
